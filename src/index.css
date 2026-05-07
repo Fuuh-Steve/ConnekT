@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  :root {
+    --bg-main: 255 255 255;
+    --bg-side: 248 250 252;
+    --text-main: 15 23 42;
+    --text-muted: 71 85 105;
+    --border: 232 238 246;
+    --accent: 37 99 235;
+    --accent-glow: rgba(37, 99, 235, 0.08);
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(37, 99, 235, 0.08);
+  }
+
+  .dark {
+    --bg-main: 2 6 23;
+    --bg-side: 15 23 42;
+    --text-main: 248 250 252;
+    --text-muted: 148 163 184;
+    --border: 30 41 59;
+    --accent: 59 130 246;
+    --accent-glow: rgba(59, 130, 246, 0.2);
+    --glass: rgba(15, 23, 42, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+
+  body {
+    @apply bg-[rgb(var(--bg-main))] text-[rgb(var(--text-main))] font-sans antialiased transition-colors duration-300;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply backdrop-blur-xl border border-[rgb(var(--border))]/50 bg-[rgb(var(--bg-main))]/70;
+  }
+
+  .accent-glow {
+    box-shadow: 0 0 25px var(--accent-glow);
+  }
+
+  .accent-text-glow {
+    text-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .shadow-soft {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.12);
+  }
+
+  .shadow-hard {
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .shadow-soft {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .dark .shadow-hard {
+    box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  .immersive-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+  .immersive-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .immersive-scrollbar::-webkit-scrollbar-thumb {
+    background: rgb(var(--accent));
+    border-radius: 10px;
+  }
+}
+
+@keyframes pulse-cyan {
+  0% { box-shadow: 0 0 0 0 rgba(var(--accent), 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(var(--accent), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--accent), 0); }
+}
+
+.animate-pulse-cyan {
+  animation: pulse-cyan 2s infinite;
+}
