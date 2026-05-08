@@ -70,7 +70,7 @@ export const Sidebar = ({ isCollapsed, toggleCollapse }: { isCollapsed: boolean,
         {!isCollapsed && (
           <div className="flex flex-col">
             <span className="font-bold text-lg tracking-tight leading-none text-[rgb(var(--text-main))]">ConnekT</span>
-            <span className="text-[10px] text-[rgb(var(--text-muted))] uppercase tracking-wider font-semibold">Scale</span>
+            {/* <span className="text-[10px] text-[rgb(var(--text-muted))] uppercase tracking-wider font-semibold">Scale</span> */}
           </div>
         )}
       </Link>
