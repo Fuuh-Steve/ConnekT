@@ -1,6 +1,6 @@
-# Connekt
+# ConnekT
 
-Connekt is a modern Next.js job marketplace built with Supabase for authentication and data storage. It includes student/applicant workflows, recruiter dashboards, job listings, application management, profile pages, and admin features.
+ConnekT is a modern Next.js job marketplace built with Supabase for authentication and data storage. It includes student/applicant workflows, recruiter dashboards, job listings, application management, profile pages, and admin features.
 
 ## Features
 
