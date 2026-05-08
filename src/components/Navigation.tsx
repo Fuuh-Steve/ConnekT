@@ -37,9 +37,9 @@ export const Sidebar = ({ isCollapsed, toggleCollapse }: { isCollapsed: boolean,
       { id: 'pricing', label: 'Billing/Plans', icon: CreditCard, path: '/pricing' },
     ],
     admin: [
-      { id: 'dashboard', label: 'Admin Dashboard', icon: ShieldCheck, path: '/dashboard' },
-      { id: 'verifications', label: 'Verifications', icon: CheckCircle, path: '/verifications' },
+      { id: 'admin', label: 'Admin Dashboard', icon: ShieldCheck, path: '/admin' },
       { id: 'pricing', label: 'Revenue', icon: CreditCard, path: '/pricing' },
+      { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
     ],
     guest: [
        { id: 'jobs', label: 'Explore Jobs', icon: Briefcase, path: '/jobs' },

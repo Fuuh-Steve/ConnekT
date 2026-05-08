@@ -17,6 +17,7 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -25,6 +26,7 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
     setError(null);
 
     try {
+      setInfoMessage(null);
       // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email.trim())) {
@@ -40,24 +42,31 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
         
         // Wait a moment for the auth state to update
         await new Promise(resolve => setTimeout(resolve, 500));
-      } else {
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email: email.trim(),
-          password,
-          options: {
-            data: {
-              role: selectedRole,
-              full_name: fullName.trim()
-            }
-          }
-        });
-        if (signUpError) throw signUpError;
-        
-        // Profiles are handled by the database trigger
-        // Wait for profile creation to complete
-        await new Promise(resolve => setTimeout(resolve, 500));
+        router.push('/dashboard');
+        return;
       }
-      // Redirection is handled by the role in AuthContext, navigate to /dashboard first
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: {
+            role: selectedRole,
+            full_name: fullName.trim()
+          }
+        }
+      });
+      if (signUpError) throw signUpError;
+
+      if (data?.user && !data.session) {
+        setInfoMessage('Your account was created. Please check your email to confirm your address before signing in.');
+        setIsLogin(true);
+        return;
+      }
+
+      // Profiles are handled by the database trigger
+      // Wait for profile creation to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
       router.push('/dashboard');
     } catch (err: any) {
       let msg = err.message || 'An error occurred during authentication';
@@ -180,6 +189,12 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
                 <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-sm font-bold flex items-center gap-3">
                   <ShieldCheck className="w-5 h-5 shrink-0" />
                   <p>{error}</p>
+                </div>
+              )}
+              {infoMessage && (
+                <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-700 text-sm font-bold flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 shrink-0" />
+                  <p>{infoMessage}</p>
                 </div>
               )}
               

@@ -97,10 +97,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               </>
             ) : role === 'admin' ? (
               <>
-                <MobileNavLink href="/dashboard" icon={ShieldCheck} label="Admin" active={currentTab === 'dashboard'} />
-                <MobileNavLink href="/verifications" icon={CheckCircle} label="Verify" active={currentTab === 'verifications'} />
+                <MobileNavLink href="/admin" icon={ShieldCheck} label="Admin" active={currentTab === 'admin'} />
                 <MobileNavLink href="/pricing" icon={CreditCard} label="Revenue" active={currentTab === 'pricing'} />
-                <MobileNavLink href="/profile" icon={User} label="Profile" active={currentTab === 'profile'} />
+                <MobileNavLink href="/settings" icon={Settings} label="Settings" active={currentTab === 'settings'} />
               </>
             ) : (
               <>

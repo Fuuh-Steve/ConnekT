@@ -89,11 +89,11 @@ returns trigger as $$
 begin
   insert into public.profiles (id, email, role, full_name, avatar_url)
   values (
-    new.id, 
-    new.email, 
-    coalesce(new.raw_user_meta_data->>'role', 'student'),
-    new.raw_user_meta_data->>'full_name',
-    new.raw_user_meta_data->>'avatar_url'
+    new.id,
+    new.email,
+    coalesce(new.user_metadata->>'role', new.raw_user_meta_data->>'role', 'student'),
+    coalesce(new.user_metadata->>'full_name', new.raw_user_meta_data->>'full_name'),
+    coalesce(new.user_metadata->>'avatar_url', new.raw_user_meta_data->>'avatar_url')
   );
   return new;
 end;

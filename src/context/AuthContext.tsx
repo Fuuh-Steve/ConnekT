@@ -30,21 +30,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .single();
 
       if (error) {
-        console.error('Profile not found, checking for pending registration...', error.message);
-        
-        // Handle OAuth signup where role is in localStorage
-        const pendingRole = localStorage.getItem('pending_role');
-        
-        if (pendingRole && (pendingRole === 'student' || pendingRole === 'recruiter') && currentUser) {
-          const fullName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name;
-          const avatarUrl = currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture;
-          
-          console.log('Creating profile for Google user:', currentUser.email);
+        console.error('Profile not found or could not be fetched, attempting profile creation...', error.message);
 
-          // Use upsert instead of update to ensure record exists for OAuth
-          const { error: upsertError } = await supabase.from('profiles').upsert({ 
+        const pendingRole = localStorage.getItem('pending_role');
+        const metadataRole = currentUser?.user_metadata?.role as UserRole | undefined;
+        const fallbackRole = pendingRole === 'recruiter' || pendingRole === 'student'
+          ? (pendingRole as UserRole)
+          : metadataRole || 'student';
+
+        const fullName = currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || null;
+        const avatarUrl = currentUser?.user_metadata?.avatar_url || currentUser?.user_metadata?.picture || null;
+
+        if (currentUser) {
+          console.log('Creating or syncing profile for new user:', currentUser.email);
+
+          const { error: upsertError } = await supabase.from('profiles').upsert({
             id: userId,
-            role: pendingRole,
+            role: fallbackRole,
             email: currentUser.email,
             full_name: fullName,
             avatar_url: avatarUrl
@@ -59,10 +61,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             throw upsertError;
           }
 
-          setRole(pendingRole as UserRole);
+          setRole(fallbackRole);
           localStorage.removeItem('pending_role');
         } else {
-          setRole('student'); 
+          setRole('student');
         }
       } else if (data) {
         setRole(data.role as UserRole);

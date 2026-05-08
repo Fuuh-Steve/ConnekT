@@ -13,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && role !== 'guest') {
-      router.push('/dashboard');
+      router.push(role === 'admin' ? '/admin' : '/dashboard');
     }
   }, [role, loading, router]);
 

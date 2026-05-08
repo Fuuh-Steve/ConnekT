@@ -14,8 +14,12 @@ export default function DashboardPage() {
   console.log('DashboardPage: role =', role, 'loading =', loading);
 
   useEffect(() => {
-    if (!loading && role === 'guest') {
-      router.push('/login');
+    if (!loading) {
+      if (role === 'guest') {
+        router.push('/login');
+      } else if (role === 'admin') {
+        router.push('/admin');
+      }
     }
   }, [role, loading, router]);
 
