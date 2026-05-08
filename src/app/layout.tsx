@@ -3,6 +3,7 @@ import Script from "next/script";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { Layout } from "@/src/components/Layout";
 import "@/src/index.css";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: "ConnekT",
