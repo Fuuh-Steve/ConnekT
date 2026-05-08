@@ -303,6 +303,7 @@ export const ManageListingsPage = () => {
                             </button>
                             <button 
                                 onClick={() => deleteJob(job.id)}
+                                aria-label="Delete job posting"
                                 className="p-3.5 text-[rgb(var(--text-muted))] hover:text-red-500 hover:bg-red-50 rounded-xl dark:hover:bg-red-900/10 transition-all border border-[rgb(var(--border))]"
                             >
                                 <XCircle className="w-5 h-5" />

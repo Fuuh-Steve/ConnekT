@@ -317,6 +317,7 @@ const SettingInput = ({ label, defaultValue, icon: Icon }: SettingInputProps) =>
       {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgb(var(--text-muted))]" />}
       <input 
         type="text" 
+        aria-label={label}
         defaultValue={defaultValue}
         className={cn(
           "w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all font-semibold",
@@ -347,8 +348,8 @@ const ToggleSetting = ({ icon: Icon, title, desc, defaultChecked, value }: Toggl
        </div>
     ) : (
       <label className="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" className="sr-only peer" defaultChecked={defaultChecked} />
-        <div className="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[rgb(var(--accent))]"></div>
+        <input type="checkbox" aria-label={title} className="sr-only peer" defaultChecked={defaultChecked} />
+        <div className="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[rgb(var(--accent))]"></div>
       </label>
     )}
   </div>

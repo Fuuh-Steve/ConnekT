@@ -164,6 +164,7 @@ export const LandingPage = () => {
             >
               <button 
                 onClick={() => setSelectedFeature(null)}
+                aria-label="Close feature details"
                 className="absolute top-4 right-4 w-10 h-10 rounded-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center hover:bg-red-500 hover:text-white transition-all z-10"
               >
                 <X className="w-5 h-5" />
@@ -333,7 +334,7 @@ export const LandingPage = () => {
 };
 
 const SocialLink = ({ icon: Icon, href }: any) => (
-  <a href={href} className="w-10 h-10 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center text-[rgb(var(--text-muted))] hover:bg-[rgb(var(--accent))] hover:text-white hover:border-transparent transition-all duration-300 shadow-sm">
+  <a href={href} aria-label={`Visit our ${href.includes('twitter') ? 'Twitter' : href.includes('linkedin') ? 'LinkedIn' : href.includes('github') ? 'GitHub' : 'social media'} profile`} className="w-10 h-10 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center text-[rgb(var(--text-muted))] hover:bg-[rgb(var(--accent))] hover:text-white hover:border-transparent transition-all duration-300 shadow-sm">
     <Icon className="w-5 h-5" />
   </a>
 );

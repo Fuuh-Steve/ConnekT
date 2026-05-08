@@ -238,7 +238,7 @@ return (
 
       <section className="space-y-8">
         <h3 className="text-2xl font-extrabold uppercase tracking-widest">Global Activity</h3>
-        <div className="relative space-y-12 before:absolute before:left-5 before:top-2 before:bottom-2 before:w-[3px] before:bg-[rgb(var(--border))]">
+        <div className="relative space-y-12 before:absolute before:left-5 before:top-2 before:bottom-2 before:w-0.75 before:bg-[rgb(var(--border))]">
           {[
             { text: "New application received for Frontend React role", time: "2m ago", type: "new" },
             { text: "Shortlisted 5 candidates for Backend Node.js", time: "1h ago", type: "shortlist" },

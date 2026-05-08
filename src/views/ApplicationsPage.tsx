@@ -153,7 +153,7 @@ export const ApplicationsPage = () => {
                         className="h-full bg-[rgb(var(--accent))]" 
                       />
                     </div>
-                    <span className="text-[12px] font-bold text-[rgb(var(--text-muted))] min-w-[30px]">{app.progress}%</span>
+                    <span className="text-[12px] font-bold text-[rgb(var(--text-muted))] min-w-7.5">{app.progress}%</span>
                   </div>
                 </div>
                 
@@ -209,6 +209,7 @@ export const ApplicationsPage = () => {
                 </div>
                 <button 
                   onClick={() => setSelectedApp(null)}
+                  aria-label="Close application details"
                   className="p-2 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] transition-colors"
                 >
                   <X className="w-5 h-5" />

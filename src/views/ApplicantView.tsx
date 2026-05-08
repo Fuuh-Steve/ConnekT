@@ -306,7 +306,7 @@ export const ApplicantView = () => {
                       <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em]">Match Score</label>
                       <span className="text-[10px] font-bold text-[rgb(var(--accent))]">80%+</span>
                     </div>
-                    <input type="range" className="w-full accent-[rgb(var(--accent))] h-1 bg-[rgb(var(--bg-side))] rounded-full appearance-none cursor-pointer" />
+                    <input type="range" aria-label="Match score filter" className="w-full accent-[rgb(var(--accent))] h-1 bg-[rgb(var(--bg-side))] rounded-full appearance-none cursor-pointer" />
                  </div>
                  
                  <div className="space-y-4">
@@ -335,7 +335,7 @@ export const ApplicantView = () => {
              </div>
              <div className="flex items-center gap-4 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest">
                <span>Sort by:</span>
-               <select className="bg-transparent border-none focus:ring-0 cursor-pointer text-[rgb(var(--accent))]">
+               <select aria-label="Sort applicants" className="bg-transparent border-none focus:ring-0 cursor-pointer text-[rgb(var(--accent))]">
                  <option>Highest Match</option>
                  <option>Recent First</option>
                  <option>Score</option>
@@ -358,7 +358,7 @@ export const ApplicantView = () => {
                     
                     <div className="flex items-center gap-6 md:gap-8 relative z-10 w-full xl:w-auto">
                        <div className="relative">
-                          <div className="w-16 h-16 md:w-20 md:h-20 rounded-3xl md:rounded-4xl bg-linear-to-br from-[rgb(var(--accent))] to-brand p-[2px] transition-all group-hover:rotate-6 group-hover:scale-110 shrink-0">
+                          <div className="w-16 h-16 md:w-20 md:h-20 rounded-3xl md:rounded-4xl bg-linear-to-br from-[rgb(var(--accent))] to-brand p-0.5 transition-all group-hover:rotate-6 group-hover:scale-110 shrink-0">
                             <div className="w-full h-full rounded-[22px] md:rounded-[30px] bg-[rgb(var(--bg-main))] flex items-center justify-center p-1">
                               <div className="w-full h-full rounded-xl md:rounded-2xl bg-[rgb(var(--bg-side))] flex items-center justify-center border border-[rgb(var(--border))]">
                               <User className="w-6 h-6 text-[rgb(var(--text-muted))]" />
@@ -393,7 +393,7 @@ export const ApplicantView = () => {
                           </div>
                        </div>
 
-                       <div className="min-w-[100px] md:min-w-[120px] text-center space-y-2">
+                       <div className="min-w-25 md:min-w-30 text-center space-y-2">
                           <span className={cn(
                             "text-[8px] md:text-[9px] font-bold uppercase tracking-[0.2em] px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border transition-all",
                             applicant.status === 'Accepted' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
@@ -503,6 +503,7 @@ export const ApplicantView = () => {
                 </label>
                 <input
                   type="datetime-local"
+                  aria-label="Interview date and time"
                   value={interviewForm.dateTime}
                   onChange={(e) => setInterviewForm(prev => ({ ...prev, dateTime: e.target.value }))}
                   className="w-full px-4 py-3 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl text-[rgb(var(--text))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50"

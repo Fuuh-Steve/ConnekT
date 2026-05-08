@@ -85,7 +85,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Modern Floating Mobile Navigation */}
       {role !== 'guest' && (
-        <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[340px] md:max-w-[480px] glass-panel rounded-2xl flex items-center px-1 py-1.5 md:px-2 md:py-2 z-100 shadow-hard border border-[rgb(var(--accent))]/40 overflow-hidden ring-1 ring-white/10 transition-all duration-300">
+        <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-85 md:max-w-120 glass-panel rounded-2xl flex items-center px-1 py-1.5 md:px-2 md:py-2 z-100 shadow-hard border border-[rgb(var(--accent))]/40 overflow-hidden ring-1 ring-white/10 transition-all duration-300">
             <div className="absolute inset-0 bg-linear-to-t from-[rgb(var(--accent))]/10 to-transparent pointer-events-none"></div>
             
             {role === 'recruiter' ? (

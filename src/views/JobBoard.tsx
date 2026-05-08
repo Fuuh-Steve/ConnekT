@@ -80,7 +80,7 @@ export const JobBoard = () => {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-[300px] w-full bg-[rgb(var(--bg-side))] animate-pulse rounded-2xl border border-[rgb(var(--border))]"></div>
+            <div key={i} className="h-75 w-full bg-[rgb(var(--bg-side))] animate-pulse rounded-2xl border border-[rgb(var(--border))]"></div>
           ))}
         </div>
       ) : jobs.length > 0 ? (

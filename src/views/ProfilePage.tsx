@@ -184,6 +184,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
           )}
           <input 
             type="file" 
+            aria-label="Upload cover photo"
             ref={coverInputRef} 
             onChange={(e) => handleFileUpload(e, 'cover')} 
             accept="image/*" 
@@ -225,12 +226,14 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                 <>
                   <button 
                     onClick={() => avatarInputRef.current?.click()}
+                    aria-label="Upload profile picture"
                     className="absolute bottom-3 right-3 w-10 h-10 rounded-lg bg-white dark:bg-slate-700 text-[rgb(var(--text-main))] flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all border border-[rgb(var(--border))] z-20"
                   >
                      <Camera className="w-4 h-4" />
                   </button>
                   <input 
                     type="file" 
+                    aria-label="Choose avatar file"
                     ref={avatarInputRef} 
                     onChange={(e) => handleFileUpload(e, 'avatar')} 
                     accept="image/*" 
@@ -396,7 +399,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                   <h3 className="text-xl font-bold text-[rgb(var(--text-main))]">{selectedExperience.role}</h3>
                   <p className="text-sm font-bold text-[rgb(var(--accent))] uppercase tracking-wider mt-1">{selectedExperience.company}</p>
                 </div>
-                <button onClick={() => setSelectedExperience(null)} className="p-2 hover:bg-[rgb(var(--bg-main))] rounded-xl transition-all">
+                <button onClick={() => setSelectedExperience(null)} aria-label="Close experience details" className="p-2 hover:bg-[rgb(var(--bg-main))] rounded-xl transition-all">
                   <X className="w-5 h-5 text-[rgb(var(--text-main))]" />
                 </button>
               </div>
@@ -528,7 +531,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
           >
             <div className="p-6 border-b border-[rgb(var(--border))] flex items-center justify-between bg-[rgb(var(--bg-side))]">
               <h3 className="text-xl font-bold">Update Profile</h3>
-              <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+              <button onClick={onClose} aria-label="Close dialog" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -654,6 +657,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                             newExp.splice(i, 1);
                             setFormData({...formData, experience: newExp});
                           }}
+                          aria-label="Remove experience entry"
                           className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all border-2 border-[rgb(var(--bg-main))]"
                         >
                           <X className="w-4 h-4" />
@@ -741,6 +745,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                             newEdu.splice(i, 1);
                             setFormData({...formData, education: newEdu});
                           }}
+                          aria-label="Remove education entry"
                           className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all border-2 border-[rgb(var(--bg-main))]"
                         >
                           <X className="w-4 h-4" />
@@ -828,6 +833,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                           </div>
                           <input 
                             type="range" 
+                            aria-label={`Skill level for ${skill.name}`}
                             min="0" 
                             max="100" 
                             value={skill.level}
@@ -845,6 +851,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                             newSkills.splice(i, 1);
                             setFormData({...formData, skills: newSkills});
                           }}
+                          aria-label="Remove skill"
                           className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                         >
                           <XCircle className="w-4 h-4" />
@@ -898,7 +905,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
               <button 
                 onClick={() => onSave(formData)}
                 disabled={saving}
-                className="px-8 py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl shadow-xl shadow-[rgb(var(--accent))]/20 flex items-center justify-center gap-2 disabled:opacity-70 flex-1 md:flex-none md:min-w-[200px]"
+                className="px-8 py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl shadow-xl shadow-[rgb(var(--accent))]/20 flex items-center justify-center gap-2 disabled:opacity-70 flex-1 md:flex-none md:min-w-50"
               >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-4 h-4" />}
                 Save Profile
@@ -921,7 +928,7 @@ const SocialLink = ({ icon: Icon, label, url }: any) => (
      <div className="w-7 h-7 rounded-lg bg-[rgb(var(--bg-side))] flex items-center justify-center text-[rgb(var(--text-muted))] group-hover:bg-[rgb(var(--accent))] group-hover:text-white transition-all border border-[rgb(var(--border))]">
         <Icon className="w-3.5 h-3.5" />
      </div>
-     <span className="text-xs font-bold text-[rgb(var(--text-muted))] group-hover:text-[rgb(var(--text-main))] transition-colors truncate max-w-[150px]">{label}</span>
+     <span className="text-xs font-bold text-[rgb(var(--text-muted))] group-hover:text-[rgb(var(--text-main))] transition-colors truncate max-w-37.5">{label}</span>
   </a>
 );
 

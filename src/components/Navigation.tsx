@@ -58,7 +58,7 @@ export const Sidebar = ({ isCollapsed, toggleCollapse }: { isCollapsed: boolean,
   return (
     <aside className={cn(
       "border-r border-[rgb(var(--border))] h-screen sticky top-0 hidden lg:flex flex-col bg-[rgb(var(--bg-side))] transition-all duration-300 z-40 overflow-hidden",
-      isCollapsed ? "w-[80px] p-4" : "w-[280px] p-6"
+      isCollapsed ? "w-20 p-4" : "w-70 p-6"
     )}>
       <Link href="/" className={cn(
         "flex items-center gap-2 group relative z-10",
@@ -80,7 +80,7 @@ export const Sidebar = ({ isCollapsed, toggleCollapse }: { isCollapsed: boolean,
         onClick={toggleCollapse}
         className={cn(
           "absolute w-8 h-8 bg-[rgb(var(--accent))] text-white rounded-lg flex items-center justify-center z-70 shadow-xl hover:scale-110 active:scale-95 transition-all group/toggle",
-          isCollapsed ? "left-1/2 -translate-x-1/2 top-20" : "right-[-16px] top-20"
+          isCollapsed ? "left-1/2 -translate-x-1/2 top-20" : "-right-4 top-20"
         )}
       >
         <ChevronRight className={cn("w-4 h-4 transition-transform duration-300", isCollapsed ? "rotate-0" : "rotate-180")} />
@@ -106,7 +106,7 @@ export const Sidebar = ({ isCollapsed, toggleCollapse }: { isCollapsed: boolean,
             {currentTab === item.id && (
                 <motion.div 
                   layoutId="nav-pill"
-                  className="absolute left-[-2px] w-1 h-5 bg-[rgb(var(--accent))] rounded-r-full"
+                  className="absolute -left-0.5 w-1 h-5 bg-[rgb(var(--accent))] rounded-r-full"
                 />
             )}
             <item.icon className={cn("w-5 h-5 transition-colors shrink-0", currentTab === item.id ? "text-[rgb(var(--accent))]" : "group-hover:text-[rgb(var(--accent))]")} />
