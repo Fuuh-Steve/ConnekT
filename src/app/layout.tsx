@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { Layout } from "@/src/components/Layout";
 import "@/src/index.css";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "ConnekT",
@@ -44,6 +46,7 @@ export default function RootLayout({
           </Layout>
         </AuthProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

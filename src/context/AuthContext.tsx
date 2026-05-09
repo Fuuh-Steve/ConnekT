@@ -21,28 +21,88 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [role, setRole] = useState<UserRole>('guest');
   const [loading, setLoading] = useState(true);
 
+  const INACTIVE_SIGNOUT_TIME = 1000 * 60 * 30; // 30 minutes
+  const HIDDEN_TIMESTAMP_KEY = 'connekt-hidden-timestamp';
+  const hiddenTimeoutRef = React.useRef<number | null>(null);
+
+  const clearHiddenSignOutTimeout = () => {
+    if (hiddenTimeoutRef.current !== null) {
+      window.clearTimeout(hiddenTimeoutRef.current);
+      hiddenTimeoutRef.current = null;
+    }
+  };
+
+  const shouldSignOutAfterHidden = () => {
+    const lastHidden = localStorage.getItem(HIDDEN_TIMESTAMP_KEY);
+    return lastHidden ? Date.now() - Number(lastHidden) > INACTIVE_SIGNOUT_TIME : false;
+  };
+
+  const signOutSupabase = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.warn('Supabase sign-out failed, clearing local auth state instead:', error);
+      localStorage.removeItem(HIDDEN_TIMESTAMP_KEY);
+    }
+  };
+
+  const performSignOut = async () => {
+    clearHiddenSignOutTimeout();
+    localStorage.removeItem(HIDDEN_TIMESTAMP_KEY);
+    await signOutSupabase();
+  };
+
+  const scheduleHiddenSignOut = () => {
+    clearHiddenSignOutTimeout();
+    hiddenTimeoutRef.current = window.setTimeout(async () => {
+      localStorage.setItem(HIDDEN_TIMESTAMP_KEY, Date.now().toString());
+      await signOutSupabase();
+    }, INACTIVE_SIGNOUT_TIME);
+  };
+
+  const handleVisibilityChange = async () => {
+    if (document.hidden) {
+      localStorage.setItem(HIDDEN_TIMESTAMP_KEY, Date.now().toString());
+      scheduleHiddenSignOut();
+    } else {
+      clearHiddenSignOutTimeout();
+      if (shouldSignOutAfterHidden()) {
+        localStorage.removeItem(HIDDEN_TIMESTAMP_KEY);
+        await signOutSupabase();
+      } else {
+        localStorage.removeItem(HIDDEN_TIMESTAMP_KEY);
+      }
+    }
+  };
+
   const fetchProfile = React.useCallback(async (userId: string, currentUser?: User) => {
     try {
+      console.log('[fetchProfile] Starting for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
+
+      const pendingRole = localStorage.getItem('pending_role');
+      const metadataRole = currentUser?.user_metadata?.role as UserRole | undefined;
+      const fallbackRole = pendingRole === 'recruiter' || pendingRole === 'student'
+        ? (pendingRole as UserRole)
+        : metadataRole || 'student';
+
+      console.log('[fetchProfile] pendingRole:', pendingRole, 'metadataRole:', metadataRole, 'fallbackRole:', fallbackRole);
 
       if (error) {
-        console.error('Profile not found or could not be fetched, attempting profile creation...', error.message);
+        console.error('Profile fetch error, attempting profile creation or sync...', error.message);
+      }
 
-        const pendingRole = localStorage.getItem('pending_role');
-        const metadataRole = currentUser?.user_metadata?.role as UserRole | undefined;
-        const fallbackRole = pendingRole === 'recruiter' || pendingRole === 'student'
-          ? (pendingRole as UserRole)
-          : metadataRole || 'student';
-
-        const fullName = currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || null;
-        const avatarUrl = currentUser?.user_metadata?.avatar_url || currentUser?.user_metadata?.picture || null;
-
+      if (!data) {
+        console.log('[fetchProfile] No existing profile found, creating new one');
         if (currentUser) {
-          console.log('Creating or syncing profile for new user:', currentUser.email);
+          const fullName = currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || null;
+          const avatarUrl = currentUser?.user_metadata?.avatar_url || currentUser?.user_metadata?.picture || null;
+
+          console.log('Creating profile for new user:', currentUser.email, 'with role', fallbackRole);
 
           const { error: upsertError } = await supabase.from('profiles').upsert({
             id: userId,
@@ -66,10 +126,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else {
           setRole('student');
         }
-      } else if (data) {
-        setRole(data.role as UserRole);
+      } else {
+        // Profile exists; check if we need to update it with pending_role
+        const profileRole = data.role as UserRole;
+        console.log('[fetchProfile] Existing profile found with role:', profileRole);
+        const shouldUpdateRole = pendingRole && (pendingRole === 'recruiter' || pendingRole === 'student') && pendingRole !== profileRole;
+
+        console.log('[fetchProfile] shouldUpdateRole:', shouldUpdateRole, 'pendingRole:', pendingRole, 'profileRole:', profileRole);
+
+        if (shouldUpdateRole) {
+          console.log('Updating existing profile from', profileRole, 'to', pendingRole, 'based on pending_role');
+          
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ role: pendingRole })
+            .eq('id', userId);
+
+          if (updateError) {
+            console.error('Failed to update profile role:', updateError);
+            setRole(profileRole);
+          } else {
+            console.log('[fetchProfile] Successfully updated profile role to:', pendingRole);
+            setRole(pendingRole as UserRole);
+          }
+        } else {
+          setRole(profileRole);
+        }
+        
         localStorage.removeItem('pending_role');
-        console.log('Fetched profile role:', data.role);
+        console.log('Fetched existing profile role:', profileRole);
       }
     } catch (err) {
       console.error('Unexpected error fetching profile:', err);
@@ -80,6 +165,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
+    const runInitialHiddenCheck = async () => {
+      if (shouldSignOutAfterHidden()) {
+        await signOutSupabase();
+      }
+    };
+
+    runInitialHiddenCheck();
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -89,9 +182,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setLoading(false);
       }
+    }).catch((error) => {
+      console.warn('Error getting Supabase session:', error);
+      setLoading(false);
     });
 
-    // Listen for changes
+    // Listen for visibility changes so inactive background users get logged out
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const currentUser = session?.user ?? null;
       setSession(session);
@@ -104,11 +203,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearHiddenSignOutTimeout();
+    };
   }, [fetchProfile]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    clearHiddenSignOutTimeout();
+    localStorage.removeItem(HIDDEN_TIMESTAMP_KEY);
+    await signOutSupabase();
   };
 
   return (
