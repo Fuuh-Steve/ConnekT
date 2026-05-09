@@ -42,7 +42,7 @@ export const PostJobPage = () => {
                 .from('jobs')
                 .insert({
                     title: formData.title,
-                    company: profile?.company_name || 'ConnekT Partner',
+                    company: profile?.company_name || 'Company not provided',
                     location: formData.location,
                     description: formData.description,
                     tags: [formData.department, 'Full-time'],

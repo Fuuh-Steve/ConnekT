@@ -35,10 +35,30 @@ export const JobBoard = () => {
       if (error) {
         console.error('Error fetching jobs:', error);
       } else if (data) {
+        const recruiterIds = [...new Set(data.map((job: any) => job.recruiter_id).filter(Boolean))];
+        let profileMap: Record<string, string> = {};
+
+        if (recruiterIds.length > 0) {
+          const { data: profilesData } = await supabase
+            .from('profiles')
+            .select('id, company_name')
+            .in('id', recruiterIds);
+
+          if (profilesData) {
+            profileMap = profilesData.reduce((acc: Record<string, string>, profile: any) => {
+              if (profile.company_name) acc[profile.id] = profile.company_name;
+              return acc;
+            }, {});
+          }
+        }
+
         // Map database fields to JobListing interface
-        const mappedJobs: JobListing[] = data.map((job: JobListing) => ({
+        const mappedJobs: JobListing[] = data.map((job: any) => ({
           ...job,
-          postedDate: new Date(job.postedDate).toLocaleDateString(),
+          company: job.company && job.company !== 'ConnekT Partner'
+            ? job.company
+            : profileMap[job.recruiter_id] || job.company || 'Company not provided',
+          postedDate: new Date(job.posted_date).toLocaleDateString(),
           matchScore: Math.floor(Math.random() * 20) + 80 // Temporary until ML match score is implemented
         }));
         setJobs(mappedJobs);

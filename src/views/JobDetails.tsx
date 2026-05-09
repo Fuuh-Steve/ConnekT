@@ -21,9 +21,12 @@ export const JobDetails = () => {
   const { user } = useAuth();
   const router = useRouter();
   const [job, setJob] = useState<JobListing | null>(null);
+  const [recruiterCompany, setRecruiterCompany] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const displayCompany = recruiterCompany || job?.company || 'Company';
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -44,6 +47,18 @@ export const JobDetails = () => {
             postedDate: new Date(data.posted_date).toLocaleDateString(),
             matchScore: 95 // Temporary
           } as JobListing);
+
+          if (data.recruiter_id) {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('company_name')
+              .eq('id', data.recruiter_id)
+              .single();
+
+            if (profileData?.company_name) {
+              setRecruiterCompany(profileData.company_name);
+            }
+          }
         }
       } catch (err) {
         console.error('Unexpected error:', err);
@@ -125,7 +140,7 @@ export const JobDetails = () => {
               <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white border border-[rgb(var(--border))] p-2 shrink-0 shadow-sm">
                 <Image 
                   src={job.logo} 
-                  alt={job.company} 
+                  alt={displayCompany} 
                   width={96}
                   height={96}
                   className="w-full h-full rounded-xl object-contain" 
@@ -134,7 +149,7 @@ export const JobDetails = () => {
               <div className="space-y-3">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{job.title}</h1>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[rgb(var(--text-muted))] font-medium">
-                  <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-[rgb(var(--accent))]" /> {job.company}</span>
+                  <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-[rgb(var(--accent))]" /> {displayCompany}</span>
                   <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-[rgb(var(--accent))]" /> {job.location}</span>
                   <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-[rgb(var(--accent))]" /> Posted {job.postedDate}</span>
                 </div>

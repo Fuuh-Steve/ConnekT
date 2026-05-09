@@ -254,6 +254,9 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                  <p className="text-[rgb(var(--text-muted))] font-semibold text-sm">
                    {profile.bio || 'Product Focused Developer'} • {profile.location || 'Remote'}
                  </p>
+                 {profile.role === 'recruiter' && profile.company_name ? (
+                   <p className="text-[rgb(var(--text-muted))] font-semibold text-sm">{profile.company_name}</p>
+                 ) : null}
               </div>
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1">

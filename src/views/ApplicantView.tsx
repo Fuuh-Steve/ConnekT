@@ -7,13 +7,16 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight, User, Mail, Download, CheckCircle, XCircle, Zap, Search, ListFilter, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
 
 export const ApplicantView = () => {
   const params = useParams();
   const jobId = params?.jobId;
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [applicants, setApplicants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unauthorized, setUnauthorized] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [interviewModal, setInterviewModal] = useState<{ open: boolean; applicant: any }>({ open: false, applicant: null });
   const [interviewForm, setInterviewForm] = useState({ dateTime: '', meetLink: '', notes: '' });
@@ -44,10 +47,38 @@ export const ApplicantView = () => {
         setLoading(false);
         return;
       }
-      
+      if (authLoading) return;
+      if (!user) {
+        setUnauthorized(true);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setUnauthorized(false);
+
       try {
-        console.log('Fetching applicants for jobId:', jobId);
-        
+        const { data: jobData, error: jobError } = await supabase
+          .from('jobs')
+          .select('id, recruiter_id, title')
+          .eq('id', jobId)
+          .single();
+
+        if (jobError || !jobData) {
+          console.error('Error fetching job details:', jobError);
+          setUnauthorized(true);
+          setApplicants([]);
+          setLoading(false);
+          return;
+        }
+
+        if (jobData.recruiter_id !== user.id) {
+          setUnauthorized(true);
+          setApplicants([]);
+          setLoading(false);
+          return;
+        }
+
         // Fetch applications for this job
         const { data: applicationsData, error: applicationsError } = await supabase
           .from('applications')
@@ -112,7 +143,7 @@ export const ApplicantView = () => {
     };
 
     fetchApplicants();
-  }, [jobId]);
+  }, [jobId, user, authLoading]);
 
   const updateApplicantStatus = async (applicationId: string, newStatus: string) => {
     setUpdatingStatus(applicationId);
@@ -195,11 +226,21 @@ export const ApplicantView = () => {
     setInterviewForm({ dateTime: '', meetLink: '', notes: '' });
   };
   
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
         <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading applicants...</p>
+      </div>
+    );
+  }
+
+  if (unauthorized) {
+    return (
+      <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-6">
+        <p className="text-2xl font-bold">Access denied</p>
+        <p className="text-[rgb(var(--text-muted))] max-w-md">Only the recruiter who posted this job can view the candidates who applied to it.</p>
+        <Link href="/dashboard" className="px-6 py-3 bg-[rgb(var(--accent))] text-white rounded-2xl font-bold hover:bg-[rgb(var(--accent))]/90 transition-all">Go back to dashboard</Link>
       </div>
     );
   }
@@ -388,9 +429,9 @@ export const ApplicantView = () => {
                           </div>
                        </div>
 
-                       <div className="min-w-25 md:min-w-30 text-center space-y-2">
+                       <div className="min-w-55 max-w-65 text-center space-y-4">
                           <span className={cn(
-                            "text-[8px] md:text-[9px] font-bold uppercase tracking-[0.2em] px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border transition-all",
+                            "text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-2xl border transition-all inline-flex",
                             applicant.status === 'Accepted' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
                             applicant.status === 'Interview' ? 'bg-[rgb(var(--accent))]/10 text-[rgb(var(--accent))] border-[rgb(var(--accent))]/20' :
                             applicant.status === 'Reviewed' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
@@ -401,50 +442,50 @@ export const ApplicantView = () => {
                           </span>
                           
                           {/* Status Action Buttons */}
-                          <div className="flex flex-col gap-2">
+                          <div className="space-y-3">
                             {applicant.status === 'Pending' && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Reviewed'); }}
                                 disabled={updatingStatus === applicant.id}
-                                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-purple-500 text-white border border-purple-500 rounded-lg hover:bg-purple-600 transition-all disabled:opacity-50 shadow-sm"
+                                className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-purple-500 text-white border border-purple-500 rounded-2xl hover:bg-purple-600 transition-all disabled:opacity-50 shadow-sm"
                               >
                                 {updatingStatus === applicant.id ? 'Processing...' : 'Mark as Reviewed'}
                               </button>
                             )}
                             
                             {applicant.status === 'Reviewed' && (
-                              <div className="flex gap-2">
+                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); setInterviewModal({ open: true, applicant }); }}
-                                  className="flex-1 px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-[rgb(var(--accent))] text-white rounded-lg hover:bg-[rgb(var(--accent))]/90 transition-all shadow-sm"
+                                  className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-[rgb(var(--accent))] text-white rounded-2xl hover:bg-[rgb(var(--accent))]/90 transition-all shadow-sm"
                                 >
                                   Schedule Interview
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Rejected'); }}
                                   disabled={updatingStatus === applicant.id}
-                                  className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
+                                  className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-2xl hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
-                                  {updatingStatus === applicant.id ? '...' : 'Reject'}
+                                  {updatingStatus === applicant.id ? 'Rejecting...' : 'Reject'}
                                 </button>
                               </div>
                             )}
                             
                             {applicant.status === 'Interview' && (
-                              <div className="flex gap-2">
+                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Accepted'); }}
                                   disabled={updatingStatus === applicant.id}
-                                  className="flex-1 px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all disabled:opacity-50 shadow-sm"
+                                  className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-green-500 text-white rounded-2xl hover:bg-green-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
                                   {updatingStatus === applicant.id ? 'Processing...' : 'Accept'}
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Rejected'); }}
                                   disabled={updatingStatus === applicant.id}
-                                  className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
+                                  className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-2xl hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
-                                  {updatingStatus === applicant.id ? '...' : 'Reject'}
+                                  {updatingStatus === applicant.id ? 'Rejecting...' : 'Reject'}
                                 </button>
                               </div>
                             )}
