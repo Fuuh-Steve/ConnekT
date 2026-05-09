@@ -74,7 +74,7 @@ export const LandingPage = () => {
              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[rgb(var(--accent))]/10 border border-[rgb(var(--accent))]/20 text-[rgb(var(--accent))] text-sm font-bold mb-4"
           >
             <Zap className="w-4 h-4 fill-current" />
-            <span className="uppercase tracking-widest text-[9px] sm:text-[10px]">Empowering Tech Talent</span>
+            <span className="uppercase tracking-widest text-[9px] sm:text-[10px]">Empowering Tech Talents</span>
           </motion.div>
           
           <motion.h1 
@@ -306,7 +306,7 @@ export const LandingPage = () => {
             <div className="space-y-3">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-[rgb(var(--accent))] shrink-0 mt-0.5" />
-                <p className="text-sm text-[rgb(var(--text-muted))] font-medium">Yaoundé, Cameroon</p>
+                <p className="text-sm text-[rgb(var(--text-muted))] font-medium">Bamenda, Cameroon</p>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[rgb(var(--accent))] shrink-0" />
