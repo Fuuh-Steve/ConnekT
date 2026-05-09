@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { Layout } from "@/src/components/Layout";
 import "@/src/index.css";
