@@ -82,7 +82,9 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
   const handleGoogleAuth = async () => {
     try {
       // Store the selected role in localStorage so we can retrieve it after redirect
+      console.log('[handleGoogleAuth] Setting pending_role to:', selectedRole);
       localStorage.setItem('pending_role', selectedRole);
+      console.log('[handleGoogleAuth] pending_role in localStorage:', localStorage.getItem('pending_role'));
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
