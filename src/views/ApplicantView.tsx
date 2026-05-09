@@ -252,14 +252,9 @@ export const ApplicantView = () => {
             color: 'bg-blue-500' 
           },
           { 
-            label: 'Screening', 
-            count: applicants.filter(a => a.status === 'Pending').length, 
-            color: 'bg-purple-500' 
-          },
-          { 
             label: 'Reviewed', 
             count: applicants.filter(a => a.status === 'Reviewed').length, 
-            color: 'bg-orange-500' 
+            color: 'bg-purple-500' 
           },
           { 
             label: 'Interview', 
@@ -406,52 +401,52 @@ export const ApplicantView = () => {
                           </span>
                           
                           {/* Status Action Buttons */}
-                          <div className="flex gap-1 justify-center">
+                          <div className="flex flex-col gap-2">
                             {applicant.status === 'Pending' && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Reviewed'); }}
                                 disabled={updatingStatus === applicant.id}
-                                className="px-2 py-1 text-[8px] font-bold uppercase tracking-widest bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-lg hover:bg-purple-500/20 transition-all disabled:opacity-50"
+                                className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-purple-500 text-white border border-purple-500 rounded-lg hover:bg-purple-600 transition-all disabled:opacity-50 shadow-sm"
                               >
-                                {updatingStatus === applicant.id ? '...' : 'Review'}
+                                {updatingStatus === applicant.id ? 'Processing...' : 'Mark as Reviewed'}
                               </button>
                             )}
                             
                             {applicant.status === 'Reviewed' && (
-                              <>
+                              <div className="flex gap-2">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); setInterviewModal({ open: true, applicant }); }}
-                                  className="px-2 py-1 text-[8px] font-bold uppercase tracking-widest bg-[rgb(var(--accent))]/10 text-[rgb(var(--accent))] border border-[rgb(var(--accent))]/20 rounded-lg hover:bg-[rgb(var(--accent))]/20 transition-all"
+                                  className="flex-1 px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-[rgb(var(--accent))] text-white rounded-lg hover:bg-[rgb(var(--accent))]/90 transition-all shadow-sm"
                                 >
-                                  Interview
+                                  Schedule Interview
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Rejected'); }}
                                   disabled={updatingStatus === applicant.id}
-                                  className="px-2 py-1 text-[8px] font-bold uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all disabled:opacity-50"
+                                  className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
                                   {updatingStatus === applicant.id ? '...' : 'Reject'}
                                 </button>
-                              </>
+                              </div>
                             )}
                             
                             {applicant.status === 'Interview' && (
-                              <>
+                              <div className="flex gap-2">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Accepted'); }}
                                   disabled={updatingStatus === applicant.id}
-                                  className="px-2 py-1 text-[8px] font-bold uppercase tracking-widest bg-green-500/10 text-green-400 border border-green-500/20 rounded-lg hover:bg-green-500/20 transition-all disabled:opacity-50"
+                                  className="flex-1 px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
-                                  {updatingStatus === applicant.id ? '...' : 'Accept'}
+                                  {updatingStatus === applicant.id ? 'Processing...' : 'Accept'}
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Rejected'); }}
                                   disabled={updatingStatus === applicant.id}
-                                  className="px-2 py-1 text-[8px] font-bold uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all disabled:opacity-50"
+                                  className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
                                   {updatingStatus === applicant.id ? '...' : 'Reject'}
                                 </button>
-                              </>
+                              </div>
                             )}
                           </div>
                        </div>
@@ -479,86 +474,91 @@ export const ApplicantView = () => {
 
       {/* Interview Scheduling Modal */}
       {interviewModal.open && interviewModal.applicant && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-[rgb(var(--bg))] border border-[rgb(var(--border))] rounded-3xl p-8 max-w-md w-full shadow-2xl"
+            className="bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-3xl p-8 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-[rgb(var(--text))]">Schedule Interview</h3>
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-2xl font-bold text-[rgb(var(--text-main))] mb-2">Schedule Interview</h3>
+                <p className="text-[rgb(var(--text-muted))] text-sm">Set up an interview for <span className="font-semibold text-[rgb(var(--accent))]">{interviewModal.applicant.name}</span></p>
+              </div>
               <button
                 onClick={() => setInterviewModal({ open: false, applicant: null })}
-                className="text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text))] transition-colors"
+                className="text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] transition-colors p-2 hover:bg-[rgb(var(--bg-side))] rounded-xl"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[rgb(var(--text))] mb-2">
-                  Interview Date & Time
-                </label>
-                <input
-                  type="datetime-local"
-                  aria-label="Interview date and time"
-                  value={interviewForm.dateTime}
-                  onChange={(e) => setInterviewForm(prev => ({ ...prev, dateTime: e.target.value }))}
-                  className="w-full px-4 py-3 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl text-[rgb(var(--text))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[rgb(var(--text))] mb-2">
-                  Meet Link
-                </label>
-                <div className="flex gap-2">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-[rgb(var(--text-main))] mb-3 uppercase tracking-widest">
+                    Interview Date & Time
+                  </label>
                   <input
-                    type="url"
-                    value={interviewForm.meetLink}
-                    onChange={(e) => setInterviewForm(prev => ({ ...prev, meetLink: e.target.value }))}
-                    placeholder="https://meet.google.com/..."
-                    className="flex-1 px-4 py-3 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl text-[rgb(var(--text))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50"
+                    type="datetime-local"
+                    aria-label="Interview date and time"
+                    value={interviewForm.dateTime}
+                    onChange={(e) => setInterviewForm(prev => ({ ...prev, dateTime: e.target.value }))}
+                    className="w-full px-4 py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50 focus:border-[rgb(var(--accent))] transition-all text-base"
                     required
                   />
-                  <button
-                    onClick={() => generateMeetLink()}
-                    className="px-4 py-3 bg-[rgb(var(--accent))]/10 text-[rgb(var(--accent))] border border-[rgb(var(--accent))]/20 rounded-xl hover:bg-[rgb(var(--accent))]/20 transition-all font-medium"
-                  >
-                    Generate
-                  </button>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-[rgb(var(--text-main))] mb-3 uppercase tracking-widest">
+                    Meeting Link
+                  </label>
+                  <div className="space-y-3">
+                    <input
+                      type="url"
+                      value={interviewForm.meetLink}
+                      onChange={(e) => setInterviewForm(prev => ({ ...prev, meetLink: e.target.value }))}
+                      placeholder="https://meet.google.com/..."
+                      className="w-full px-4 py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50 focus:border-[rgb(var(--accent))] transition-all text-base"
+                      required
+                    />
+                    <button
+                      onClick={() => generateMeetLink()}
+                      className="w-full px-4 py-3 bg-[rgb(var(--accent))]/10 text-[rgb(var(--accent))] border border-[rgb(var(--accent))]/20 rounded-xl hover:bg-[rgb(var(--accent))]/20 transition-all font-semibold text-sm"
+                    >
+                      Generate Google Meet Link
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[rgb(var(--text))] mb-2">
-                  Notes (Optional)
+                <label className="block text-sm font-bold text-[rgb(var(--text-main))] mb-3 uppercase tracking-widest">
+                  Interview Notes (Optional)
                 </label>
                 <textarea
                   value={interviewForm.notes}
                   onChange={(e) => setInterviewForm(prev => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Add any notes for the interview..."
-                  rows={3}
-                  className="w-full px-4 py-3 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl text-[rgb(var(--text))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50 resize-none"
+                  placeholder="Add any preparation notes, agenda items, or special instructions for the interview..."
+                  rows={4}
+                  className="w-full px-4 py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50 focus:border-[rgb(var(--accent))] transition-all resize-none text-base"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-4 pt-6 border-t border-[rgb(var(--border))]">
                 <button
                   onClick={() => setInterviewModal({ open: false, applicant: null })}
-                  className="flex-1 py-3 px-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl text-[rgb(var(--text))] hover:bg-[rgb(var(--bg-hover))] transition-all font-medium"
+                  className="flex-1 py-4 px-6 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] hover:bg-[rgb(var(--bg-hover))] transition-all font-semibold text-base"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleScheduleInterview()}
-                  disabled={schedulingInterview}
-                  className="flex-1 py-3 px-4 bg-[rgb(var(--accent))] text-white rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all font-medium disabled:opacity-50"
+                  disabled={schedulingInterview || !interviewForm.dateTime || !interviewForm.meetLink}
+                  className="flex-1 py-4 px-6 bg-[rgb(var(--accent))] text-white rounded-2xl hover:bg-[rgb(var(--accent))]/90 transition-all font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[rgb(var(--accent))]/20"
                 >
-                  {schedulingInterview ? 'Scheduling...' : 'Schedule Interview'}
+                  {schedulingInterview ? 'Scheduling Interview...' : 'Schedule Interview'}
                 </button>
               </div>
             </div>

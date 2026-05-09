@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install Dependencies",
+			"type": "shell",
+			"command": "npm install"
+		},
+		{
+			"label": "Install Dependencies with Bash",
+			"type": "shell",
+			"command": "bash -c 'npm install'"
+		}
+	]
+}

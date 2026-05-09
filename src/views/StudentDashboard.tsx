@@ -31,6 +31,12 @@ export const StudentDashboard = () => {
     const fetchDashboardData = async () => {
       if (!user) return;
       setLoading(true);
+      
+      // Set a timeout to ensure loading doesn't stay forever
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+      }, 10000); // 10 seconds timeout
+      
       try {
         // Fetch profile
         const { data: profileData } = await supabase
@@ -80,6 +86,7 @@ export const StudentDashboard = () => {
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
       } finally {
+        clearTimeout(timeoutId);
         setLoading(false);
       }
     };

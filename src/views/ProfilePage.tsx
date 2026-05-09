@@ -94,10 +94,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
 
         if (!error) {
           setProfile((prev: any) => ({ ...prev, ...updateData }));
-          if (type === 'avatar') {
-            localStorage.setItem('profile_avatar', base64);
-            window.dispatchEvent(new Event('profile_updated'));
-          }
+          window.dispatchEvent(new Event('profile_updated'));
         }
       };
       reader.readAsDataURL(file);

@@ -152,7 +152,7 @@ export const TopNav = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [profile, setProfile] = useState<any>(null);
-  const [avatar, setAvatar] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('profile_avatar') : null);
+  const [avatar, setAvatar] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const profileRef = useRef<HTMLDivElement>(null);
@@ -162,7 +162,10 @@ export const TopNav = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
     const fetchProfile = async () => {
       if (!user) return;
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-      if (data) setProfile(data);
+      if (data) {
+        setProfile(data);
+        setAvatar(data.avatar_url);
+      }
     };
     fetchProfile();
 
@@ -176,7 +179,6 @@ export const TopNav = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
     };
     
     const handleProfileUpdate = () => {
-      setAvatar(localStorage.getItem('profile_avatar'));
       fetchProfile();
     };
 
