@@ -25,6 +25,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const HIDDEN_TIMESTAMP_KEY = 'connekt-hidden-timestamp';
   const hiddenTimeoutRef = React.useRef<number | null>(null);
 
+  // Add loading timeout to prevent infinite loading
+  React.useEffect(() => {
+    const loadingTimeout = setTimeout(() => {
+      if (loading) {
+        console.warn('Auth loading timeout - setting loading to false');
+        setLoading(false);
+      }
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(loadingTimeout);
+  }, [loading]);
+
   const clearHiddenSignOutTimeout = () => {
     if (hiddenTimeoutRef.current !== null) {
       window.clearTimeout(hiddenTimeoutRef.current);
@@ -78,11 +90,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchProfile = React.useCallback(async (userId: string, currentUser?: User) => {
     try {
       console.log('[fetchProfile] Starting for user:', userId);
-      const { data, error } = await supabase
+
+      // Set a timeout for the profile fetch
+      const profilePromise = supabase
         .from('profiles')
         .select('role')
         .eq('id', userId)
         .maybeSingle();
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
+      );
+
+      const { data, error } = await Promise.race([profilePromise, timeoutPromise]) as any;
 
       const pendingRole = localStorage.getItem('pending_role');
       const metadataRole = currentUser?.user_metadata?.role as UserRole | undefined;
@@ -92,73 +112,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       console.log('[fetchProfile] pendingRole:', pendingRole, 'metadataRole:', metadataRole, 'fallbackRole:', fallbackRole);
 
-      if (error) {
-        console.error('Profile fetch error, attempting profile creation or sync...', error.message);
+      if (error && error.message !== 'Profile fetch timeout') {
+        console.error('Profile fetch error, using fallback role:', error.message);
+        setRole(fallbackRole);
+        localStorage.removeItem('pending_role');
+        return;
       }
 
       if (!data) {
-        console.log('[fetchProfile] No existing profile found, creating new one');
-        if (currentUser) {
-          const fullName = currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || null;
-          const avatarUrl = currentUser?.user_metadata?.avatar_url || currentUser?.user_metadata?.picture || null;
-
-          console.log('Creating profile for new user:', currentUser.email, 'with role', fallbackRole);
-
-          const { error: upsertError } = await supabase.from('profiles').upsert({
-            id: userId,
-            role: fallbackRole,
-            email: currentUser.email,
-            full_name: fullName,
-            avatar_url: avatarUrl
-          }, { onConflict: 'id' });
-
-          if (upsertError) {
-            console.error('FAILED TO CREATE PROFILE:', upsertError);
-            if (upsertError.code === '42501' || upsertError.message.includes('permission denied')) {
-              console.error('RLS POLICY ERROR: You must add the UPDATE policy to the profiles table in Supabase.');
-              throw new Error('Database access denied (403). Please ensure your Supabase RLS policies allow for UPDATE on the profiles table.');
-            }
-            throw upsertError;
-          }
-
-          setRole(fallbackRole);
-          localStorage.removeItem('pending_role');
-        } else {
-          setRole('student');
-        }
+        console.log('[fetchProfile] No existing profile found, using fallback role');
+        setRole(fallbackRole);
+        localStorage.removeItem('pending_role');
       } else {
         // Profile exists; check if we need to update it with pending_role
         const profileRole = data.role as UserRole;
         console.log('[fetchProfile] Existing profile found with role:', profileRole);
-        const shouldUpdateRole = pendingRole && (pendingRole === 'recruiter' || pendingRole === 'student') && pendingRole !== profileRole;
 
-        console.log('[fetchProfile] shouldUpdateRole:', shouldUpdateRole, 'pendingRole:', pendingRole, 'profileRole:', profileRole);
-
-        if (shouldUpdateRole) {
+        if (pendingRole && (pendingRole === 'recruiter' || pendingRole === 'student') && pendingRole !== profileRole) {
           console.log('Updating existing profile from', profileRole, 'to', pendingRole, 'based on pending_role');
-          
-          const { error: updateError } = await supabase
+
+          // Non-blocking update - don't wait for it
+          supabase
             .from('profiles')
             .update({ role: pendingRole })
-            .eq('id', userId);
-
-          if (updateError) {
-            console.error('Failed to update profile role:', updateError);
-            setRole(profileRole);
-          } else {
-            console.log('[fetchProfile] Successfully updated profile role to:', pendingRole);
-            setRole(pendingRole as UserRole);
-          }
-        } else {
-          setRole(profileRole);
+            .eq('id', userId)
+            .then(({ error: updateError }) => {
+              if (updateError) {
+                console.error('Failed to update profile role:', updateError);
+              } else {
+                console.log('[fetchProfile] Successfully updated profile role to:', pendingRole);
+              }
+            });
         }
-        
+
+        setRole(profileRole);
         localStorage.removeItem('pending_role');
         console.log('Fetched existing profile role:', profileRole);
       }
     } catch (err) {
       console.error('Unexpected error fetching profile:', err);
-      setRole('student');
+      // Use fallback role on error
+      const pendingRole = localStorage.getItem('pending_role');
+      const fallbackRole = pendingRole === 'recruiter' || pendingRole === 'student'
+        ? (pendingRole as UserRole)
+        : 'student';
+      setRole(fallbackRole);
+      localStorage.removeItem('pending_role');
     } finally {
       setLoading(false);
     }
@@ -173,19 +172,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     runInitialHiddenCheck();
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id, session.user);
-      } else {
+    // Get initial session with timeout
+    const sessionPromise = supabase.auth.getSession();
+    const sessionTimeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Session fetch timeout')), 3000)
+    );
+
+    Promise.race([sessionPromise, sessionTimeout])
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          fetchProfile(session.user.id, session.user);
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.warn('Error getting Supabase session:', error);
         setLoading(false);
-      }
-    }).catch((error) => {
-      console.warn('Error getting Supabase session:', error);
-      setLoading(false);
-    });
+      });
 
     // Listen for visibility changes so inactive background users get logged out
     document.addEventListener('visibilitychange', handleVisibilityChange);

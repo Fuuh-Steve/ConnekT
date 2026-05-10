@@ -19,9 +19,15 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center gap-4 bg-[rgb(var(--bg-main))]">
-        <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Initializing...</p>
+      <div className="h-screen w-full flex flex-col items-center justify-center gap-6 bg-[rgb(var(--bg-main))]">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-[rgb(var(--accent))]/20 border-t-[rgb(var(--accent))] rounded-full animate-spin"></div>
+          <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-[rgb(var(--accent))]/40 rounded-full animate-spin animation-delay-75"></div>
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-[rgb(var(--text-main))] font-bold text-lg">Welcome to ConnekT</p>
+          <p className="text-[rgb(var(--text-muted))] font-medium uppercase tracking-widest text-xs">Setting up your experience...</p>
+        </div>
       </div>
     );
   }

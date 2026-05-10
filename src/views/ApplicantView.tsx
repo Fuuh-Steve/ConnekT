@@ -8,12 +8,14 @@ import { ChevronLeft, ChevronRight, User, Mail, Download, CheckCircle, XCircle, 
 import { cn } from '../lib/utils';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 
 export const ApplicantView = () => {
   const params = useParams();
   const jobId = params?.jobId;
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { alert } = useToast();
   const [applicants, setApplicants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
@@ -163,22 +165,28 @@ export const ApplicantView = () => {
       console.log(`Status updated to ${newStatus}`);
     } catch (err) {
       console.error('Error updating status:', err);
-      alert('Failed to update applicant status');
+      alert.error('Update Failed', 'Failed to update applicant status. Please try again.');
     } finally {
       setUpdatingStatus(null);
     }
   };
 
   const scheduleInterview = async (applicantId: string, interviewDetails: any) => {
+    console.log('Starting interview scheduling for applicant:', applicantId);
+    console.log('Interview details:', interviewDetails);
+    
     setSchedulingInterview(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('applications')
         .update({ 
           status: 'Interview',
           interview_details: interviewDetails 
         })
-        .eq('id', applicantId);
+        .eq('id', applicantId)
+        .select();
+
+      console.log('Supabase update result:', { data, error });
 
       if (error) throw error;
 
@@ -189,10 +197,11 @@ export const ApplicantView = () => {
           : app
       ));
 
-      console.log('Interview scheduled successfully');
+      console.log('Interview scheduled successfully, local state updated');
+      alert.success('Interview Scheduled', 'Interview has been successfully scheduled!');
     } catch (err) {
       console.error('Error scheduling interview:', err);
-      alert('Failed to schedule interview');
+      alert.error('Scheduling Failed', 'Failed to schedule interview. Please try again.');
     } finally {
       setSchedulingInterview(false);
     }
@@ -207,8 +216,20 @@ export const ApplicantView = () => {
   };
 
   const handleScheduleInterview = async () => {
+    console.log('Scheduling interview for applicant:', interviewModal.applicant);
+    console.log('Form data:', interviewForm);
+    
     if (!interviewModal.applicant || !interviewForm.dateTime || !interviewForm.meetLink) {
-      alert('Please fill in all required fields');
+      alert.warning('Missing Information', 'Please fill in all required fields for the interview.');
+      return;
+    }
+
+    // Validate that the interview date is in the future
+    const interviewDate = new Date(interviewForm.dateTime);
+    const now = new Date();
+    
+    if (interviewDate <= now) {
+      alert.warning('Invalid Date', 'Please select a date and time in the future.');
       return;
     }
 
@@ -216,14 +237,22 @@ export const ApplicantView = () => {
       dateTime: interviewForm.dateTime,
       meetLink: interviewForm.meetLink,
       notes: interviewForm.notes,
-      scheduled_at: new Date(interviewForm.dateTime).toISOString()
+      scheduled_at: interviewDate.toISOString()
     };
 
-    await scheduleInterview(interviewModal.applicant.id, interviewDetails);
-    
-    // Reset modal
-    setInterviewModal({ open: false, applicant: null });
-    setInterviewForm({ dateTime: '', meetLink: '', notes: '' });
+    console.log('Interview details:', interviewDetails);
+
+    try {
+      await scheduleInterview(interviewModal.applicant.id, interviewDetails);
+      alert.success('Interview Scheduled', 'Interview has been successfully scheduled!');
+      
+      // Reset modal
+      setInterviewModal({ open: false, applicant: null });
+      setInterviewForm({ dateTime: '', meetLink: '', notes: '' });
+    } catch (error) {
+      console.error('Error in handleScheduleInterview:', error);
+      alert.error('Scheduling Failed', 'Failed to schedule interview. Please try again.');
+    }
   };
   
   if (authLoading || loading) {
@@ -270,13 +299,13 @@ export const ApplicantView = () => {
 
         <div className="flex items-center gap-4">
            <button 
-            onClick={() => alert('Exporting candidate data...')}
+            onClick={() => alert.info('Export Started', 'Exporting candidate data to CSV file...')}
             className="px-8 py-5 border border-[rgb(var(--border))] rounded-3xl text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-all flex items-center gap-3 shadow-sm"
            >
               <Download className="w-5 h-5" /> Export Data
            </button>
            <button 
-            onClick={() => alert('Invitations sent to candidates!')}
+            onClick={() => alert.success('Invitations Sent', 'Interview invitations have been sent to all selected candidates!')}
             className="px-10 py-5 bg-[rgb(var(--accent))] text-black font-bold rounded-3xl accent-glow uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[rgb(var(--accent))]/20"
            >
               Mass Invite

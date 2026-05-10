@@ -20,6 +20,7 @@ export interface Application {
   appliedDate: string;
   status: ApplicationStatus;
   progress: number; // 0-100
+  interviewDetails?: any;
 }
 
 export interface JobListing {

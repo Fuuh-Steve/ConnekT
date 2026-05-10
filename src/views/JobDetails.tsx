@@ -13,12 +13,14 @@ import {
 import { supabase } from '../lib/supabase';
 import { JobListing } from '../types';
 import { cn } from '../lib/utils';
+import { useToast } from '../components/Toast';
 import { useAuth } from '../context/AuthContext';
 
 export const JobDetails = () => {
   const params = useParams();
   const jobId = params?.jobId as string;
   const { user } = useAuth();
+  const { alert } = useToast();
   const router = useRouter();
   const [job, setJob] = useState<JobListing | null>(null);
   const [recruiterCompany, setRecruiterCompany] = useState<string | null>(null);
@@ -78,12 +80,20 @@ export const JobDetails = () => {
     
     setApplying(true);
     try {
+      // Fetch student's CV from profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('cv_url')
+        .eq('id', user.id)
+        .single();
+
       const { error } = await supabase
         .from('applications')
         .insert({
           job_id: jobId,
           student_id: user.id,
-          status: 'pending'
+          status: 'pending',
+          resume_url: profile?.cv_url || null
         });
 
       if (error) throw error;
@@ -93,9 +103,9 @@ export const JobDetails = () => {
       console.error('Error applying:', err);
       // If already applied, Supabase will return error because of unique constraint
       if (err.code === '23505') {
-        alert('You have already applied for this position.');
+        alert.warning('Already Applied', 'You have already applied for this position.');
       } else {
-        alert('Failed to submit application. Please try again.');
+        alert.error('Application Failed', 'Failed to submit application. Please try again.');
       }
     } finally {
       setApplying(false);
