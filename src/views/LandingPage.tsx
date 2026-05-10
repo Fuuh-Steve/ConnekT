@@ -12,6 +12,7 @@ export const LandingPage = () => {
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const [selectedFeature, setSelectedFeature] = useState<any>(null);
+  const [selectedResource, setSelectedResource] = useState<any>(null);
 
   const features = [
     { 
@@ -215,6 +216,17 @@ export const LandingPage = () => {
         )}
       </AnimatePresence>
 
+      {/* About Us */}
+      <section className="py-16 sm:py-20 px-6 max-w-7xl mx-auto">
+        <div className="space-y-8 md:space-y-12">
+          <div className="text-center space-y-4">
+            <p className="text-2xl font-extrabold uppercase tracking-[0.35em] text-[rgb(var(--accent))]">About ConnekT</p>
+            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white leading-[1.1] max-w-4xl mx-auto">We help students discover meaningful tech internships while recruiters build stronger campus talent pipelines.</h2>
+            <p className="text-base md:text-lg text-white/80 max-w-3xl mx-auto leading-relaxed font-light">ConnekT is built for the next generation of innovators. Our mission is to simplify early-career hiring, surface the best-fit opportunities, and create a trusted connection between campus talent and employers.</p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 sm:py-32 px-6 max-w-7xl mx-auto">
         <motion.div 
@@ -294,10 +306,18 @@ export const LandingPage = () => {
           <div className="space-y-4">
             <h4 className="font-bold text-sm">Resources</h4>
             <div className="flex flex-col gap-2">
-              <FooterLink href="#">Success Stories</FooterLink>
-              <FooterLink href="#">Blog</FooterLink>
-              <FooterLink href="#">Partner with Us</FooterLink>
-              <FooterLink href="#">Privacy Policy</FooterLink>
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'success-stories', title: 'Success Stories', summary: 'Read how students landed their dream roles with ConnekT and how companies found the right talent faster.', details: ['Student-led case studies from top universities.', 'Recruiter success metrics and conversion stories.', 'Internships that turned into full-time offers.'] })}>
+                Success Stories
+              </FooterResourceButton>
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'blog', title: 'Blog', summary: 'Insights on career growth, interview prep, and navigating the tech internship landscape.', details: ['Resume tips for campus hires.', 'Interview guides for engineering and product roles.', 'Emerging tech trends students should know.'] })}>
+                Blog
+              </FooterResourceButton>
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'partner-with-us', title: 'Partner with Us', summary: 'Grow your internship pipeline with trusted student talent and benefit from a dedicated recruiter dashboard.', details: ['Access verified student talent pools.', 'Custom hiring campaigns for your company.', 'Dedicated onboarding support for recruiters.'] })}>
+                Partner with Us
+              </FooterResourceButton>
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'privacy-policy', title: 'Privacy Policy', summary: 'We keep student and recruiter data secure with clear privacy controls and trusted handling practices.', details: ['Transparent data collection and usage.', 'Secure profile and application storage.', 'Respect for user privacy across the platform.'] })}>
+                Privacy Policy
+              </FooterResourceButton>
             </div>
           </div>
 
@@ -329,6 +349,13 @@ export const LandingPage = () => {
           </div>
         </div>
       </footer>
+
+      {/* Resource Modal */}
+      <AnimatePresence>
+        {selectedResource && (
+          <ResourceModal resource={selectedResource} onClose={() => setSelectedResource(null)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -344,6 +371,13 @@ const FooterLink = ({ href, children }: any) => (
     <div className="w-0 h-px bg-[rgb(var(--accent))] group-hover:w-4 transition-all duration-300"></div>
     {children}
   </Link>
+);
+
+const FooterResourceButton = ({ onClick, children }: any) => (
+  <button onClick={onClick} className="text-sm text-[rgb(var(--text-muted))] hover:text-[rgb(var(--accent))] transition-colors w-fit flex items-center gap-2 group text-left">
+    <div className="w-0 h-px bg-[rgb(var(--accent))] group-hover:w-4 transition-all duration-300"></div>
+    {children}
+  </button>
 );
 
 const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) => {
@@ -378,5 +412,65 @@ const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) =>
          </span>
       </div>
     </motion.div>
+  );
+};
+
+const ResourceModal = ({ resource, onClose }: any) => {
+  if (!resource) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-[rgb(var(--text-main))]">{resource.title}</h2>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center text-[rgb(var(--text-muted))] hover:bg-[rgb(var(--accent))] hover:text-white hover:border-transparent transition-all duration-300"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          <p className="text-base text-[rgb(var(--text-muted))] leading-relaxed">{resource.summary}</p>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-[rgb(var(--text-main))]">Key Highlights</h3>
+            <ul className="space-y-3">
+              {resource.details.map((detail: string, index: number) => (
+                <li key={index} className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-[rgb(var(--accent))] shrink-0 mt-0.5" />
+                  <span className="text-sm text-[rgb(var(--text-muted))] leading-relaxed">{detail}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="pt-4 border-t border-[rgb(var(--border))] flex justify-between items-center">
+            <p className="text-sm text-[rgb(var(--text-muted))] text-center">
+              Interested in learning more? Contact us at{' '}
+              <a href="mailto:contact@connekt.io" className="text-[rgb(var(--accent))] hover:underline">
+                contact@connekt.io
+              </a>
+            </p>
+            {resource.id === 'partner-with-us' && (
+              <Link
+                href="/login"
+                onClick={onClose}
+                className="px-6 py-2 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all text-sm"
+              >
+                Get Started
+              </Link>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
