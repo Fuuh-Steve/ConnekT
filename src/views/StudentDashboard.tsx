@@ -38,7 +38,7 @@ export const StudentDashboard = () => {
       }, 10000); // 10 seconds timeout
       
       try {
-        // Fetch profile
+        // Fetch  profile
         const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
