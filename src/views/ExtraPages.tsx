@@ -8,13 +8,11 @@ import { Plus, CheckCircle, Smartphone, CreditCard, ChevronRight, Search, FileTe
 import { cn } from '../lib/utils';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { useToast } from '../components/Toast';
 
 import { MOCK_JOBS } from '../mockData';
 
 export const PostJobPage = () => {
     const { user } = useAuth();
-    const { alert } = useToast();
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -58,7 +56,7 @@ export const PostJobPage = () => {
             setStep(3);
         } catch (err) {
             console.error('Error posting job:', err);
-            alert.error('Posting Failed', 'Failed to post job. Please try again.');
+            alert('Failed to post job. Please try again.');
         } finally {
             setLoading(false);
         }

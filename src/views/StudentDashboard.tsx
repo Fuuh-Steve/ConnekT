@@ -66,8 +66,7 @@ export const StudentDashboard = () => {
             location: app.jobs?.location,
             status: app.status.charAt(0).toUpperCase() + app.status.slice(1),
             progress: app.status === 'Accepted' ? 100 : app.status === 'Interview' ? 60 : app.status === 'Reviewed' ? 40 : 20,
-            appliedDate: new Date(app.created_at).toLocaleDateString(),
-            interviewDetails: app.interview_details
+            appliedDate: new Date(app.created_at).toLocaleDateString()
           })));
         }
 
@@ -417,44 +416,6 @@ export const StudentDashboard = () => {
                     </div>
                   </div>
                 </div>
-
-                {selectedApp.interviewDetails && (
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">Interview Scheduled</h4>
-                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-500 rounded-xl flex items-center justify-center">
-                          <CheckCircle className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-blue-950 dark:text-blue-100">Interview Scheduled</p>
-                          <p className="text-[12px] text-blue-700 dark:text-blue-300 mt-1">
-                            {new Date(selectedApp.interviewDetails.scheduled_at || selectedApp.interviewDetails.dateTime).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                      {selectedApp.interviewDetails.meetLink && (
-                        <div className="flex items-center gap-3 pt-2 border-t border-blue-200 dark:border-blue-800">
-                          <ExternalLink className="w-4 h-4 text-blue-600" />
-                          <a 
-                            href={selectedApp.interviewDetails.meetLink} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-sm font-medium text-blue-600 hover:text-blue-700 underline"
-                          >
-                            Join Meeting
-                          </a>
-                        </div>
-                      )}
-                      {selectedApp.interviewDetails.notes && (
-                        <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
-                          <p className="text-[12px] font-bold text-blue-950 dark:text-blue-100 mb-1">Notes:</p>
-                          <p className="text-[12px] text-blue-800 dark:text-blue-200">{selectedApp.interviewDetails.notes}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
 
                 <div className="space-y-4">
                   <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">Next Milestone</h4>

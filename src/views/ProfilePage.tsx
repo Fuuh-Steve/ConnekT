@@ -5,10 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink, FileText } from 'lucide-react';
+import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
-import { useToast } from '../components/Toast';
 import { supabase } from '../lib/supabase';
 
 export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
@@ -16,7 +15,6 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   const paramUsername = params?.username as string;
   const username = lookupBy || paramUsername;
   const { user } = useAuth();
-  const { alert } = useToast();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -29,7 +27,6 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  const cvInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -123,26 +120,6 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
       }
     } catch (err) {
       console.error('Error saving profile:', err);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return; // 'user' is available here in parent scope
-  
-    setSaving(true);
-    try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64 = reader.result as string;
-        
-        setFormData({ ...formData, cv_url: base64 });
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      console.error('Error uploading file:', err);
     } finally {
       setSaving(false);
     }
@@ -482,13 +459,12 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
         onSave={handleSaveProfile}
         profile={profile}
         saving={saving}
-        onCVUpload={handleCVUpload}
       />
     </div>
   );
 };
 
-const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving, onCVUpload }: any) => {
+const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => {
   const [formData, setFormData] = useState({
     full_name: profile.full_name || '',
     username: profile.username || '',
@@ -503,7 +479,6 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving, onCVUpload
     linkedin_url: profile.linkedin_url || '',
     twitter_url: profile.twitter_url || '',
     portfolio_url: profile.portfolio_url || '',
-    cv_url: profile.cv_url || '',
   });
 
   const [activeTab, setActiveTab] = useState<'basic' | 'exp' | 'edu' | 'skills' | 'social'>('basic');
@@ -537,26 +512,6 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving, onCVUpload
     });
   };
 
-  const handleCVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-  
-    setSaving(true);
-    try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64 = reader.result as string;
-        
-        setFormData({ ...formData, cv_url: base64 });
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      console.error('Error uploading file:', err);
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -587,7 +542,6 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving, onCVUpload
                 { id: 'exp', label: 'Experience', icon: Briefcase },
                 { id: 'edu', label: 'Education', icon: GraduationCap },
                 { id: 'skills', label: 'Skills', icon: Zap },
-                { id: 'cv', label: 'CV/Resume', icon: FileText },
                 { id: 'social', label: 'Social', icon: Globe },
               ].map((tab) => (
                 <button
@@ -888,7 +842,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving, onCVUpload
                               newSkills[i].level = parseInt(e.target.value);
                               setFormData({...formData, skills: newSkills});
                             }}
-                            className="w-full accent-[rgb(var(--accent))]" 
+                            className="w-full accent-[rgb(var(--accent))]"
                           />
                         </div>
                         <button 
@@ -904,74 +858,6 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving, onCVUpload
                         </button>
                       </div>
                     ))}
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'cv' && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Resume & Documents</p>
-                  
-                  <div className="space-y-6">
-                    <div className="p-6 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] space-y-4">
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-6 h-6 text-[rgb(var(--accent))]" />
-                        <div>
-                          <h4 className="font-bold text-sm">CV/Resume Upload</h4>
-                          <p className="text-xs text-[rgb(var(--text-muted))]">Upload your CV in PDF format (max 5MB)</p>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-4">
-                        {formData.cv_url ? (
-                          <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl">
-                            <div className="flex items-center gap-3">
-                              <CheckCircle className="w-5 h-5 text-green-600" />
-                              <span className="text-sm font-medium text-green-800 dark:text-green-200">CV uploaded successfully</span>
-                            </div>
-                            <button
-                              onClick={() => window.open(formData.cv_url, '_blank')}
-                              className="text-xs text-green-600 hover:text-green-700 font-medium"
-                            >
-                              View CV
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="border-2 border-dashed border-[rgb(var(--border))] rounded-xl p-8 text-center">
-                            <FileText className="w-12 h-12 text-[rgb(var(--text-muted))] mx-auto mb-4 opacity-50" />
-                            <p className="text-sm font-medium text-[rgb(var(--text-muted))] mb-2">No CV uploaded yet</p>
-                            <p className="text-xs text-[rgb(var(--text-muted))] mb-4">Upload your resume to apply for jobs</p>
-                          </div>
-                        )}
-                        
-                        <div className="flex gap-3">
-                          <input
-                            ref={cvInputRef}
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleCVUpload}
-                            aria-label="Upload CV/Resume PDF file"
-                            className="hidden"
-                          />
-                          <button
-                            onClick={() => cvInputRef.current?.click()}
-                            disabled={saving}
-                            className="flex-1 px-4 py-3 bg-[rgb(var(--accent))] text-white rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-2"
-                          >
-                            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                            {formData.cv_url ? 'Replace CV' : 'Upload CV'}
-                          </button>
-                          {formData.cv_url && (
-                            <button
-                              onClick={() => setFormData({...formData, cv_url: ''})}
-                              className="px-4 py-3 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-all font-medium text-sm"
-                            >
-                              Remove
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               )}

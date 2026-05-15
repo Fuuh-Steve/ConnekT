@@ -16,7 +16,6 @@ create table public.profiles (
   linkedin_url text,
   twitter_url text,
   portfolio_url text,
-  cv_url text,
   company_name text,
   company_logo text,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null

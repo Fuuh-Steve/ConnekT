@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { AuthProvider } from "@/src/context/AuthContext";
-import { ToastProvider } from "@/src/components/Toast";
 import { Layout } from "@/src/components/Layout";
 import "@/src/index.css";
 import { Analytics } from "@vercel/analytics/next"
@@ -40,13 +39,11 @@ export default function RootLayout({
               }
             })();`}
         </Script>
-        <ToastProvider>
-          <AuthProvider>
-            <Layout>
-              {children}
-            </Layout>
-          </AuthProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <Layout>
+            {children}
+          </Layout>
+        </AuthProvider>
         <Analytics />
         <SpeedInsights />
       </body>
