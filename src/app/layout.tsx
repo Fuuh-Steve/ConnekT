@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { Layout } from "@/src/components/Layout";
 import "@/src/index.css";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
@@ -45,7 +45,7 @@ export default function RootLayout({
             {children}
           </Layout>
         </AuthProvider>
-        <Analytics />
+        <VercelAnalytics />
         <SpeedInsights />
       </body>
     </html>
