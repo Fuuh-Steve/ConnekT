@@ -15,10 +15,10 @@ export const LandingPage = () => {
   const [selectedResource, setSelectedResource] = useState<any>(null);
 
   const features = [
-    { 
+    {
       id: 'smart-matching',
-      icon: Zap, 
-      title: "Smart Matching", 
+      icon: Zap,
+      title: "Smart Matching",
       desc: "Our intelligent matching system connects your unique skills and interests with the best available roles, ensuring a perfect fit for both you and the company.",
       details: [
         "Algorithm-driven personal recommendations",
@@ -28,10 +28,10 @@ export const LandingPage = () => {
       ],
       color: "blue"
     },
-    { 
+    {
       id: 'job-tracking',
-      icon: Globe, 
-      title: "Job Tracking", 
+      icon: Globe,
+      title: "Job Tracking",
       desc: "Stay organized with a centralized dashboard for all your applications. Receive instant notifications on status changes and never miss a follow-up.",
       details: [
         "Real-time application status updates",
@@ -41,10 +41,10 @@ export const LandingPage = () => {
       ],
       color: "purple"
     },
-    { 
+    {
       id: 'verified-companies',
-      icon: ShieldCheck, 
-      title: "Verified Companies", 
+      icon: ShieldCheck,
+      title: "Verified Companies",
       desc: "We manually vet every company and internship post to eliminate scams and low-quality roles, so you can apply with absolute confidence.",
       details: [
         "Thorough background checks on recruiters",
@@ -65,20 +65,20 @@ export const LandingPage = () => {
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] bg-[rgb(var(--accent))]/5 rounded-full blur-[120px]"></div>
           <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] bg-blue-500/5 rounded-full blur-[100px]"></div>
         </div>
-        <motion.div 
+        <motion.div
           style={{ scale, opacity }}
           className="space-y-8 sm:space-y-12"
         >
           <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[rgb(var(--accent))]/10 border border-[rgb(var(--accent))]/20 text-[rgb(var(--accent))] text-sm font-bold mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[rgb(var(--accent))]/10 border border-[rgb(var(--accent))]/20 text-[rgb(var(--accent))] text-sm font-bold mb-4"
           >
             <Zap className="w-4 h-4 fill-current" />
             <span className="uppercase tracking-widest text-[9px] sm:text-[10px]">Empowering Tech Talents</span>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -87,8 +87,8 @@ export const LandingPage = () => {
             Bridging the gap <br className="hidden sm:block" /> between <br className="sm:hidden" />
             <span className="text-[rgb(var(--accent))] bg-clip-text text-transparent bg-linear-to-r from-[rgb(var(--accent))] to-blue-500">Campus and Career</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -96,8 +96,8 @@ export const LandingPage = () => {
           >
             ConnekT connects the brightest university tech talents with leading companies. Simple application tracking and smart matching to jumpstart your career.
           </motion.p>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -117,8 +117,8 @@ export const LandingPage = () => {
             { label: 'Monthly Placements', value: 100, suffix: '' },
             { label: 'Match Accuracy', value: 90, suffix: '%' },
           ].map((stat, i) => (
-            <motion.div 
-              key={i} 
+            <motion.div
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -138,12 +138,12 @@ export const LandingPage = () => {
       {/* Features Grid */}
       <section className="py-20 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-16 sm:mb-24 space-y-4">
-           <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[rgb(var(--text-main))]">Everything you need to <span className="text-[rgb(var(--accent))]">succeed</span></h2>
-           <p className="text-[rgb(var(--text-muted))] text-lg sm:text-xl max-w-2xl mx-auto font-medium">Powering your internship search with tools designed for the modern student.</p>
+          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[rgb(var(--text-main))]">Everything you need to <span className="text-[rgb(var(--accent))]">succeed</span></h2>
+          <p className="text-[rgb(var(--text-muted))] text-lg sm:text-xl max-w-2xl mx-auto font-medium">Powering your internship search with tools designed for the modern student.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
           {features.map((feature, i) => (
-            <FeatureCard 
+            <FeatureCard
               key={feature.id}
               {...feature}
               index={i}
@@ -157,13 +157,13 @@ export const LandingPage = () => {
       <AnimatePresence>
         {selectedFeature && (
           <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6 backdrop-blur-md bg-white/10 dark:bg-black/40">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="w-full max-w-lg bg-[rgb(var(--bg-main))] rounded-4xl border border-[rgb(var(--border))] shadow-2xl overflow-hidden relative"
             >
-              <button 
+              <button
                 onClick={() => setSelectedFeature(null)}
                 aria-label="Close feature details"
                 className="absolute top-4 right-4 w-10 h-10 rounded-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center hover:bg-red-500 hover:text-white transition-all z-10"
@@ -173,9 +173,9 @@ export const LandingPage = () => {
 
               <div className="p-6 sm:p-10 space-y-6 sm:space-y-8">
                 <div className="flex items-center gap-5">
-                  <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg", 
-                    selectedFeature.color === 'blue' ? 'bg-blue-500' : 
-                    selectedFeature.color === 'purple' ? 'bg-purple-500' : 'bg-emerald-500'
+                  <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg",
+                    selectedFeature.color === 'blue' ? 'bg-blue-500' :
+                      selectedFeature.color === 'purple' ? 'bg-purple-500' : 'bg-emerald-500'
                   )}>
                     <selectedFeature.icon className="w-8 h-8" />
                   </div>
@@ -201,8 +201,8 @@ export const LandingPage = () => {
                 </div>
 
                 <div className="pt-4">
-                  <Link 
-                    href="/signup" 
+                  <Link
+                    href="/signup"
                     onClick={() => setSelectedFeature(null)}
                     className="w-full py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 flex items-center justify-center gap-3 text-base transition-all shadow-xl shadow-[rgb(var(--accent))]/20"
                   >
@@ -221,57 +221,57 @@ export const LandingPage = () => {
         <div className="space-y-8 md:space-y-12">
           <div className="text-center space-y-4">
             <p className="text-2xl font-extrabold uppercase tracking-[0.35em] text-[rgb(var(--accent))]">About ConnekT</p>
-            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white leading-[1.1] max-w-4xl mx-auto">We help students discover meaningful tech internships while recruiters build stronger campus talent pipelines.</h2>
-            <p className="text-base md:text-lg text-white/80 max-w-3xl mx-auto leading-relaxed font-light">ConnekT is built for the next generation of innovators. Our mission is to simplify early-career hiring, surface the best-fit opportunities, and create a trusted connection between campus talent and employers.</p>
+            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-[rgb(var(--text-main))] leading-[1.1] max-w-4xl mx-auto">We help students discover meaningful tech internships while recruiters build stronger campus talent pipelines.</h2>
+            <p className="text-base md:text-lg text-[rgb(var(--text-muted))] max-w-3xl mx-auto leading-relaxed font-light">ConnekT is built for the next generation of innovators. Our mission is to simplify early-career hiring, surface the best-fit opportunities, and create a trusted connection between campus talent and employers.</p>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-20 sm:py-32 px-6 max-w-7xl mx-auto">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           className="bg-[rgb(var(--accent))] rounded-[3.5rem] p-10 sm:p-16 md:p-24 text-center text-white space-y-8 relative overflow-hidden shadow-2xl shadow-[rgb(var(--accent))]/30"
         >
-           {/* Animated Background Elements */}
-           <motion.div 
-             animate={{ 
-               y: [0, -20, 0],
-               rotate: [0, 10, 0],
-               scale: [1, 1.1, 1]
-             }}
-             transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-             className="absolute top-0 right-0 w-96 h-96 bg-white/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"
-           ></motion.div>
-           <motion.div 
-             animate={{ 
-               y: [0, 30, 0],
-               x: [0, 20, 0],
-               scale: [1, 1.2, 1]
-             }}
-             transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
-             className="absolute bottom-0 left-0 w-80 h-80 bg-blue-400/30 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"
-           ></motion.div>
-           <motion.div 
-             animate={{ 
-               scale: [1, 1.5, 1],
-               opacity: [0.1, 0.2, 0.1]
-             }}
-             transition={{ duration: 4, repeat: Infinity }}
-             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-blue-600/10 blur-[120px] rounded-full"
-           ></motion.div>
-           
-           <div className="relative z-10 space-y-8">
-             <h2 className="text-4xl md:text-7xl font-extrabold tracking-tight">Start Your Career <br /> Journey Today.</h2>
-             <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">Don&apos;t miss out on life-changing opportunities. Join thousands of students already building their future.</p>
-             <div className="flex justify-center pt-4">
-                <Link href="/signup" className="px-12 py-6 bg-white text-[rgb(var(--accent))] font-bold rounded-2xl hover:bg-blue-50 transition-all flex items-center gap-3 group shadow-2xl hover:scale-105 active:scale-95 text-lg">
-                   Get Started Now <ChevronRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
-                </Link>
-             </div>
-           </div>
+          {/* Animated Background Elements */}
+          <motion.div
+            animate={{
+              y: [0, -20, 0],
+              rotate: [0, 10, 0],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+            className="absolute top-0 right-0 w-96 h-96 bg-white/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"
+          ></motion.div>
+          <motion.div
+            animate={{
+              y: [0, 30, 0],
+              x: [0, 20, 0],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+            className="absolute bottom-0 left-0 w-80 h-80 bg-blue-400/30 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"
+          ></motion.div>
+          <motion.div
+            animate={{
+              scale: [1, 1.5, 1],
+              opacity: [0.1, 0.2, 0.1]
+            }}
+            transition={{ duration: 4, repeat: Infinity }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-blue-600/10 blur-[120px] rounded-full"
+          ></motion.div>
+
+          <div className="relative z-10 space-y-8">
+            <h2 className="text-4xl md:text-7xl font-extrabold tracking-tight">Start Your Career <br /> Journey Today.</h2>
+            <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">Don&apos;t miss out on life-changing opportunities. Join thousands of students already building their future.</p>
+            <div className="flex justify-center pt-4">
+              <Link href="/signup" className="px-12 py-6 bg-white text-[rgb(var(--accent))] font-bold rounded-2xl hover:bg-blue-50 transition-all flex items-center gap-3 group shadow-2xl hover:scale-105 active:scale-95 text-lg">
+                Get Started Now <ChevronRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
+              </Link>
+            </div>
+          </div>
         </motion.div>
       </section>
 
@@ -388,7 +388,7 @@ const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) =>
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -397,7 +397,7 @@ const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) =>
       onClick={onClick}
     >
       <div className="absolute top-0 right-0 w-32 h-32 bg-[rgb(var(--accent))]/5 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2 group-hover:bg-[rgb(var(--accent))]/10 transition-colors"></div>
-      
+
       <div className={cn("w-16 h-16 rounded-[1.25rem] flex items-center justify-center border transition-all duration-500 group-hover:rotate-10 group-hover:scale-110 shadow-sm group-hover:shadow-lg group-hover:shadow-current/20", colors[color])}>
         <Icon className="w-8 h-8" />
       </div>
@@ -405,11 +405,11 @@ const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) =>
         <h3 className="text-2xl sm:text-3xl font-extrabold text-[rgb(var(--text-main))] tracking-tight group-hover:text-[rgb(var(--accent))] transition-colors">{title}</h3>
         <p className="text-base text-[rgb(var(--text-muted))] leading-relaxed font-medium">{desc}</p>
       </div>
-      
+
       <div className="pt-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity translate-y-0 sm:translate-y-2 sm:group-hover:translate-y-0 duration-500">
-         <span className="text-[13px] font-bold text-[rgb(var(--accent))] uppercase tracking-widest flex items-center gap-2 underline underline-offset-4 pointer-events-none">
-           Learn more <ChevronRight className="w-4 h-4" />
-         </span>
+        <span className="text-[13px] font-bold text-[rgb(var(--accent))] uppercase tracking-widest flex items-center gap-2 underline underline-offset-4 pointer-events-none">
+          Learn more <ChevronRight className="w-4 h-4" />
+        </span>
       </div>
     </motion.div>
   );
