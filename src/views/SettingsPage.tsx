@@ -235,7 +235,7 @@ const NotificationsSection = () => (
 );
 
 const SecuritySection = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, session } = useAuth();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState('');
@@ -249,10 +249,23 @@ const SecuritySection = () => {
       setIsDeleting(true);
       setErrorMsg('');
 
-      // Call the supabase RPC function to delete the user account
-      const { error } = await supabase.rpc('delete_user_account');
-      if (error) {
-        throw error;
+      const token = session?.access_token;
+      if (!token) {
+        throw new Error('No active session token found');
+      }
+
+      // Call server-side API which uses the Supabase service role key to delete the user
+      const res = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Failed to delete account');
       }
 
       // Sign out and redirect to home
