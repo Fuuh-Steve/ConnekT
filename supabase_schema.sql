@@ -18,8 +18,6 @@ create table public.profiles (
   portfolio_url text,
   company_name text,
   company_logo text,
-  resume_url text,
-  resume_name text,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
