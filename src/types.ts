@@ -70,6 +70,8 @@ export interface UserProfile {
   skills?: string[];
   github_url?: string;
   linkedin_url?: string;
+  resume_url?: string;
+  resume_name?: string;
 }
 
 export interface StatCardProps {

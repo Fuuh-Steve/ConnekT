@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, Briefcase, User, Zap, ChevronRight, TrendingUp, CheckCircle, Search, Clock, MapPin, Building2, ExternalLink, X, Mail, Loader2 } from 'lucide-react';
+import { LayoutDashboard, Briefcase, User, Zap, ChevronRight, TrendingUp, CheckCircle, Search, Clock, MapPin, Building2, ExternalLink, X, Mail, Loader2, FileText, UploadCloud, Trash2, Download } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 import { CountUp } from '../components/CountUp';
 import { UserProfile, Application, JobListing, StatCardProps } from '../types';
+import { EditProfileModal } from '../components/EditProfileModal';
 
 export const StudentDashboard = () => {
   const { user } = useAuth();
@@ -19,6 +20,110 @@ export const StudentDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Profile editing and CV states
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
+  const resumeInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleSaveProfile = async (formData: any) => {
+    if (!user) return;
+    setSavingProfile(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(formData)
+        .eq('id', user.id);
+
+      if (!error) {
+        setProfile((prev: any) => prev ? ({ ...prev, ...formData }) : null);
+        setIsEditModalOpen(false);
+        // Dispatch event so ProfilePage and other components know profile changed
+        window.dispatchEvent(new Event('profile_updated'));
+        // Show success toast
+        setShowSaveToast(true);
+        setTimeout(() => setShowSaveToast(false), 3000);
+      }
+    } catch (err) {
+      console.error('Error saving profile:', err);
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 3 * 1024 * 1024) {
+      alert('File size exceeds the 3MB limit.');
+      return;
+    }
+
+    setUploadingResume(true);
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64 = reader.result as string;
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            resume_url: base64,
+            resume_name: file.name
+          })
+          .eq('id', user.id);
+
+        if (!error) {
+          setProfile((prev: any) => prev ? ({
+            ...prev,
+            resume_url: base64,
+            resume_name: file.name
+          }) : null);
+          window.dispatchEvent(new Event('profile_updated'));
+          setShowSaveToast(true);
+          setTimeout(() => setShowSaveToast(false), 3000);
+        } else {
+          console.error('Error uploading resume:', error.message);
+        }
+        setUploadingResume(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('Error reading resume file:', err);
+      setUploadingResume(false);
+    }
+  };
+
+  const handleResumeDelete = async () => {
+    if (!user) return;
+    setUploadingResume(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          resume_url: null,
+          resume_name: null
+        })
+        .eq('id', user.id);
+
+      if (!error) {
+        setProfile((prev: any) => prev ? ({
+          ...prev,
+          resume_url: undefined,
+          resume_name: undefined
+        }) : null);
+        window.dispatchEvent(new Event('profile_updated'));
+      } else {
+        console.error('Error deleting resume:', error.message);
+      }
+    } catch (err) {
+      console.error('Error deleting resume file:', err);
+    } finally {
+      setUploadingResume(false);
+    }
+  };
 
   const filteredApplications = applications.filter(app => {
     const role = app.role?.toLowerCase() || '';
@@ -154,7 +259,16 @@ export const StudentDashboard = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
+          className="flex items-center gap-3"
         >
+          <button 
+            onClick={() => setIsEditModalOpen(true)}
+            className="px-6 py-3 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] text-[rgb(var(--text-main))] font-bold rounded-xl hover:bg-[rgb(var(--border))]/20 transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+          >
+            <User className="w-4 h-4 text-[rgb(var(--accent))]" />
+            <span>Edit Profile</span>
+          </button>
+          
           <Link href="/jobs" className="px-6 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all flex items-center gap-2 shadow-lg shadow-[rgb(var(--accent))]/20">
             <Search className="w-4 h-4" />
             <span>Explore Jobs</span>
@@ -332,6 +446,109 @@ export const StudentDashboard = () => {
               </Link>
             )) : null}
           </div>
+
+          {/* ── CV / Resume Card ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="bg-[rgb(var(--bg-main))] rounded-2xl border border-[rgb(var(--border))] overflow-hidden"
+          >
+            {/* Card header */}
+            <div className="flex items-center justify-between px-5 pt-5 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-[rgb(var(--accent))]/10 flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-[rgb(var(--accent))]" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold leading-none">My CV / Resume</p>
+                  <p className="text-[10px] text-[rgb(var(--text-muted))] mt-0.5">PDF or DOCX · max 3 MB</p>
+                </div>
+              </div>
+              {profile?.resume_name && (
+                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                  Uploaded
+                </span>
+              )}
+            </div>
+
+            <div className="px-5 pb-5 space-y-3">
+              {profile?.resume_name ? (
+                /* ── CV Exists ── */
+                <div className="flex items-center gap-3 p-3.5 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))]">
+                  <div className="w-9 h-9 rounded-lg bg-[rgb(var(--accent))]/10 flex items-center justify-center shrink-0">
+                    <FileText className="w-4 h-4 text-[rgb(var(--accent))]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold truncate">{profile.resume_name}</p>
+                    <p className="text-[11px] text-[rgb(var(--text-muted))]">
+                      {profile.resume_url
+                        ? `${Math.round((profile.resume_url.length * 3) / 4 / 1024)} KB`
+                        : 'Stored'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    {/* Download */}
+                    <a
+                      href={profile.resume_url}
+                      download={profile.resume_name}
+                      aria-label="Download CV"
+                      className="p-2 rounded-lg text-[rgb(var(--text-muted))] hover:text-[rgb(var(--accent))] hover:bg-[rgb(var(--accent))]/10 transition-all"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
+                    {/* Delete */}
+                    <button
+                      onClick={handleResumeDelete}
+                      disabled={uploadingResume}
+                      aria-label="Remove CV"
+                      className="p-2 rounded-lg text-[rgb(var(--text-muted))] hover:text-red-500 hover:bg-red-500/10 transition-all disabled:opacity-50"
+                    >
+                      {uploadingResume ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* ── No CV yet ── */
+                <div
+                  onClick={() => !uploadingResume && resumeInputRef.current?.click()}
+                  className="group flex flex-col items-center justify-center gap-2 py-6 border-2 border-dashed border-[rgb(var(--border))] hover:border-[rgb(var(--accent))]/50 rounded-xl cursor-pointer transition-all hover:bg-[rgb(var(--accent))]/5"
+                >
+                  {uploadingResume ? (
+                    <Loader2 className="w-7 h-7 text-[rgb(var(--accent))] animate-spin" />
+                  ) : (
+                    <UploadCloud className="w-7 h-7 text-[rgb(var(--text-muted))] group-hover:text-[rgb(var(--accent))] transition-colors" />
+                  )}
+                  <div className="text-center">
+                    <p className="text-sm font-bold group-hover:text-[rgb(var(--accent))] transition-colors">
+                      {uploadingResume ? 'Uploading…' : 'Upload your CV'}
+                    </p>
+                    <p className="text-[11px] text-[rgb(var(--text-muted))] mt-0.5">Click to browse files</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Always-visible upload / replace button */}
+              <button
+                onClick={() => !uploadingResume && resumeInputRef.current?.click()}
+                disabled={uploadingResume}
+                className="w-full py-2.5 flex items-center justify-center gap-2 text-xs font-bold text-[rgb(var(--text-muted))] border border-[rgb(var(--border))] rounded-xl hover:border-[rgb(var(--accent))]/50 hover:text-[rgb(var(--accent))] transition-all disabled:opacity-50"
+              >
+                <UploadCloud className="w-3.5 h-3.5" />
+                {profile?.resume_name ? 'Replace CV' : 'Browse & Upload'}
+              </button>
+
+              {/* Hidden file input */}
+              <input
+                ref={resumeInputRef}
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+                onChange={handleResumeUpload}
+              />
+            </div>
+          </motion.div>
         </div>
       </div>
 
@@ -449,6 +666,33 @@ export const StudentDashboard = () => {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+      {/* Edit Profile Modal */}
+      {profile && (
+        <EditProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleSaveProfile}
+          profile={profile}
+          saving={savingProfile}
+        />
+      )}
+
+      {/* Success Toast */}
+      <AnimatePresence>
+        {showSaveToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 bg-[rgb(var(--bg-main))] border border-emerald-500/30 shadow-2xl rounded-2xl px-5 py-3.5"
+          >
+            <div className="w-7 h-7 rounded-full bg-emerald-500/10 flex items-center justify-center">
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
+            </div>
+            <p className="text-sm font-bold">Profile updated successfully!</p>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
