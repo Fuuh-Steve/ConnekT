@@ -9,6 +9,7 @@ import { UserRole, MobileNavLinkProps } from '../types';
 import { Sidebar, TopNav } from './Navigation';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
+import { SplashLoader } from './SplashLoader';
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { role, signOut } = useAuth();
@@ -16,6 +17,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const currentTab = pathname?.split('/')[1] || 'dashboard';
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSplashing, setIsSplashing] = useState(true);
   const mainRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
 
@@ -48,7 +50,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const isAuthPage = pathname === '/login' || pathname === '/signup';
 
   return (
-    <div className="h-dvh w-full overflow-hidden bg-[rgb(var(--bg-main))] text-[rgb(var(--text-main))] transition-colors duration-300 font-sans selection:bg-[rgb(var(--accent))]/30 selection:text-current flex">
+    <>
+      <AnimatePresence mode="wait">
+        {isSplashing && (
+          <SplashLoader onComplete={() => setIsSplashing(false)} />
+        )}
+      </AnimatePresence>
+      <div className="h-dvh w-full overflow-hidden bg-[rgb(var(--bg-main))] text-[rgb(var(--text-main))] transition-colors duration-300 font-sans selection:bg-[rgb(var(--accent))]/30 selection:text-current flex">
       {/* Simple Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(var(--accent),0.03),transparent_40%)]"></div>
@@ -121,6 +129,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

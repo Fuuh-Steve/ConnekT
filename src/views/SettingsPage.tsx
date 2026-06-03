@@ -5,9 +5,10 @@ import {
   Bell, User, Lock, Eye, Globe, 
   Smartphone, Shield, Terminal, Zap,
   CheckCircle, ChevronRight, Save, Trash2, Mail, CreditCard,
-  Moon, Sun, Laptop, LogOut, Loader2, LucideIcon
+  Moon, Sun, Laptop, LogOut, Loader2, LucideIcon, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { cn } from '../lib/utils';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useAuth } from '../context/AuthContext';
@@ -233,46 +234,163 @@ const NotificationsSection = () => (
   </div>
 );
 
-const SecuritySection = () => (
-  <div className="space-y-8">
-    <Section title="Account Security" subtitle="Manage passwords and verification.">
-      <div className="space-y-4">
-         <button className="w-full flex items-center justify-between p-5 bg-[rgb(var(--bg-side))] rounded-2xl border border-[rgb(var(--border))] hover:border-[rgb(var(--accent))]/30 transition-all group">
-           <div className="flex items-center gap-4">
-             <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[rgb(var(--text-muted))]">
-                <Lock className="w-5 h-5" />
-             </div>
-             <div className="text-left">
-               <p className="font-bold text-sm">Change Password</p>
-               <p className="text-xs text-[rgb(var(--text-muted))]">Last updated 3 months ago.</p>
-             </div>
-           </div>
-           <ChevronRight className="w-5 h-5 text-[rgb(var(--text-muted))] group-hover:translate-x-1 transition-all" />
-         </button>
+const SecuritySection = () => {
+  const { user, signOut } = useAuth();
+  const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-         <button className="w-full flex items-center justify-between p-5 bg-[rgb(var(--bg-side))] rounded-2xl border border-[rgb(var(--border))] hover:border-[rgb(var(--accent))]/30 transition-all group">
-           <div className="flex items-center gap-4">
-             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                <Shield className="w-5 h-5" />
-             </div>
-             <div className="text-left">
-               <p className="font-bold text-sm">Two-Factor Auth</p>
-               <p className="text-xs text-emerald-600 font-bold">Enabled via SMS</p>
-             </div>
-           </div>
-           <CheckCircle className="w-5 h-5 text-emerald-500" />
-         </button>
-      </div>
-    </Section>
+  const handleDeleteAccount = async () => {
+    if (!user || confirmEmail !== user.email) return;
 
-    <Section title="Danger Zone" subtitle="Irreversible account actions.">
-       <button className="flex items-center gap-2 px-6 py-3 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl font-bold text-sm hover:bg-red-500 hover:text-white transition-all active:scale-95">
-          <Trash2 className="w-4 h-4" />
-          Delete Account Permanently
-       </button>
-    </Section>
-  </div>
-);
+    try {
+      setIsDeleting(true);
+      setErrorMsg('');
+
+      // Call the supabase RPC function to delete the user account
+      const { error } = await supabase.rpc('delete_user_account');
+      if (error) {
+        throw error;
+      }
+
+      // Sign out and redirect to home
+      await signOut();
+      router.push('/');
+    } catch (err: any) {
+      console.error('Error deleting account:', err);
+      setErrorMsg(err.message || 'Failed to delete account. Please try again later.');
+      setIsDeleting(false);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setConfirmEmail('');
+    setErrorMsg('');
+  };
+
+  return (
+    <div className="space-y-8">
+      <Section title="Account Security" subtitle="Manage passwords and verification.">
+        <div className="space-y-4">
+           <button className="w-full flex items-center justify-between p-5 bg-[rgb(var(--bg-side))] rounded-2xl border border-[rgb(var(--border))] hover:border-[rgb(var(--accent))]/30 transition-all group">
+             <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[rgb(var(--text-muted))]">
+                  <Lock className="w-5 h-5" />
+               </div>
+               <div className="text-left">
+                 <p className="font-bold text-sm">Change Password</p>
+                 <p className="text-xs text-[rgb(var(--text-muted))]">Last updated 3 months ago.</p>
+               </div>
+             </div>
+             <ChevronRight className="w-5 h-5 text-[rgb(var(--text-muted))] group-hover:translate-x-1 transition-all" />
+           </button>
+
+           <button className="w-full flex items-center justify-between p-5 bg-[rgb(var(--bg-side))] rounded-2xl border border-[rgb(var(--border))] hover:border-[rgb(var(--accent))]/30 transition-all group">
+             <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                  <Shield className="w-5 h-5" />
+               </div>
+               <div className="text-left">
+                 <p className="font-bold text-sm">Two-Factor Auth</p>
+                 <p className="text-xs text-emerald-600 font-bold">Enabled via SMS</p>
+               </div>
+             </div>
+             <CheckCircle className="w-5 h-5 text-emerald-500" />
+           </button>
+        </div>
+      </Section>
+
+      <Section title="Danger Zone" subtitle="Irreversible account actions.">
+         <button 
+           onClick={() => setIsModalOpen(true)}
+           className="flex items-center gap-2 px-6 py-3 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl font-bold text-sm hover:bg-red-500 hover:text-white transition-all active:scale-95"
+         >
+            <Trash2 className="w-4 h-4" />
+            Delete Account Permanently
+         </button>
+      </Section>
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6 backdrop-blur-md bg-black/60">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-md bg-[rgb(var(--bg-main))] rounded-3xl border border-[rgb(var(--border))] shadow-2xl overflow-hidden relative p-8 space-y-6"
+            >
+              <button
+                onClick={closeModal}
+                aria-label="Close modal"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="space-y-2 text-center sm:text-left">
+                <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500 mx-auto sm:mx-0">
+                  <Trash2 className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-[rgb(var(--text-main))] pt-2">Delete your account?</h3>
+                <p className="text-sm text-[rgb(var(--text-muted))] leading-relaxed">
+                  This action is <strong>irreversible</strong> and will permanently delete all profile settings, resume files, job listings, and applications.
+                </p>
+              </div>
+
+              {errorMsg && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs font-bold text-red-500">
+                  {errorMsg}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">
+                  Type your email to confirm: <span className="font-mono text-red-500 select-all">{user?.email}</span>
+                </label>
+                <input
+                  type="text"
+                  value={confirmEmail}
+                  onChange={(e) => setConfirmEmail(e.target.value)}
+                  placeholder={user?.email || "your.email@example.com"}
+                  className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-red-500 transition-all font-semibold"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  onClick={closeModal}
+                  disabled={isDeleting}
+                  className="flex-1 py-3 border border-[rgb(var(--border))] hover:bg-[rgb(var(--bg-side))] rounded-xl font-bold text-sm transition-all text-[rgb(var(--text-main))]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting || confirmEmail !== user?.email}
+                  className="flex-1 py-3 bg-red-500 text-white rounded-xl font-bold text-sm hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete Account"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+            <div className="absolute inset-0 -z-10" onClick={closeModal}></div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const BillingSection = () => (
   <div className="space-y-8">
