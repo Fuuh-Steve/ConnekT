@@ -295,20 +295,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                     Edit Profile <Edit3 className="w-4 h-4" />
                  </button>
               ) : (
-                 <button 
-                    onClick={() => {
-                      if (profile.resume_url) {
-                        const link = document.createElement('a');
-                        link.href = profile.resume_url;
-                        link.download = profile.resume_name || 'resume.pdf';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                      }
-                    }}
-                    disabled={!profile.resume_url}
-                    className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--text-main))] text-[rgb(var(--bg-main))] font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                 >
+                 <button className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--text-main))] text-[rgb(var(--bg-main))] font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
                     Download Resume <Download className="w-4 h-4" />
                  </button>
               )}
@@ -405,46 +392,6 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                   )}
                </div>
             </section>
-
-            {profile.resume_url && (
-              <section className="space-y-6">
-                <div className="space-y-1 border-l-4 border-emerald-500 pl-4">
-                  <h2 className="text-2xl font-bold tracking-tight">CV/Resume</h2>
-                  <p className="text-[13px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider">Download or Preview</p>
-                </div>
-
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-900/20 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 shadow-soft"
-                >
-                  <div className="flex items-center gap-4 flex-1 text-center sm:text-left">
-                    <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-200 dark:border-emerald-900/30 shrink-0">
-                      <FileText className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg leading-tight text-emerald-900 dark:text-emerald-300">{profile.resume_name || 'Resume'}</h4>
-                      <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mt-1">Professional CV</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      const link = document.createElement('a');
-                      link.href = profile.resume_url;
-                      link.download = profile.resume_name || 'resume.pdf';
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                    }}
-                    className="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 active:scale-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download CV
-                  </button>
-                </motion.div>
-              </section>
-            )}
          </div>
       </div>
       

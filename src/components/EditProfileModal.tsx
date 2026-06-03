@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Briefcase, GraduationCap, Zap, Globe, X, Plus, XCircle, Loader2, Save, FileText, Download, Upload } from 'lucide-react';
+import { User, Briefcase, GraduationCap, Zap, Globe, X, Plus, XCircle, Loader2, Save } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface EditProfileModalProps {
@@ -28,14 +28,10 @@ export const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: E
     linkedin_url: p?.linkedin_url || '',
     twitter_url: p?.twitter_url || '',
     portfolio_url: p?.portfolio_url || '',
-    resume_url: p?.resume_url || '',
-    resume_name: p?.resume_name || '',
   });
 
   const [formData, setFormData] = useState(() => buildFormData(profile));
-  const [activeTab, setActiveTab] = useState<'basic' | 'exp' | 'edu' | 'skills' | 'social' | 'resume'>('basic');
-  const resumeInputRef = useRef<HTMLInputElement>(null);
-  const [resumeUploading, setResumeUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'basic' | 'exp' | 'edu' | 'skills' | 'social'>('basic');
 
   // Re-sync form data every time the modal opens so it always reflects the latest saved profile
   useEffect(() => {
@@ -75,24 +71,6 @@ export const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: E
     });
   };
 
-  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setResumeUploading(true);
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64 = reader.result as string;
-      setFormData({
-        ...formData,
-        resume_url: base64,
-        resume_name: file.name
-      });
-      setResumeUploading(false);
-    };
-    reader.readAsDataURL(file);
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -123,7 +101,6 @@ export const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: E
                 { id: 'exp', label: 'Experience', icon: Briefcase },
                 { id: 'edu', label: 'Education', icon: GraduationCap },
                 { id: 'skills', label: 'Skills', icon: Zap },
-                { id: 'resume', label: 'Resume', icon: FileText },
                 { id: 'social', label: 'Social', icon: Globe },
               ].map((tab) => (
                 <button
@@ -440,59 +417,6 @@ export const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: E
                         </button>
                       </div>
                     ))}
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'resume' && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">
-                      Curriculum Vitae (CV)
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    <div className="p-8 border-2 border-dashed border-[rgb(var(--accent))]/30 rounded-2xl bg-[rgb(var(--accent))]/5 flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-[rgb(var(--accent))]/60 transition-all" onClick={() => resumeInputRef.current?.click()}>
-                      <div className="w-16 h-16 rounded-2xl bg-[rgb(var(--accent))]/10 flex items-center justify-center text-[rgb(var(--accent))]">
-                        {resumeUploading ? <Loader2 className="w-8 h-8 animate-spin" /> : <Upload className="w-8 h-8" />}
-                      </div>
-                      <div className="text-center space-y-2">
-                        <p className="font-bold text-sm text-[rgb(var(--text-main))]">
-                          {resumeUploading ? 'Uploading...' : formData.resume_name ? formData.resume_name : 'Upload Your CV/Resume'}
-                        </p>
-                        <p className="text-xs text-[rgb(var(--text-muted))]">Click to browse or drag & drop PDF, DOC, DOCX</p>
-                      </div>
-                      <input
-                        ref={resumeInputRef}
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleResumeUpload}
-                        className="hidden"
-                        aria-label="Upload CV or resume"
-                      />
-                    </div>
-                    
-                    {formData.resume_url && (
-                      <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-900/20 rounded-2xl flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                            <FileText className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-emerald-900 dark:text-emerald-300">{formData.resume_name}</p>
-                            <p className="text-xs text-emerald-700 dark:text-emerald-400">Resume uploaded successfully</p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setFormData({...formData, resume_url: '', resume_name: ''})}
-                          className="p-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-lg transition-colors"
-                          aria-label="Remove resume"
-                        >
-                          <X className="w-4 h-4 text-emerald-600" />
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
