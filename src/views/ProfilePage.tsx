@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink } from 'lucide-react';
+import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink, Smartphone } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -306,7 +306,8 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
               </div>
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1">
-                 <SocialLink icon={Mail} label={profile.email} />
+                 <SocialLink icon={Mail} label={profile.email} url={`mailto:${profile.email}`} />
+                 {profile.phone && <SocialLink icon={Smartphone} label={profile.phone} url={`tel:${profile.phone}`} />}
                  {profile.github_url && <SocialLink icon={Github} label="GitHub" url={profile.github_url} />}
                  {profile.linkedin_url && <SocialLink icon={Linkedin} label="LinkedIn" url={profile.linkedin_url} />}
                  {profile.twitter_url && <SocialLink icon={Globe} label="Twitter" url={profile.twitter_url} />}
@@ -556,6 +557,8 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
     username: profile.username || '',
     bio: profile.bio || '',
     location: profile.location || '',
+    phone: profile.phone || '',
+    availability_status: profile.availability_status || '',
     company_name: profile.company_name || '',
     company_logo: profile.company_logo || '',
     experience: profile.experience || [],
@@ -578,6 +581,8 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
       username: profile.username || '',
       bio: profile.bio || '',
       location: profile.location || '',
+      phone: profile.phone || '',
+      availability_status: profile.availability_status || '',
       company_name: profile.company_name || '',
       company_logo: profile.company_logo || '',
       experience: profile.experience || [],
@@ -704,13 +709,35 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                       className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all resize-none"
                     />
                   </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Location</label>
+                      <input 
+                        type="text" 
+                        value={formData.location}
+                        onChange={(e) => setFormData({...formData, location: e.target.value})}
+                        placeholder="e.g. Yaoundé, Cameroon"
+                        className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Phone</label>
+                      <input 
+                        type="text" 
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        placeholder="e.g. +237 699 123 456"
+                        className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Location</label>
+                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Availability</label>
                     <input 
                       type="text" 
-                      value={formData.location}
-                      onChange={(e) => setFormData({...formData, location: e.target.value})}
-                      placeholder="e.g. Yaoundé, Cameroon"
+                      value={formData.availability_status}
+                      onChange={(e) => setFormData({...formData, availability_status: e.target.value})}
+                      placeholder="e.g. Open to internships, part-time or freelance work"
                       className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                     />
                   </div>

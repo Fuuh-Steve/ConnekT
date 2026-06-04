@@ -8,6 +8,8 @@ create table public.profiles (
   avatar_url text,
   cover_url text,
   resume_url text,
+  phone text,
+  availability_status text,
   bio text,
   location text,
   skills jsonb default '[]'::jsonb,
