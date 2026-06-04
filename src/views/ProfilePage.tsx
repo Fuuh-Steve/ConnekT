@@ -18,6 +18,8 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [resumeUploading, setResumeUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   
   const isOwnProfile = !username || (profile && user && profile.id === user.id); 
   
@@ -27,6 +29,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const resumeInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -105,17 +108,60 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
     }
   };
 
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    setResumeUploading(true);
+    setUploadError('');
+
+    const fileExt = file.name.split('.').pop() || 'pdf';
+    const filePath = `${user.id}/resume-${Date.now()}.${fileExt}`;
+
+    try {
+      const { data: uploadData, error: uploadError } = await supabase
+        .storage
+        .from('resumes')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError || !uploadData) throw uploadError || new Error('Resume upload failed');
+
+      const { data: urlData } = supabase
+        .storage
+        .from('resumes')
+        .getPublicUrl(uploadData.path);
+
+      if (!urlData?.publicUrl) throw new Error('Unable to generate resume URL');
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ resume_url: urlData.publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile((prev: any) => ({ ...prev, resume_url: urlData.publicUrl }));
+    } catch (err: any) {
+      console.error('Error uploading resume:', err);
+      setUploadError(err.message || 'Unable to upload resume');
+    } finally {
+      setResumeUploading(false);
+    }
+  };
+
   const handleSaveProfile = async (formData: any) => {
     if (!user) return;
     setSaving(true);
     try {
-      const { error } = await supabase
+      const { data: updatedProfile, error } = await supabase
         .from('profiles')
         .update(formData)
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select()
+        .single();
 
-      if (!error) {
-        setProfile((prev: any) => ({ ...prev, ...formData }));
+      if (!error && updatedProfile) {
+        setProfile(updatedProfile);
         setIsEditModalOpen(false);
       }
     } catch (err) {
@@ -304,6 +350,46 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                </div>
             </div>
 
+            <div className="bg-[rgb(var(--bg-main))] p-6 rounded-2xl border border-[rgb(var(--border))] space-y-4 shadow-sm">
+               <div className="flex items-center justify-between">
+                 <h3 className="text-sm font-bold uppercase tracking-wider">Resume</h3>
+                 {profile.resume_url ? (
+                   <a href={profile.resume_url} target="_blank" rel="noreferrer" className="text-[rgb(var(--accent))] text-xs font-bold">View</a>
+                 ) : null}
+               </div>
+               <p className="text-xs text-[rgb(var(--text-muted))]">Upload a CV for recruiters to download from your student profile.</p>
+               <div className="flex flex-col gap-3">
+                 {profile.resume_url ? (
+                   <a
+                     href={profile.resume_url}
+                     target="_blank"
+                     rel="noreferrer"
+                     className="block text-sm font-bold text-[rgb(var(--text-main))] underline underline-offset-4"
+                   >
+                     Download CV
+                   </a>
+                 ) : (
+                   <p className="text-xs text-[rgb(var(--text-muted))]">No CV uploaded yet.</p>
+                 )}
+                 <button
+                   onClick={() => resumeInputRef.current?.click()}
+                   disabled={resumeUploading}
+                   className="px-4 py-3 bg-[rgb(var(--accent))] text-white rounded-xl font-bold text-sm hover:bg-[rgb(var(--accent))]/90 transition-all disabled:opacity-70"
+                 >
+                   {resumeUploading ? 'Uploading...' : profile.resume_url ? 'Update CV' : 'Upload CV'}
+                 </button>
+                 {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+                 <input
+                   type="file"
+                   aria-label="Upload curriculum vitae"
+                   accept=".pdf,.doc,.docx"
+                   ref={resumeInputRef}
+                   onChange={handleResumeUpload}
+                   className="hidden"
+                 />
+               </div>
+            </div>
+
             <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/20">
                <h3 className="text-sm font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-3 flex items-center justify-between">
                  Availability
@@ -479,9 +565,32 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
     linkedin_url: profile.linkedin_url || '',
     twitter_url: profile.twitter_url || '',
     portfolio_url: profile.portfolio_url || '',
+    resume_url: profile.resume_url || '',
   });
 
   const [activeTab, setActiveTab] = useState<'basic' | 'exp' | 'edu' | 'skills' | 'social'>('basic');
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setFormData({
+      full_name: profile.full_name || '',
+      username: profile.username || '',
+      bio: profile.bio || '',
+      location: profile.location || '',
+      company_name: profile.company_name || '',
+      company_logo: profile.company_logo || '',
+      experience: profile.experience || [],
+      education: profile.education || [],
+      skills: profile.skills || [],
+      github_url: profile.github_url || '',
+      linkedin_url: profile.linkedin_url || '',
+      twitter_url: profile.twitter_url || '',
+      portfolio_url: profile.portfolio_url || '',
+      resume_url: profile.resume_url || '',
+    });
+    setActiveTab('basic');
+  }, [profile, isOpen]);
 
   const addExperience = () => {
     setFormData({

@@ -7,6 +7,7 @@ create table public.profiles (
   full_name text,
   avatar_url text,
   cover_url text,
+  resume_url text,
   bio text,
   location text,
   skills jsonb default '[]'::jsonb,
