@@ -7,9 +7,6 @@ create table public.profiles (
   full_name text,
   avatar_url text,
   cover_url text,
-  resume_url text,
-  phone text,
-  availability_status text,
   bio text,
   location text,
   skills jsonb default '[]'::jsonb,
@@ -113,4 +110,6 @@ begin
   delete from auth.users where id = auth.uid();
 end;
 $$ language plpgsql security definer;
+
+grant execute on function public.delete_user_account() to authenticated;
 

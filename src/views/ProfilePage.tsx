@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink, Smartphone } from 'lucide-react';
+import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -18,61 +18,15 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [resumeUploading, setResumeUploading] = useState(false);
-  const [uploadError, setUploadError] = useState('');
   
   const isOwnProfile = !username || (profile && user && profile.id === user.id); 
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editFormData, setEditFormData] = useState<any>({
-    full_name: '',
-    username: '',
-    bio: '',
-    location: '',
-    phone: '',
-    availability_status: '',
-    company_name: '',
-    company_logo: '',
-    experience: [],
-    education: [],
-    skills: [],
-    github_url: '',
-    linkedin_url: '',
-    twitter_url: '',
-    portfolio_url: '',
-    resume_url: '',
-  });
   const [selectedExperience, setSelectedExperience] = useState<any>(null);
   const [subscription, setSubscription] = useState<'free' | 'pro'>('free');
   
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  const resumeInputRef = useRef<HTMLInputElement>(null);
-
-  const buildEditForm = (profileData: any) => ({
-    full_name: profileData?.full_name || '',
-    username: profileData?.username || '',
-    bio: profileData?.bio || '',
-    location: profileData?.location || '',
-    phone: profileData?.phone || '',
-    availability_status: profileData?.availability_status || '',
-    company_name: profileData?.company_name || '',
-    company_logo: profileData?.company_logo || '',
-    experience: profileData?.experience || [],
-    education: profileData?.education || [],
-    skills: profileData?.skills || [],
-    github_url: profileData?.github_url || '',
-    linkedin_url: profileData?.linkedin_url || '',
-    twitter_url: profileData?.twitter_url || '',
-    portfolio_url: profileData?.portfolio_url || '',
-    resume_url: profileData?.resume_url || '',
-  });
-
-  const openEditModal = () => {
-    if (!profile) return;
-    setEditFormData(buildEditForm(profile));
-    setIsEditModalOpen(true);
-  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -151,74 +105,21 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
     }
   };
 
-  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    setResumeUploading(true);
-    setUploadError('');
-
-    const fileExt = file.name.split('.').pop() || 'pdf';
-    const filePath = `${user.id}/resume-${Date.now()}.${fileExt}`;
-
-    try {
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('resumes')
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError || !uploadData) throw uploadError || new Error('Resume upload failed');
-
-      const { data: urlData } = supabase
-        .storage
-        .from('resumes')
-        .getPublicUrl(uploadData.path);
-
-      if (!urlData?.publicUrl) throw new Error('Unable to generate resume URL');
-
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ resume_url: urlData.publicUrl })
-        .eq('id', user.id);
-
-      if (updateError) throw updateError;
-
-      setProfile((prev: any) => ({ ...prev, resume_url: urlData.publicUrl }));
-    } catch (err: any) {
-      console.error('Error uploading resume:', err);
-      setUploadError(err.message || 'Unable to upload resume');
-    } finally {
-      setResumeUploading(false);
-    }
-  };
-
   const handleSaveProfile = async (formData: any) => {
-    const profileId = profile?.id || user?.id;
-    if (!profileId) {
-      console.error('Cannot save profile: missing profile or user id');
-      return;
-    }
-
+    if (!user) return;
     setSaving(true);
     try {
-      const { data: updatedProfile, error } = await supabase
+      const { error } = await supabase
         .from('profiles')
         .update(formData)
-        .eq('id', profileId)
-        .select()
-        .single();
+        .eq('id', user.id);
 
-      if (error) {
-        console.error('Error saving profile:', error);
-        return;
-      }
-
-      if (updatedProfile) {
-        setProfile(updatedProfile);
+      if (!error) {
+        setProfile((prev: any) => ({ ...prev, ...formData }));
         setIsEditModalOpen(false);
       }
     } catch (err) {
-      console.error('Unexpected error saving profile:', err);
+      console.error('Error saving profile:', err);
     } finally {
       setSaving(false);
     }
@@ -359,8 +260,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
               </div>
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1">
-                 <SocialLink icon={Mail} label={profile.email} url={`mailto:${profile.email}`} />
-                 {profile.phone && <SocialLink icon={Smartphone} label={profile.phone} url={`tel:${profile.phone}`} />}
+                 <SocialLink icon={Mail} label={profile.email} />
                  {profile.github_url && <SocialLink icon={Github} label="GitHub" url={profile.github_url} />}
                  {profile.linkedin_url && <SocialLink icon={Linkedin} label="LinkedIn" url={profile.linkedin_url} />}
                  {profile.twitter_url && <SocialLink icon={Globe} label="Twitter" url={profile.twitter_url} />}
@@ -371,7 +271,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
            <div className="pb-2 md:pb-4 w-full md:w-auto">
               {isOwnProfile ? (
                  <button 
-                  onClick={openEditModal}
+                  onClick={() => setIsEditModalOpen(true)}
                   className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl shadow-lg shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
                  >
                     Edit Profile <Edit3 className="w-4 h-4" />
@@ -401,46 +301,6 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                   )) : (
                     <p className="text-xs text-[rgb(var(--text-muted))]">No skills added yet.</p>
                   )}
-               </div>
-            </div>
-
-            <div className="bg-[rgb(var(--bg-main))] p-6 rounded-2xl border border-[rgb(var(--border))] space-y-4 shadow-sm">
-               <div className="flex items-center justify-between">
-                 <h3 className="text-sm font-bold uppercase tracking-wider">Resume</h3>
-                 {profile.resume_url ? (
-                   <a href={profile.resume_url} target="_blank" rel="noreferrer" className="text-[rgb(var(--accent))] text-xs font-bold">View</a>
-                 ) : null}
-               </div>
-               <p className="text-xs text-[rgb(var(--text-muted))]">Upload a CV for recruiters to download from your student profile.</p>
-               <div className="flex flex-col gap-3">
-                 {profile.resume_url ? (
-                   <a
-                     href={profile.resume_url}
-                     target="_blank"
-                     rel="noreferrer"
-                     className="block text-sm font-bold text-[rgb(var(--text-main))] underline underline-offset-4"
-                   >
-                     Download CV
-                   </a>
-                 ) : (
-                   <p className="text-xs text-[rgb(var(--text-muted))]">No CV uploaded yet.</p>
-                 )}
-                 <button
-                   onClick={() => resumeInputRef.current?.click()}
-                   disabled={resumeUploading}
-                   className="px-4 py-3 bg-[rgb(var(--accent))] text-white rounded-xl font-bold text-sm hover:bg-[rgb(var(--accent))]/90 transition-all disabled:opacity-70"
-                 >
-                   {resumeUploading ? 'Uploading...' : profile.resume_url ? 'Update CV' : 'Upload CV'}
-                 </button>
-                 {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
-                 <input
-                   type="file"
-                   aria-label="Upload curriculum vitae"
-                   accept=".pdf,.doc,.docx"
-                   ref={resumeInputRef}
-                   onChange={handleResumeUpload}
-                   className="hidden"
-                 />
                </div>
             </div>
 
@@ -597,29 +457,60 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
         isOpen={isEditModalOpen} 
         onClose={() => setIsEditModalOpen(false)} 
         onSave={handleSaveProfile}
-        formData={editFormData}
-        setFormData={setEditFormData}
+        profile={profile}
         saving={saving}
-        profileRole={profile?.role}
       />
     </div>
   );
 };
 
-const EditProfileModal = ({ isOpen, onClose, onSave, formData, setFormData, saving }: any) => {
-  const [step, setStep] = useState(0);
-  const steps = [
-    { title: 'Basic Info', description: 'Name, username and short bio.' },
-    { title: 'Contact', description: 'Location, phone and availability.' },
-    { title: 'Links', description: 'Optional GitHub, LinkedIn and portfolio links.' },
-  ];
+const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => {
+  const [formData, setFormData] = useState({
+    full_name: profile.full_name || '',
+    username: profile.username || '',
+    bio: profile.bio || '',
+    location: profile.location || '',
+    company_name: profile.company_name || '',
+    company_logo: profile.company_logo || '',
+    experience: profile.experience || [],
+    education: profile.education || [],
+    skills: profile.skills || [],
+    github_url: profile.github_url || '',
+    linkedin_url: profile.linkedin_url || '',
+    twitter_url: profile.twitter_url || '',
+    portfolio_url: profile.portfolio_url || '',
+  });
 
-  useEffect(() => {
-    if (!isOpen) return;
-    setStep(0);
-  }, [isOpen]);
+  const [activeTab, setActiveTab] = useState<'basic' | 'exp' | 'edu' | 'skills' | 'social'>('basic');
 
-  const isLastStep = step === steps.length - 1;
+  const addExperience = () => {
+    setFormData({
+      ...formData,
+      experience: [
+        ...formData.experience,
+        { role: '', company: '', period: '', desc: '', details: [], skills: [] }
+      ]
+    });
+    setActiveTab('exp');
+  };
+
+  const addEducation = () => {
+    setFormData({
+      ...formData,
+      education: [
+        ...formData.education,
+        { school: '', degree: '', period: '', gpa: '' }
+      ]
+    });
+    setActiveTab('edu');
+  };
+
+  const addSkill = () => {
+    setFormData({
+      ...formData,
+      skills: [...formData.skills, { name: '', level: 50 }]
+    });
+  };
 
   return (
     <AnimatePresence>
@@ -638,125 +529,386 @@ const EditProfileModal = ({ isOpen, onClose, onSave, formData, setFormData, savi
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="relative w-full max-w-2xl bg-[rgb(var(--bg-main))] rounded-3xl shadow-2xl border border-[rgb(var(--border))] overflow-hidden flex flex-col max-h-[90vh]"
           >
-            <div className="p-6 border-b border-[rgb(var(--border))] bg-[rgb(var(--bg-side))]">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-bold">Update Profile</h3>
-                  <p className="text-sm text-[rgb(var(--text-muted))] mt-1">{steps[step].description}</p>
-                </div>
-                <button onClick={onClose} aria-label="Close dialog" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+            <div className="p-6 border-b border-[rgb(var(--border))] flex items-center justify-between bg-[rgb(var(--bg-side))]">
+              <h3 className="text-xl font-bold">Update Profile</h3>
+              <button onClick={onClose} aria-label="Close dialog" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="p-6 space-y-6 overflow-y-auto flex-1 bg-[rgb(var(--bg-main))]">
-              <div className="flex items-center gap-3 text-xs uppercase tracking-[0.25em] font-bold text-[rgb(var(--text-muted))]">
-                {steps.map((item, index) => (
-                  <div key={item.title} className={cn(
-                    'rounded-full px-3 py-2 border transition-all',
-                    index === step ? 'bg-[rgb(var(--accent))] text-white border-[rgb(var(--accent))]' : 'bg-[rgb(var(--bg-side))] border-[rgb(var(--border))]'
-                  )}>
-                    {index + 1}
-                  </div>
-                ))}
-                <span className="text-[rgb(var(--text-muted))]">Step {step + 1} of {steps.length}</span>
-              </div>
+            <div className="flex border-b border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] overflow-x-auto">
+              {[
+                { id: 'basic', label: 'Basic Info', icon: User },
+                { id: 'exp', label: 'Experience', icon: Briefcase },
+                { id: 'edu', label: 'Education', icon: GraduationCap },
+                { id: 'skills', label: 'Skills', icon: Zap },
+                { id: 'social', label: 'Social', icon: Globe },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={cn(
+                    "px-6 py-4 text-xs font-bold uppercase tracking-widest flex items-center gap-2 border-b-2 transition-all whitespace-nowrap",
+                    activeTab === tab.id 
+                      ? "border-[rgb(var(--accent))] text-[rgb(var(--accent))] bg-[rgb(var(--bg-main))]" 
+                      : "border-transparent text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))]"
+                  )}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-              {step === 0 && (
-                <div className="space-y-6">
+            <div className="p-8 space-y-8 overflow-y-auto flex-1 bg-[rgb(var(--bg-main))]">
+              {activeTab === 'basic' && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputField 
-                      label="Full Name"
-                      placeholder="Steve Ferguson"
-                      value={formData.full_name}
-                      onChange={(val: string) => setFormData({...formData, full_name: val})}
-                    />
-                    <InputField 
-                      label="Username"
-                      placeholder="steveroger"
-                      value={formData.username}
-                      onChange={(val: string) => setFormData({...formData, username: val})}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Full Name</label>
+                      <input 
+                        type="text" 
+                        value={formData.full_name}
+                        onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                        placeholder="e.g. Steve Ferguson"
+                        className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Username</label>
+                      <input 
+                        type="text" 
+                        value={formData.username}
+                        onChange={(e) => setFormData({...formData, username: e.target.value})}
+                        placeholder="e.g. steveroger"
+                        className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">One-line Bio</label>
+                    <textarea 
+                      rows={2}
+                      value={formData.bio}
+                      onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                      placeholder="e.g. Full-stack developer passionate about building scalable web applications."
+                      className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all resize-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">One-line Bio</label>
-                    <textarea
-                      rows={3}
-                      value={formData.bio}
-                      onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                      placeholder="e.g. Full-stack developer building student-friendly products."
-                      className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all resize-none"
+                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Location</label>
+                    <input 
+                      type="text" 
+                      value={formData.location}
+                      onChange={(e) => setFormData({...formData, location: e.target.value})}
+                      placeholder="e.g. Yaoundé, Cameroon"
+                      className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                     />
+                  </div>
+
+                  {profile.role === 'recruiter' && (
+                    <div className="pt-4 border-t border-[rgb(var(--border))] space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--accent))]">Recruiter Information</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Company Name</label>
+                          <input 
+                            type="text" 
+                            value={formData.company_name}
+                            onChange={(e) => setFormData({...formData, company_name: e.target.value})}
+                            placeholder="e.g. TechFlow Inc."
+                            className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Company Logo URL</label>
+                          <input 
+                            type="text" 
+                            value={formData.company_logo}
+                            onChange={(e) => setFormData({...formData, company_logo: e.target.value})}
+                            placeholder="https://example.com/logo.png"
+                            className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'exp' && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Work History</p>
+                    <button 
+                      onClick={addExperience}
+                      className="flex items-center gap-2 text-[rgb(var(--accent))] font-bold text-xs"
+                    >
+                      <Plus className="w-4 h-4" /> Add Role
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-10">
+                    {formData.experience.map((exp: any, i: number) => (
+                      <div key={i} className="relative p-6 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] space-y-4">
+                        <button 
+                          onClick={() => {
+                            const newExp = [...formData.experience];
+                            newExp.splice(i, 1);
+                            setFormData({...formData, experience: newExp});
+                          }}
+                          aria-label="Remove experience entry"
+                          className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all border-2 border-[rgb(var(--bg-main))]"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <InputField 
+                            label="Role" 
+                            placeholder="e.g. Software Engineer" 
+                            value={exp.role}
+                            onChange={(val) => {
+                              const newExp = [...formData.experience];
+                              newExp[i].role = val;
+                              setFormData({...formData, experience: newExp});
+                            }}
+                          />
+                          <InputField 
+                            label="Company" 
+                            placeholder="e.g. Tech Corp" 
+                            value={exp.company}
+                            onChange={(val) => {
+                              const newExp = [...formData.experience];
+                              newExp[i].company = val;
+                              setFormData({...formData, experience: newExp});
+                            }}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <InputField 
+                            label="Period" 
+                            placeholder="e.g. Jan 2022 - Present" 
+                            value={exp.period}
+                            onChange={(val) => {
+                              const newExp = [...formData.experience];
+                              newExp[i].period = val;
+                              setFormData({...formData, experience: newExp});
+                            }}
+                          />
+                        </div>
+                        <div className="space-y-1.5 leading-none">
+                          <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest">Description</label>
+                          <textarea 
+                            value={exp.desc}
+                            onChange={(e) => {
+                              const newExp = [...formData.experience];
+                              newExp[i].desc = e.target.value;
+                              setFormData({...formData, experience: newExp});
+                            }}
+                            className="w-full bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-xl p-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all resize-none"
+                            rows={3}
+                            placeholder="Briefly describe your responsibilities..."
+                          />
+                        </div>
+                      </div>
+                    ))}
+
+                    {formData.experience.length === 0 && (
+                      <div className="text-center py-10 border-2 border-dashed border-[rgb(var(--border))] rounded-2xl">
+                        <Briefcase className="w-8 h-8 text-[rgb(var(--text-muted))] mx-auto mb-3 opacity-20" />
+                        <p className="text-sm font-bold text-[rgb(var(--text-muted))]">No experience added yet.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
-              {step === 1 && (
-                <div className="space-y-6">
-                  <InputField 
-                    label="Location"
-                    placeholder="Yaoundé, Cameroon"
-                    value={formData.location}
-                    onChange={(val: string) => setFormData({...formData, location: val})}
-                  />
-                  <InputField 
-                    label="Phone"
-                    placeholder="+237 699 123 456"
-                    value={formData.phone}
-                    onChange={(val: string) => setFormData({...formData, phone: val})}
-                  />
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Availability</label>
-                  <input
-                    type="text"
-                    value={formData.availability_status}
-                    onChange={(e) => setFormData({...formData, availability_status: e.target.value})}
-                    placeholder="Open to internships, part-time or freelance work"
-                    className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
-                  />
+              {activeTab === 'edu' && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Academic Background</p>
+                    <button 
+                      onClick={addEducation}
+                      className="flex items-center gap-2 text-[rgb(var(--accent))] font-bold text-xs"
+                    >
+                      <Plus className="w-4 h-4" /> Add School
+                    </button>
+                  </div>
+
+                  <div className="space-y-6">
+                    {formData.education.map((edu: any, i: number) => (
+                      <div key={i} className="relative p-6 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] space-y-4">
+                        <button 
+                          onClick={() => {
+                            const newEdu = [...formData.education];
+                            newEdu.splice(i, 1);
+                            setFormData({...formData, education: newEdu});
+                          }}
+                          aria-label="Remove education entry"
+                          className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all border-2 border-[rgb(var(--bg-main))]"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <InputField 
+                            label="Degree" 
+                            placeholder="e.g. B.Sc Computer Science" 
+                            value={edu.degree}
+                            onChange={(val) => {
+                              const newEdu = [...formData.education];
+                              newEdu[i].degree = val;
+                              setFormData({...formData, education: newEdu});
+                            }}
+                          />
+                          <InputField 
+                            label="School" 
+                            placeholder="e.g. Unilag" 
+                            value={edu.school}
+                            onChange={(val) => {
+                              const newEdu = [...formData.education];
+                              newEdu[i].school = val;
+                              setFormData({...formData, education: newEdu});
+                            }}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <InputField 
+                            label="Period" 
+                            placeholder="e.g. 2018 - 2022" 
+                            value={edu.period}
+                            onChange={(val) => {
+                              const newEdu = [...formData.education];
+                              newEdu[i].period = val;
+                              setFormData({...formData, education: newEdu});
+                            }}
+                          />
+                          <InputField 
+                            label="GPA (optional)" 
+                            placeholder="e.g. 4.5/5.0" 
+                            value={edu.gpa}
+                            onChange={(val) => {
+                              const newEdu = [...formData.education];
+                              newEdu[i].gpa = val;
+                              setFormData({...formData, education: newEdu});
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
-              {step === 2 && (
-                <div className="space-y-6">
-                  <InputField 
-                    label="GitHub Profile URL"
-                    placeholder="https://github.com/your-username"
-                    value={formData.github_url}
-                    onChange={(val: string) => setFormData({...formData, github_url: val})}
-                  />
-                  <InputField 
-                    label="LinkedIn Profile URL"
-                    placeholder="https://linkedin.com/in/your-username"
-                    value={formData.linkedin_url}
-                    onChange={(val: string) => setFormData({...formData, linkedin_url: val})}
-                  />
-                  <InputField 
-                    label="Portfolio Website"
-                    placeholder="https://your-portfolio.me"
-                    value={formData.portfolio_url}
-                    onChange={(val: string) => setFormData({...formData, portfolio_url: val})}
-                  />
+              {activeTab === 'skills' && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Technical Skills</p>
+                    <button 
+                      onClick={addSkill}
+                      className="flex items-center gap-2 text-[rgb(var(--accent))] font-bold text-xs"
+                    >
+                      <Plus className="w-4 h-4" /> Add Skill Tag
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {formData.skills.map((skill: any, i: number) => (
+                      <div key={i} className="flex items-center gap-3 p-4 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] group">
+                        <div className="flex-1 space-y-3">
+                          <div className="flex items-center justify-between">
+                             <input 
+                              type="text" 
+                              value={skill.name}
+                              onChange={(e) => {
+                                const newSkills = [...formData.skills];
+                                newSkills[i].name = e.target.value;
+                                setFormData({...formData, skills: newSkills});
+                              }}
+                              placeholder="e.g. React"
+                              className="bg-transparent font-bold text-sm focus:outline-none w-full"
+                             />
+                             <span className="text-[10px] font-mono text-[rgb(var(--accent))] font-bold">{skill.level}%</span>
+                          </div>
+                          <input 
+                            type="range" 
+                            aria-label={`Skill level for ${skill.name}`}
+                            min="0" 
+                            max="100" 
+                            value={skill.level}
+                            onChange={(e) => {
+                              const newSkills = [...formData.skills];
+                              newSkills[i].level = parseInt(e.target.value);
+                              setFormData({...formData, skills: newSkills});
+                            }}
+                            className="w-full accent-[rgb(var(--accent))]"
+                          />
+                        </div>
+                        <button 
+                          onClick={() => {
+                            const newSkills = [...formData.skills];
+                            newSkills.splice(i, 1);
+                            setFormData({...formData, skills: newSkills});
+                          }}
+                          aria-label="Remove skill"
+                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          <XCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'social' && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Social Media & Portfolio</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField 
+                      label="GitHub Profile URL" 
+                      placeholder="https://github.com/your-username" 
+                      value={formData.github_url}
+                      onChange={(val: string) => setFormData({...formData, github_url: val})}
+                    />
+                    <InputField 
+                      label="LinkedIn Profile URL" 
+                      placeholder="https://linkedin.com/in/your-username" 
+                      value={formData.linkedin_url}
+                      onChange={(val: string) => setFormData({...formData, linkedin_url: val})}
+                    />
+                    <InputField 
+                      label="Twitter Profile URL" 
+                      placeholder="https://twitter.com/your-username" 
+                      value={formData.twitter_url}
+                      onChange={(val: string) => setFormData({...formData, twitter_url: val})}
+                    />
+                    <InputField 
+                      label="Portfolio Website" 
+                      placeholder="https://your-portfolio.me" 
+                      value={formData.portfolio_url}
+                      onChange={(val: string) => setFormData({...formData, portfolio_url: val})}
+                    />
+                  </div>
                 </div>
               )}
             </div>
 
             <div className="p-6 bg-[rgb(var(--bg-side))] border-t border-[rgb(var(--border))] flex items-center justify-between gap-4">
               <button 
-                onClick={step > 0 ? () => setStep(step - 1) : onClose}
+                onClick={onClose}
                 className="px-6 py-4 text-sm font-bold text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] underline-offset-4 hover:underline"
               >
-                {step > 0 ? 'Back' : 'Cancel'}
+                Cancel
               </button>
               <button 
-                onClick={() => {
-                  if (isLastStep) return onSave(formData);
-                  setStep(step + 1);
-                }}
+                onClick={() => onSave(formData)}
                 disabled={saving}
                 className="px-8 py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl shadow-xl shadow-[rgb(var(--accent))]/20 flex items-center justify-center gap-2 disabled:opacity-70 flex-1 md:flex-none md:min-w-50"
               >
-                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : isLastStep ? 'Save Profile' : 'Next'}
+                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-4 h-4" />}
+                Save Profile
               </button>
             </div>
           </motion.div>
