@@ -66,20 +66,20 @@ create policy "Recruiters can update own jobs" on public.jobs for update using (
 create policy "Recruiters can delete own jobs" on public.jobs for delete using (auth.uid() = recruiter_id);
 
 -- Applications Policies
-create policy "Students can view own applications" on public.applications for select using (auth.uid() = student_id);
+create policy "Students can view own applications" on public.applications for select using (auth.uid()::uuid = student_id);
 create policy "Recruiters can view applications for their jobs" on public.applications for select using (
   exists (
     select 1 from public.jobs 
     where id = public.applications.job_id 
-    and recruiter_id = auth.uid()
+    and recruiter_id = auth.uid()::uuid
   )
 );
-create policy "Students can apply for jobs" on public.applications for insert with check (auth.uid() = student_id);
+create policy "Students can apply for jobs" on public.applications for insert using (true) with check (auth.uid()::uuid = student_id);
 create policy "Recruiters can update applications for their jobs" on public.applications for update using (
   exists (
     select 1 from public.jobs 
     where id = public.applications.job_id 
-    and recruiter_id = auth.uid()
+    and recruiter_id = auth.uid()::uuid
   )
 );
 
