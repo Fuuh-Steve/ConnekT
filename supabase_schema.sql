@@ -74,7 +74,7 @@ create policy "Recruiters can view applications for their jobs" on public.applic
     and recruiter_id = auth.uid()::uuid
   )
 );
-create policy "Students can apply for jobs" on public.applications for insert using (true) with check (auth.uid()::uuid = student_id);
+create policy "Students can apply for jobs" on public.applications for insert with check (auth.uid()::uuid = student_id);
 create policy "Recruiters can update applications for their jobs" on public.applications for update using (
   exists (
     select 1 from public.jobs 
