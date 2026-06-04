@@ -80,11 +80,7 @@ export const JobDetails = () => {
     try {
       const { error } = await supabase
         .from('applications')
-        .insert({
-          job_id: jobId,
-          student_id: user.id,
-          status: 'pending'
-        });
+        .insert({ job_id: jobId, student_id: user.id, status: 'pending' });
 
       if (error) throw error;
       
