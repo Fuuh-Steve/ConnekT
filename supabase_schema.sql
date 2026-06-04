@@ -114,5 +114,3 @@ begin
 end;
 $$ language plpgsql security definer;
 
-grant execute on function public.delete_user_account() to authenticated;
-
