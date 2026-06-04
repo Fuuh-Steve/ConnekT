@@ -55,15 +55,15 @@ alter table public.applications enable row level security;
 
 -- Profiles Policies
 create policy "Public profiles are viewable by everyone" on public.profiles for select using (true);
-create policy "Users can update own profile" on public.profiles for update using (auth.uid() = id);
-create policy "Users can insert own profile" on public.profiles for insert with check (auth.uid() = id);
-create policy "Users can delete own profile" on public.profiles for delete using (auth.uid() = id);
+create policy "Users can update own profile" on public.profiles for update using (auth.uid()::uuid = id);
+create policy "Users can insert own profile" on public.profiles for insert with check (auth.uid()::uuid = id);
+create policy "Users can delete own profile" on public.profiles for delete using (auth.uid()::uuid = id);
 
 -- Jobs Policies
 create policy "Jobs are viewable by everyone" on public.jobs for select using (true);
-create policy "Recruiters can insert jobs" on public.jobs for insert with check (auth.uid() = recruiter_id);
-create policy "Recruiters can update own jobs" on public.jobs for update using (auth.uid() = recruiter_id);
-create policy "Recruiters can delete own jobs" on public.jobs for delete using (auth.uid() = recruiter_id);
+create policy "Recruiters can insert jobs" on public.jobs for insert with check (auth.uid()::uuid = recruiter_id);
+create policy "Recruiters can update own jobs" on public.jobs for update using (auth.uid()::uuid = recruiter_id);
+create policy "Recruiters can delete own jobs" on public.jobs for delete using (auth.uid()::uuid = recruiter_id);
 
 -- Applications Policies
 create policy "Students can view own applications" on public.applications for select using (auth.uid()::uuid = student_id);
