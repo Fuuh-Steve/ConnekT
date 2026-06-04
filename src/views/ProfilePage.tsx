@@ -150,22 +150,32 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   };
 
   const handleSaveProfile = async (formData: any) => {
-    if (!user) return;
+    const profileId = profile?.id || user?.id;
+    if (!profileId) {
+      console.error('Cannot save profile: missing profile or user id');
+      return;
+    }
+
     setSaving(true);
     try {
       const { data: updatedProfile, error } = await supabase
         .from('profiles')
         .update(formData)
-        .eq('id', user.id)
+        .eq('id', profileId)
         .select()
         .single();
 
-      if (!error && updatedProfile) {
+      if (error) {
+        console.error('Error saving profile:', error);
+        return;
+      }
+
+      if (updatedProfile) {
         setProfile(updatedProfile);
         setIsEditModalOpen(false);
       }
     } catch (err) {
-      console.error('Error saving profile:', err);
+      console.error('Unexpected error saving profile:', err);
     } finally {
       setSaving(false);
     }
