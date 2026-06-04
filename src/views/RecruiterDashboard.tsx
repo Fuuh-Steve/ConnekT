@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, CheckCircle, ChevronRight, Search, Users, Briefcase, User, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
 import { CountUp } from '../components/CountUp';
 import { supabase } from '../lib/supabase';
@@ -17,6 +17,14 @@ export const RecruiterDashboard = () => {
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [scheduledInterviews, setScheduledInterviews] = useState<any[]>([]);
+  const [activityFeed, setActivityFeed] = useState<any[]>([]);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [selectedApp, setSelectedApp] = useState<any>(null);
+  const [interviewDate, setInterviewDate] = useState('');
+  const [interviewTime, setInterviewTime] = useState('');
+  const [interviewLink, setInterviewLink] = useState('');
+
 
   const normalizeStatus = (status?: string | null) => {
     const value = status?.toString().trim().toLowerCase() || 'pending';
@@ -53,7 +61,7 @@ export const RecruiterDashboard = () => {
         const jobIds = jobsData.map(j => j.id);
         const { data: appsData, error: appsError } = await supabase
           .from('applications')
-          .select('id, job_id, student_id, status, created_at')
+          .select('id, job_id, student_id, status, created_at, interview_details')
           .in('job_id', jobIds)
           .order('created_at', { ascending: false });
 
@@ -67,6 +75,29 @@ export const RecruiterDashboard = () => {
         // Filter out applications with invalid student_ids
         const validApps = (appsData || []).filter((app: any) => app.student_id && typeof app.student_id === 'string');
         console.log('Valid applications:', validApps.length);
+
+        // Extract scheduled interviews (those with interview_details)
+        const interviews = validApps.filter((app: any) => app.interview_details);
+        setScheduledInterviews(interviews);
+
+        // Generate activity feed from applications
+        const activities = validApps.slice(0, 3).map((app: any, idx: number) => {
+          const statuses: any = {
+            'Pending': { text: 'New application received', type: 'new', time: '2m ago' },
+            'Reviewed': { text: 'Application reviewed', type: 'shortlist', time: '1h ago' },
+            'Interview': { text: 'Interview scheduled', type: 'alert', time: '3h ago' },
+            'Accepted': { text: 'Candidate accepted', type: 'shortlist', time: '4h ago' },
+            'Rejected': { text: 'Application rejected', type: 'alert', time: '5h ago' }
+          };
+          return {
+            text: statuses[app.status || 'Pending']?.text || 'New application received',
+            type: statuses[app.status || 'Pending']?.type || 'new',
+            time: statuses[app.status || 'Pending']?.time || '2m ago'
+          };
+        });
+        setActivityFeed(activities.length > 0 ? activities : [
+          { text: "No recent activity", type: "new", time: "N/A" }
+        ]);
 
         const applicationsWithDetails = validApps.map((app: any) => {
           const job = jobsData.find((job: any) => job.id === app.job_id);
@@ -106,6 +137,12 @@ export const RecruiterDashboard = () => {
                   ...app,
                   profiles: profileMap[app.student_id] || { full_name: 'Unknown Applicant', avatar_url: null, university: 'Not specified' }
                 })));
+
+                // Update scheduled interviews with candidate names
+                setScheduledInterviews(prev => prev.map(interview => ({
+                  ...interview,
+                  profiles: profileMap[interview.student_id] || { full_name: 'Candidate', avatar_url: null }
+                })));
               }
             } catch (err) {
               // Silently fail - profiles are optional
@@ -131,6 +168,47 @@ const filteredApplications = applications.filter(app => {
   const query = searchQuery.toLowerCase();
   return fullName.includes(query) || jobTitle.includes(query);
 });
+
+const handleScheduleInterview = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!selectedApp || !interviewDate || !interviewTime) {
+    alert('Please fill in all fields');
+    return;
+  }
+
+  try {
+    const { error } = await supabase
+      .from('applications')
+      .update({
+        interview_details: {
+          date: interviewDate,
+          time: interviewTime,
+          meet_link: interviewLink || 'https://meet.google.com'
+        },
+        status: 'Interview'
+      })
+      .eq('id', selectedApp.id);
+
+    if (error) {
+      console.error('Error scheduling interview:', error);
+      alert('Failed to schedule interview');
+      return;
+    }
+
+    alert('Interview scheduled successfully!');
+    setShowScheduleModal(false);
+    setSelectedApp(null);
+    setInterviewDate('');
+    setInterviewTime('');
+    setInterviewLink('');
+    
+    // Refresh dashboard data
+    fetchDashboardData();
+  } catch (err) {
+    console.error('Error:', err);
+    alert('Failed to schedule interview');
+  }
+};
 
 if (loading) {
   return (
@@ -207,57 +285,79 @@ return (
           Scheduled Interviews
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              onClick={() => typeof window !== 'undefined' && window.open('https://meet.google.com', '_blank')}
-              className="p-6 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] hover:border-[rgb(var(--accent))]/60 transition-all cursor-pointer group shadow-sm hover:shadow-2xl hover:shadow-[rgb(var(--accent))]/10"
-            >
-              <div className="flex items-center gap-5 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-[rgb(var(--bg-side))] flex items-center justify-center border border-[rgb(var(--border))] group-hover:scale-105 transition-transform shadow-sm">
-                  <User className="w-6 h-6 text-[rgb(var(--text-muted))]" />
+          {scheduledInterviews.length > 0 ? (
+            scheduledInterviews.map((interview: any) => (
+              <motion.div
+                key={interview.id}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                onClick={() => interview.interview_details?.meet_link && typeof window !== 'undefined' && window.open(interview.interview_details.meet_link, '_blank')}
+                className="p-6 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] hover:border-[rgb(var(--accent))]/60 transition-all cursor-pointer group shadow-sm hover:shadow-2xl hover:shadow-[rgb(var(--accent))]/10"
+              >
+                <div className="flex items-center gap-5 mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-[rgb(var(--bg-side))] flex items-center justify-center border border-[rgb(var(--border))] group-hover:scale-105 transition-transform shadow-sm overflow-hidden">
+                    {interview.profiles?.avatar_url ? (
+                      <Image
+                        src={interview.profiles.avatar_url}
+                        alt="Candidate"
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-6 h-6 text-[rgb(var(--text-muted))]" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{interview.profiles?.full_name || 'Candidate'}</p>
+                    <p className="text-[10px] text-[rgb(var(--text-muted))] uppercase font-bold tracking-widest opacity-80">{interview.jobs?.title || 'Position'}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-lg font-bold group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">Jane Smith {i}</p>
-                  <p className="text-[10px] text-[rgb(var(--text-muted))] uppercase font-bold tracking-widest opacity-80">Product Design Role</p>
+                <div className="flex items-center justify-between mt-8">
+                  <div className="px-4 py-2 rounded-xl bg-[rgb(var(--bg-side))] text-[rgb(var(--accent))] text-[11px] font-bold tracking-widest uppercase border border-[rgb(var(--border))]">
+                    {interview.interview_details?.date || 'TBD'}, {interview.interview_details?.time || ''}
+                  </div>
+                  {interview.interview_details?.meet_link && (
+                    <button className="text-[11px] font-bold text-[rgb(var(--accent))] underline underline-offset-8 uppercase tracking-widest group-hover:translate-x-2 transition-transform">
+                      Join Link
+                    </button>
+                  )}
                 </div>
-              </div>
-              <div className="flex items-center justify-between mt-8">
-                <div className="px-4 py-2 rounded-xl bg-[rgb(var(--bg-side))] text-[rgb(var(--accent))] text-[11px] font-bold tracking-widest uppercase border border-[rgb(var(--border))]">
-                  Today, 14:00
-                </div>
-                <button className="text-[11px] font-bold text-[rgb(var(--accent))] underline underline-offset-8 uppercase tracking-widest group-hover:translate-x-2 transition-transform">Join Link</button>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          ) : (
+            <div className="p-8 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] text-center">
+              <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-sm">No Scheduled Interviews</p>
+            </div>
+          )}
         </div>
       </section>
 
       <section className="space-y-8">
         <h3 className="text-2xl font-extrabold uppercase tracking-widest">Global Activity</h3>
         <div className="relative space-y-12 before:absolute before:left-5 before:top-2 before:bottom-2 before:w-0.75 before:bg-[rgb(var(--border))]">
-          {[
-            { text: "New application received for Frontend React role", time: "2m ago", type: "new" },
-            { text: "Shortlisted 5 candidates for Backend Node.js", time: "1h ago", type: "shortlist" },
-            { text: "Job posting 'UI Intern' is closing tomorrow", time: "3h ago", type: "alert" }
-          ].map((activity, i) => (
-            <div
-              key={i}
-              className="relative pl-14 group cursor-pointer"
-            >
-              <div className={cn(
-                "absolute left-0 top-1 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[rgb(var(--bg-main))] z-10 transition-transform group-hover:scale-125 group-hover:rotate-12",
-                activity.type === 'new' ? "bg-blue-500 shadow-xl shadow-blue-500/30" : activity.type === 'shortlist' ? "bg-emerald-500 shadow-xl shadow-emerald-500/30" : "bg-[rgb(var(--accent))] shadow-xl shadow-[rgb(var(--accent))]/30"
-              )}>
-                <div className="w-2 h-2 bg-white rounded-full"></div>
+          {activityFeed.length > 0 ? (
+            activityFeed.map((activity: any, i: number) => (
+              <div
+                key={i}
+                className="relative pl-14 group cursor-pointer"
+              >
+                <div className={cn(
+                  "absolute left-0 top-1 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[rgb(var(--bg-main))] z-10 transition-transform group-hover:scale-125 group-hover:rotate-12",
+                  activity.type === 'new' ? "bg-blue-500 shadow-xl shadow-blue-500/30" : activity.type === 'shortlist' ? "bg-emerald-500 shadow-xl shadow-emerald-500/30" : "bg-[rgb(var(--accent))] shadow-xl shadow-[rgb(var(--accent))]/30"
+                )}>
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <p className="text-sm text-[rgb(var(--text-main))] font-bold leading-tight group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{activity.text}</p>
+                <p className="text-[11px] text-[rgb(var(--text-muted))] mt-2 font-bold uppercase tracking-widest opacity-70">{activity.time}</p>
               </div>
-              <p className="text-sm text-[rgb(var(--text-main))] font-bold leading-tight group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{activity.text}</p>
-              <p className="text-[11px] text-[rgb(var(--text-muted))] mt-2 font-bold uppercase tracking-widest opacity-70">{activity.time}</p>
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">No activity yet</p>
             </div>
-          ))}
+          )}
         </div>
       </section>
     </div>
@@ -374,6 +474,16 @@ return (
                   <td className="px-6 md:px-10 py-8 text-right">
                     <div className="flex items-center justify-end gap-2 md:gap-3">
                       <button
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          setSelectedApp(app);
+                          setShowScheduleModal(true);
+                        }}
+                        className="px-3 md:px-4 py-2 bg-[rgb(var(--bg-side))] rounded-xl border border-[rgb(var(--border))] text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:border-[rgb(var(--accent))] transition-all whitespace-nowrap"
+                      >
+                        Schedule
+                      </button>
+                      <button
                         onClick={(e) => { e.stopPropagation(); router.push(`/applicants/${app.job_id}`); }}
                         className="px-3 md:px-4 py-2 bg-[rgb(var(--bg-side))] rounded-xl border border-[rgb(var(--border))] text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:border-[rgb(var(--accent))] transition-all whitespace-nowrap"
                       >
@@ -397,6 +507,84 @@ return (
         </div>
       </motion.div>
     </section>
+
+    <AnimatePresence>
+      {showScheduleModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowScheduleModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-3xl p-8 max-w-md w-full shadow-2xl"
+          >
+            <h2 className="text-2xl font-bold mb-6">Schedule Interview</h2>
+            <form onSubmit={handleScheduleInterview} className="space-y-6">
+              <div>
+                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">
+                  Candidate: {selectedApp?.profiles?.full_name}
+                </label>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">Date</label>
+                <input
+                  type="date"
+                  value={interviewDate}
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                  required
+                  placeholder="Select date"
+                  title="Interview date"
+                  className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">Time</label>
+                <input
+                  type="time"
+                  value={interviewTime}
+                  onChange={(e) => setInterviewTime(e.target.value)}
+                  required
+                  placeholder="Select time"
+                  title="Interview time"
+                  className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">Meet Link (optional)</label>
+                <input
+                  type="url"
+                  value={interviewLink}
+                  onChange={(e) => setInterviewLink(e.target.value)}
+                  placeholder="https://meet.google.com/..."
+                  className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowScheduleModal(false)}
+                  className="flex-1 py-3 border border-[rgb(var(--border))] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[rgb(var(--bg-side))] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 bg-[rgb(var(--accent))] text-white rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[rgb(var(--accent))]/90 transition-all"
+                >
+                  Schedule
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   </div>
 );
 };
