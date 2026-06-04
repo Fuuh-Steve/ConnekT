@@ -17,6 +17,8 @@ export const RecruiterDashboard = () => {
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [scheduledInterviews, setScheduledInterviews] = useState<any[]>([]);
+  const [activityFeed, setActivityFeed] = useState<any[]>([]);
 
   const normalizeStatus = (status?: string | null) => {
     const value = status?.toString().trim().toLowerCase() || 'pending';
@@ -33,6 +35,33 @@ export const RecruiterDashboard = () => {
         return 'Rejected';
       default:
         return status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Pending';
+    }
+  };
+
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const date = new Date(timestamp);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  const formatInterviewDateTime = (date?: string, time?: string) => {
+    if (!date) return 'Not scheduled';
+    try {
+      const d = new Date(date);
+      const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const timeStr = time || '00:00';
+      return `${dateStr}, ${timeStr}`;
+    } catch {
+      return 'Not scheduled';
     }
   };
 
@@ -80,6 +109,38 @@ export const RecruiterDashboard = () => {
         });
 
         setApplications(applicationsWithDetails);
+
+        // Extract scheduled interviews
+        const interviews = applicationsWithDetails
+          .filter((app: any) => app.interview_details)
+          .map((app: any) => ({
+            ...app,
+            interview_date: app.interview_details?.date,
+            interview_time: app.interview_details?.time,
+            interview_link: app.interview_details?.link
+          }))
+          .sort((a: any, b: any) => {
+            const dateA = new Date(a.interview_date);
+            const dateB = new Date(b.interview_date);
+            return dateA.getTime() - dateB.getTime();
+          });
+        setScheduledInterviews(interviews);
+
+        // Generate activity feed from applications
+        const activities = applicationsWithDetails.map((app: any) => {
+          const statusText = app.status === 'Pending' ? 'submitted application' : 
+                           app.status === 'Reviewed' ? 'application reviewed' :
+                           app.status === 'Interview' ? 'scheduled for interview' :
+                           app.status === 'Accepted' ? 'accepted' : 'rejected';
+          const activityType = app.status === 'Pending' ? 'new' : 
+                             app.status === 'Interview' ? 'shortlist' : 'alert';
+          return {
+            text: `${app.profiles?.full_name || 'Candidate'} ${statusText} for ${app.jobs?.title}`,
+            time: formatTimeAgo(app.created_at),
+            type: activityType
+          };
+        });
+        setActivityFeed(activities);
 
         // Fetch profiles separately (optional - dashboard works without them)
         const studentIds = [...new Set(validApps.map((app: any) => app.student_id).filter(id => {
@@ -206,59 +267,80 @@ return (
           <CheckCircle className="w-7 h-7 text-emerald-500" />
           Scheduled Interviews
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              onClick={() => typeof window !== 'undefined' && window.open('https://meet.google.com', '_blank')}
-              className="p-6 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] hover:border-[rgb(var(--accent))]/60 transition-all cursor-pointer group shadow-sm hover:shadow-2xl hover:shadow-[rgb(var(--accent))]/10"
-            >
-              <div className="flex items-center gap-5 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-[rgb(var(--bg-side))] flex items-center justify-center border border-[rgb(var(--border))] group-hover:scale-105 transition-transform shadow-sm">
-                  <User className="w-6 h-6 text-[rgb(var(--text-muted))]" />
+        {scheduledInterviews.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+            {scheduledInterviews.slice(0, 4).map((interview) => (
+              <motion.div
+                key={interview.id}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                onClick={() => interview.interview_link && typeof window !== 'undefined' && window.open(interview.interview_link, '_blank')}
+                className="p-6 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] hover:border-[rgb(var(--accent))]/60 transition-all cursor-pointer group shadow-sm hover:shadow-2xl hover:shadow-[rgb(var(--accent))]/10"
+              >
+                <div className="flex items-center gap-5 mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-[rgb(var(--bg-side))] flex items-center justify-center border border-[rgb(var(--border))] group-hover:scale-105 transition-transform shadow-sm overflow-hidden">
+                    {interview.profiles?.avatar_url ? (
+                      <Image
+                        src={interview.profiles.avatar_url}
+                        alt="Avatar"
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-6 h-6 text-[rgb(var(--text-muted))]" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{interview.profiles?.full_name || 'Candidate'}</p>
+                    <p className="text-[10px] text-[rgb(var(--text-muted))] uppercase font-bold tracking-widest opacity-80">{interview.jobs?.title}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-lg font-bold group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">Jane Smith {i}</p>
-                  <p className="text-[10px] text-[rgb(var(--text-muted))] uppercase font-bold tracking-widest opacity-80">Product Design Role</p>
+                <div className="flex items-center justify-between mt-8">
+                  <div className="px-4 py-2 rounded-xl bg-[rgb(var(--bg-side))] text-[rgb(var(--accent))] text-[11px] font-bold tracking-widest uppercase border border-[rgb(var(--border))]">
+                    {formatInterviewDateTime(interview.interview_date, interview.interview_time)}
+                  </div>
+                  {interview.interview_link && (
+                    <button className="text-[11px] font-bold text-[rgb(var(--accent))] underline underline-offset-8 uppercase tracking-widest group-hover:translate-x-2 transition-transform">Join Link</button>
+                  )}
                 </div>
-              </div>
-              <div className="flex items-center justify-between mt-8">
-                <div className="px-4 py-2 rounded-xl bg-[rgb(var(--bg-side))] text-[rgb(var(--accent))] text-[11px] font-bold tracking-widest uppercase border border-[rgb(var(--border))]">
-                  Today, 14:00
-                </div>
-                <button className="text-[11px] font-bold text-[rgb(var(--accent))] underline underline-offset-8 uppercase tracking-widest group-hover:translate-x-2 transition-transform">Join Link</button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-12 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] text-center">
+            <CheckCircle className="w-12 h-12 text-[rgb(var(--text-muted))] opacity-20 mx-auto mb-4" />
+            <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-sm">No scheduled interviews</p>
+          </div>
+        )}
       </section>
 
       <section className="space-y-8">
         <h3 className="text-2xl font-extrabold uppercase tracking-widest">Global Activity</h3>
-        <div className="relative space-y-12 before:absolute before:left-5 before:top-2 before:bottom-2 before:w-0.75 before:bg-[rgb(var(--border))]">
-          {[
-            { text: "New application received for Frontend React role", time: "2m ago", type: "new" },
-            { text: "Shortlisted 5 candidates for Backend Node.js", time: "1h ago", type: "shortlist" },
-            { text: "Job posting 'UI Intern' is closing tomorrow", time: "3h ago", type: "alert" }
-          ].map((activity, i) => (
-            <div
-              key={i}
-              className="relative pl-14 group cursor-pointer"
-            >
-              <div className={cn(
-                "absolute left-0 top-1 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[rgb(var(--bg-main))] z-10 transition-transform group-hover:scale-125 group-hover:rotate-12",
-                activity.type === 'new' ? "bg-blue-500 shadow-xl shadow-blue-500/30" : activity.type === 'shortlist' ? "bg-emerald-500 shadow-xl shadow-emerald-500/30" : "bg-[rgb(var(--accent))] shadow-xl shadow-[rgb(var(--accent))]/30"
-              )}>
-                <div className="w-2 h-2 bg-white rounded-full"></div>
+        {activityFeed.length > 0 ? (
+          <div className="relative space-y-12 before:absolute before:left-5 before:top-2 before:bottom-2 before:w-0.75 before:bg-[rgb(var(--border))]">
+            {activityFeed.slice(0, 10).map((activity, i) => (
+              <div
+                key={i}
+                className="relative pl-14 group cursor-pointer"
+              >
+                <div className={cn(
+                  "absolute left-0 top-1 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[rgb(var(--bg-main))] z-10 transition-transform group-hover:scale-125 group-hover:rotate-12",
+                  activity.type === 'new' ? "bg-blue-500 shadow-xl shadow-blue-500/30" : activity.type === 'shortlist' ? "bg-emerald-500 shadow-xl shadow-emerald-500/30" : "bg-[rgb(var(--accent))] shadow-xl shadow-[rgb(var(--accent))]/30"
+                )}>
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <p className="text-sm text-[rgb(var(--text-main))] font-bold leading-tight group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{activity.text}</p>
+                <p className="text-[11px] text-[rgb(var(--text-muted))] mt-2 font-bold uppercase tracking-widest opacity-70">{activity.time}</p>
               </div>
-              <p className="text-sm text-[rgb(var(--text-main))] font-bold leading-tight group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{activity.text}</p>
-              <p className="text-[11px] text-[rgb(var(--text-muted))] mt-2 font-bold uppercase tracking-widest opacity-70">{activity.time}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-12 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] text-center">
+            <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-sm">No recent activity</p>
+          </div>
+        )}
       </section>
     </div>
 
