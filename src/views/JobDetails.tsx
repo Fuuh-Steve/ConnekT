@@ -92,7 +92,7 @@ export const JobDetails = () => {
         throw error;
       }
 
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         setSuccess(true);
       }
     } catch (err: any) {
