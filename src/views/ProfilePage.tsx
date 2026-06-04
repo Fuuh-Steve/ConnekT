@@ -24,12 +24,55 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   const isOwnProfile = !username || (profile && user && profile.id === user.id); 
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState<any>({
+    full_name: '',
+    username: '',
+    bio: '',
+    location: '',
+    phone: '',
+    availability_status: '',
+    company_name: '',
+    company_logo: '',
+    experience: [],
+    education: [],
+    skills: [],
+    github_url: '',
+    linkedin_url: '',
+    twitter_url: '',
+    portfolio_url: '',
+    resume_url: '',
+  });
   const [selectedExperience, setSelectedExperience] = useState<any>(null);
   const [subscription, setSubscription] = useState<'free' | 'pro'>('free');
   
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
+
+  const buildEditForm = (profileData: any) => ({
+    full_name: profileData?.full_name || '',
+    username: profileData?.username || '',
+    bio: profileData?.bio || '',
+    location: profileData?.location || '',
+    phone: profileData?.phone || '',
+    availability_status: profileData?.availability_status || '',
+    company_name: profileData?.company_name || '',
+    company_logo: profileData?.company_logo || '',
+    experience: profileData?.experience || [],
+    education: profileData?.education || [],
+    skills: profileData?.skills || [],
+    github_url: profileData?.github_url || '',
+    linkedin_url: profileData?.linkedin_url || '',
+    twitter_url: profileData?.twitter_url || '',
+    portfolio_url: profileData?.portfolio_url || '',
+    resume_url: profileData?.resume_url || '',
+  });
+
+  const openEditModal = () => {
+    if (!profile) return;
+    setEditFormData(buildEditForm(profile));
+    setIsEditModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -328,7 +371,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
            <div className="pb-2 md:pb-4 w-full md:w-auto">
               {isOwnProfile ? (
                  <button 
-                  onClick={() => setIsEditModalOpen(true)}
+                  onClick={openEditModal}
                   className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl shadow-lg shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
                  >
                     Edit Profile <Edit3 className="w-4 h-4" />
@@ -554,58 +597,22 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
         isOpen={isEditModalOpen} 
         onClose={() => setIsEditModalOpen(false)} 
         onSave={handleSaveProfile}
-        profile={profile}
+        formData={editFormData}
+        setFormData={setEditFormData}
         saving={saving}
+        profileRole={profile?.role}
       />
     </div>
   );
 };
 
-const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => {
-  const [formData, setFormData] = useState({
-    full_name: profile.full_name || '',
-    username: profile.username || '',
-    bio: profile.bio || '',
-    location: profile.location || '',
-    phone: profile.phone || '',
-    availability_status: profile.availability_status || '',
-    company_name: profile.company_name || '',
-    company_logo: profile.company_logo || '',
-    experience: profile.experience || [],
-    education: profile.education || [],
-    skills: profile.skills || [],
-    github_url: profile.github_url || '',
-    linkedin_url: profile.linkedin_url || '',
-    twitter_url: profile.twitter_url || '',
-    portfolio_url: profile.portfolio_url || '',
-    resume_url: profile.resume_url || '',
-  });
-
+const EditProfileModal = ({ isOpen, onClose, onSave, formData, setFormData, saving, profileRole }: any) => {
   const [activeTab, setActiveTab] = useState<'basic' | 'exp' | 'edu' | 'skills' | 'social'>('basic');
 
   useEffect(() => {
     if (!isOpen) return;
-
-    setFormData({
-      full_name: profile.full_name || '',
-      username: profile.username || '',
-      bio: profile.bio || '',
-      location: profile.location || '',
-      phone: profile.phone || '',
-      availability_status: profile.availability_status || '',
-      company_name: profile.company_name || '',
-      company_logo: profile.company_logo || '',
-      experience: profile.experience || [],
-      education: profile.education || [],
-      skills: profile.skills || [],
-      github_url: profile.github_url || '',
-      linkedin_url: profile.linkedin_url || '',
-      twitter_url: profile.twitter_url || '',
-      portfolio_url: profile.portfolio_url || '',
-      resume_url: profile.resume_url || '',
-    });
     setActiveTab('basic');
-  }, [profile, isOpen]);
+  }, [isOpen]);
 
   const addExperience = () => {
     setFormData({
@@ -752,7 +759,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                     />
                   </div>
 
-                  {profile.role === 'recruiter' && (
+                  {profileRole === 'recruiter' && (
                     <div className="pt-4 border-t border-[rgb(var(--border))] space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
                       <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--accent))]">Recruiter Information</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
