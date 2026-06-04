@@ -79,13 +79,13 @@ export const JobDetails = () => {
     setApplying(true);
     try {
       const studentId = user.id;
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from('applications')
         .insert([{ 
           job_id: jobId,
           student_id: studentId,
           status: 'Pending'
-        }]);
+        }]) as unknown as Promise<{ data: any; error: any }>);
 
       if (error) {
         console.error('Error applying:', error, 'studentId:', studentId, 'jobId:', jobId);
