@@ -71,29 +71,36 @@ export const JobDetails = () => {
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
+    if (!user?.id) {
       router.push('/login');
       return;
     }
-    
+
     setApplying(true);
     try {
-      const { error } = await supabase
+      const studentId = user.id;
+      const { data, error } = await supabase
         .from('applications')
-        .insert({
+        .insert([{ 
           job_id: jobId,
-          student_id: user.id,
-          status: 'pending'
-        });
+          student_id: studentId,
+          status: 'Pending'
+        }]);
 
-      if (error) throw error;
-      
-      setSuccess(true);
+      if (error) {
+        console.error('Error applying:', error, 'studentId:', studentId, 'jobId:', jobId);
+        throw error;
+      }
+
+      if (data && data.length > 0) {
+        setSuccess(true);
+      }
     } catch (err: any) {
       console.error('Error applying:', err);
-      // If already applied, Supabase will return error because of unique constraint
       if (err.code === '23505') {
         alert('You have already applied for this position.');
+      } else if (err.code === '42501') {
+        alert('Application denied by database permissions. Please make sure you are signed in and try again.');
       } else {
         alert('Failed to submit application. Please try again.');
       }
