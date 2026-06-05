@@ -44,6 +44,35 @@ export const RecruiterDashboard = () => {
     }
   };
 
+ const getTimeAgo = (dateString: string) => {
+  const created = new Date(dateString).getTime();
+
+  // Current local browser time
+  const now = new Date().getTime();
+
+  const diffInSeconds = Math.floor((now - created) / 1000);
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds}s ago`;
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m ago`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+
+  if (diffInHours < 24) {
+    return `${diffInHours}h ago`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  return `${diffInDays}d ago`;
+};
+
   const fetchDashboardData = React.useCallback(async () => {
     if (!user) return;
     setLoading(true);
@@ -81,18 +110,18 @@ export const RecruiterDashboard = () => {
         setScheduledInterviews(interviews);
 
         // Generate activity feed from applications
-        const activities = validApps.slice(0, 3).map((app: any, idx: number) => {
+        const activities = validApps.slice(0, 3).map((app: any) => {
           const statuses: any = {
-            'Pending': { text: 'New application received', type: 'new', time: '2m ago' },
-            'Reviewed': { text: 'Application reviewed', type: 'shortlist', time: '1h ago' },
-            'Interview': { text: 'Interview scheduled', type: 'alert', time: '3h ago' },
-            'Accepted': { text: 'Candidate accepted', type: 'shortlist', time: '4h ago' },
-            'Rejected': { text: 'Application rejected', type: 'alert', time: '5h ago' }
+            Pending: { text: 'New application received', type: 'new' },
+            Reviewed: { text: 'Application reviewed', type: 'shortlist' },
+            Interview: { text: 'Interview scheduled', type: 'alert' },
+            Accepted: { text: 'Candidate accepted', type: 'shortlist' },
+            Rejected: { text: 'Application rejected', type: 'alert' }
           };
           return {
             text: statuses[app.status || 'Pending']?.text || 'New application received',
             type: statuses[app.status || 'Pending']?.type || 'new',
-            time: statuses[app.status || 'Pending']?.time || '2m ago'
+            time: getTimeAgo(app.created_at)
           };
         });
         setActivityFeed(activities.length > 0 ? activities : [
