@@ -11,7 +11,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!loading && role !== 'admin') {
-      router.push(role === 'guest' ? '/login' : '/dashboard');
+      router.push(role === 'guest' ? '/auth' : '/dashboard');
     }
   }, [role, loading, router]);
 

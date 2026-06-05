@@ -26,7 +26,7 @@ export const PostJobPage = () => {
 
     const handlePublish = async () => {
         if (!user) {
-            router.push('/login');
+            router.push('/auth');
             return;
         }
         setLoading(true);

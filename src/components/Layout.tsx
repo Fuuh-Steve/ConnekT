@@ -47,7 +47,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     router.push('/');
   };
 
-  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const isAuthPage = pathname === '/auth';
 
   return (
     <>

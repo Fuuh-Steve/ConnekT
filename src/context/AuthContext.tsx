@@ -127,34 +127,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setRole('student');
         }
       } else {
-        // Profile exists; check if we need to update it with pending_role
         const profileRole = data.role as UserRole;
-        console.log('[fetchProfile] Existing profile found with role:', profileRole);
-        const shouldUpdateRole = pendingRole && (pendingRole === 'recruiter' || pendingRole === 'student') && pendingRole !== profileRole;
-
-        console.log('[fetchProfile] shouldUpdateRole:', shouldUpdateRole, 'pendingRole:', pendingRole, 'profileRole:', profileRole);
-
-        if (shouldUpdateRole) {
-          console.log('Updating existing profile from', profileRole, 'to', pendingRole, 'based on pending_role');
-          
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ role: pendingRole })
-            .eq('id', userId);
-
-          if (updateError) {
-            console.error('Failed to update profile role:', updateError);
-            setRole(profileRole);
-          } else {
-            console.log('[fetchProfile] Successfully updated profile role to:', pendingRole);
-            setRole(pendingRole as UserRole);
-          }
-        } else {
-          setRole(profileRole);
-        }
-        
+        setRole(profileRole);
         localStorage.removeItem('pending_role');
-        console.log('Fetched existing profile role:', profileRole);
       }
     } catch (err) {
       console.error('Unexpected error fetching profile:', err);

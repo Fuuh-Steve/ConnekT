@@ -72,7 +72,7 @@ export const JobDetails = () => {
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.id) {
-      router.push('/login');
+      router.push('/auth');
       return;
     }
 

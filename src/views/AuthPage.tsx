@@ -1,37 +1,85 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { User, Briefcase, ChevronRight, Zap, Globe, ShieldCheck, Mail, Lock } from 'lucide-react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { User, Briefcase, ChevronRight, Zap, Globe, ShieldCheck, Mail, Lock, MailCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { UserRole } from '../types';
 import { supabase } from '../lib/supabase';
 
-export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 'signup' }) => {
-  const [isLogin, setIsLogin] = useState(defaultMode === 'login');
-  const [selectedRole, setSelectedRole] = useState<UserRole>('student');
+function AuthPageInner() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isLogin = searchParams.get('mode') !== 'signup';
+  const selectedRole: UserRole = searchParams.get('role') === 'recruiter' ? 'recruiter' : 'student';
+
+  const buildUrl = (updates: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(updates)) {
+      params.set(key, value);
+    }
+    if (!params.get('mode')) params.set('mode', 'login');
+    if (!params.get('role')) params.set('role', 'student');
+    return `${pathname}?${params.toString()}`;
+  };
+
+  React.useEffect(() => {
+    const mode = searchParams.get('mode');
+    const role = searchParams.get('role');
+    if (!mode || !role) {
+      router.replace(buildUrl({}));
+    }
+  }, []);
+
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
-  const router = useRouter();
+  const [fieldErrors, setFieldErrors] = useState<{ fullName?: string; email?: string; password?: string }>({});
+  const [showEmailModal, setShowEmailModal] = useState(false);
+
+  const mode = searchParams.get('mode');
+  React.useEffect(() => {
+    setError(null);
+    setInfoMessage(null);
+    setFieldErrors({});
+  }, [mode]);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validate = () => {
+    const errors: { fullName?: string; email?: string; password?: string } = {};
+    if (!isLogin && fullName.trim().length < 2)
+      errors.fullName = 'Full name must be at least 2 characters.';
+    if (!emailRegex.test(email.trim()))
+      errors.email = 'Please enter a valid email address.';
+    if (!isLogin && password.length < 8)
+      errors.password = 'Password must be at least 8 characters.';
+    else if (isLogin && !password)
+      errors.password = 'Password is required.';
+    return errors;
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    setInfoMessage(null);
+
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      setInfoMessage(null);
-      // Basic email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email.trim())) {
-        throw new Error('Please enter a valid email address.');
-      }
 
       if (isLogin) {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -39,8 +87,6 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
           password
         });
         if (signInError) throw signInError;
-        
-        // Wait a moment for the auth state to update
         await new Promise(resolve => setTimeout(resolve, 500));
         router.push('/dashboard');
         return;
@@ -59,13 +105,10 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
       if (signUpError) throw signUpError;
 
       if (data?.user && !data.session) {
-        setInfoMessage('Your account was created. Please check your email to confirm your address before signing in.');
-        setIsLogin(true);
+        setShowEmailModal(true);
         return;
       }
 
-      // Profiles are handled by the database trigger
-      // Wait for profile creation to complete
       await new Promise(resolve => setTimeout(resolve, 500));
       router.push('/dashboard');
     } catch (err: any) {
@@ -81,11 +124,7 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
 
   const handleGoogleAuth = async () => {
     try {
-      // Store the selected role in localStorage so we can retrieve it after redirect
-      console.log('[handleGoogleAuth] Setting pending_role to:', selectedRole);
       localStorage.setItem('pending_role', selectedRole);
-      console.log('[handleGoogleAuth] pending_role in localStorage:', localStorage.getItem('pending_role'));
-      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -104,14 +143,13 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 relative bg-[rgb(var(--bg-main))] overflow-x-hidden">
-      {/* Background blobs for depth */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[rgb(var(--accent))]/10 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]"></div>
       </div>
 
-      <Link 
-        href="/" 
+      <Link
+        href="/"
         className="absolute top-6 sm:top-10 left-6 sm:left-10 flex items-center gap-3 text-sm sm:text-base font-bold text-[rgb(var(--text-muted))] hover:text-[rgb(var(--accent))] transition-all group z-50 py-2 sm:py-0"
       >
         <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center group-hover:bg-[rgb(var(--accent))] group-hover:text-white transition-all shadow-sm">
@@ -121,9 +159,7 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
         <span className="sm:hidden">Back</span>
       </Link>
 
-      <div 
-        className="max-w-4xl w-full bg-[rgb(var(--bg-main))] p-8 sm:p-10 md:p-14 rounded-[2.5rem] sm:rounded-[4rem] shadow-hard border border-[rgb(var(--border))] flex flex-col md:flex-row gap-10 sm:gap-14 mt-28 sm:mt-10 md:mt-0 relative z-10"
-      >
+      <div className="max-w-4xl w-full bg-[rgb(var(--bg-main))] p-8 sm:p-10 md:p-14 rounded-[2.5rem] sm:rounded-[4rem] shadow-hard border border-[rgb(var(--border))] flex flex-col md:flex-row gap-10 sm:gap-14 mt-28 sm:mt-10 md:mt-0 relative z-10">
         <div className="flex-1 space-y-8">
           <div className="space-y-4">
             <div className="w-16 h-16 bg-linear-to-br from-[rgb(var(--accent))] to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-[rgb(var(--accent))]/20">
@@ -136,30 +172,6 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
               {isLogin ? "Sign in to access your dashboard and manage your tech career." : "Create your account and bridge the gap from campus to career."}
             </p>
           </div>
-
-          <div className="space-y-6">
-             <div className="flex items-center bg-[rgb(var(--bg-side))] p-2 rounded-2xl border border-[rgb(var(--border))]">
-               <button 
-                 onClick={() => setIsLogin(false)}
-                 className={cn(
-                   "flex-1 py-3 text-[14px] sm:text-[15px] font-bold rounded-xl transition-all",
-                   !isLogin ? "bg-white dark:bg-slate-800 text-[rgb(var(--accent))] shadow-lg" : "text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))]"
-                 )}
-               >
-                 Join Now
-               </button>
-               <div className="w-px h-6 bg-[rgb(var(--border))] mx-2"></div>
-               <button 
-                 onClick={() => setIsLogin(true)}
-                 className={cn(
-                   "flex-1 py-3 text-[14px] sm:text-[15px] font-bold rounded-xl transition-all",
-                   isLogin ? "bg-white dark:bg-slate-800 text-[rgb(var(--accent))] shadow-lg" : "text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))]"
-                 )}
-               >
-                 Sign In
-               </button>
-             </div>
-          </div>
         </div>
 
         <div className="flex-[1.3] space-y-8">
@@ -169,19 +181,19 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
                 {isLogin ? 'Access your portal' : 'Choose your path'}
               </label>
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                <RoleSelectionCard 
+                <RoleSelectionCard
                   id="student"
                   icon={User}
                   label="Student"
                   selected={selectedRole === 'student'}
-                  onClick={() => setSelectedRole('student')}
+                  onClick={() => router.replace(buildUrl({ role: 'student' }))}
                 />
-                <RoleSelectionCard 
+                <RoleSelectionCard
                   id="recruiter"
                   icon={Briefcase}
                   label="Recruiter"
                   selected={selectedRole === 'recruiter'}
-                  onClick={() => setSelectedRole('recruiter')}
+                  onClick={() => router.replace(buildUrl({ role: 'recruiter' }))}
                 />
               </div>
             </div>
@@ -199,47 +211,62 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
                   <p>{infoMessage}</p>
                 </div>
               )}
-              
+
               {!isLogin && (
-                <div className="relative animate-in fade-in slide-in-from-top-2 duration-300">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[rgb(var(--text-muted))]" />
-                  <input 
-                    type="text" 
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Full Name"
-                    className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl py-4.5 pl-12 pr-6 text-[15px] font-medium focus:outline-none focus:border-[rgb(var(--accent))] transition-all shadow-sm"
-                  />
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[rgb(var(--text-muted))]" />
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => { setFullName(e.target.value); setFieldErrors(prev => ({ ...prev, fullName: undefined })); }}
+                      placeholder="Full Name"
+                      className={cn(
+                        "w-full bg-[rgb(var(--bg-side))] border rounded-2xl py-4.5 pl-12 pr-6 text-[15px] font-medium focus:outline-none transition-all shadow-sm",
+                        fieldErrors.fullName ? "border-red-500 focus:border-red-500" : "border-[rgb(var(--border))] focus:border-[rgb(var(--accent))]"
+                      )}
+                    />
+                  </div>
+                  {fieldErrors.fullName && <p className="text-red-500 text-xs font-semibold mt-1.5 ml-1">{fieldErrors.fullName}</p>}
                 </div>
               )}
 
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[rgb(var(--text-muted))]" />
-                <input 
-                  type="email" 
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address"
-                  className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl py-4.5 pl-12 pr-6 text-[15px] font-medium focus:outline-none focus:border-[rgb(var(--accent))] transition-all shadow-sm"
-                />
+              <div>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[rgb(var(--text-muted))]" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setFieldErrors(prev => ({ ...prev, email: undefined })); }}
+                    placeholder="Email address"
+                    className={cn(
+                      "w-full bg-[rgb(var(--bg-side))] border rounded-2xl py-4.5 pl-12 pr-6 text-[15px] font-medium focus:outline-none transition-all shadow-sm",
+                      fieldErrors.email ? "border-red-500 focus:border-red-500" : "border-[rgb(var(--border))] focus:border-[rgb(var(--accent))]"
+                    )}
+                  />
+                </div>
+                {fieldErrors.email && <p className="text-red-500 text-xs font-semibold mt-1.5 ml-1">{fieldErrors.email}</p>}
               </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[rgb(var(--text-muted))]" />
-                <input 
-                  type="password" 
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl py-4.5 pl-12 pr-6 text-[15px] focus:outline-none focus:border-[rgb(var(--accent))] transition-all font-mono shadow-sm"
-                />
+              <div>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[rgb(var(--text-muted))]" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setFieldErrors(prev => ({ ...prev, password: undefined })); }}
+                    placeholder="Password"
+                    className={cn(
+                      "w-full bg-[rgb(var(--bg-side))] border rounded-2xl py-4.5 pl-12 pr-6 text-[15px] focus:outline-none transition-all font-mono shadow-sm",
+                      fieldErrors.password ? "border-red-500 focus:border-red-500" : "border-[rgb(var(--border))] focus:border-[rgb(var(--accent))]"
+                    )}
+                  />
+                </div>
+                {fieldErrors.password && <p className="text-red-500 text-xs font-semibold mt-1.5 ml-1">{fieldErrors.password}</p>}
               </div>
             </div>
 
             <div className="space-y-5 pt-2">
-              <button 
+              <button
                 type="submit"
                 disabled={loading}
                 className="w-full py-5 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl hover:bg-[rgb(var(--accent))]/90 active:scale-[0.98] transition-all shadow-xl shadow-[rgb(var(--accent))]/20 flex items-center justify-center gap-3 text-lg disabled:opacity-70 disabled:cursor-not-allowed"
@@ -260,7 +287,7 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
                 <div className="grow border-t border-[rgb(var(--border))]"></div>
               </div>
 
-              <button 
+              <button
                 type="button"
                 onClick={handleGoogleAuth}
                 className="w-full py-4.5 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] hover:border-[rgb(var(--accent))]/40 font-bold rounded-2xl flex items-center justify-center gap-4 text-base transition-all shadow-sm group"
@@ -280,10 +307,10 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
             <p className="text-base text-[rgb(var(--text-muted))] font-bold">
               {isLogin ? (
                 <>
-                  New to ConnekT? {" "}
-                  <button 
+                  New to ConnekT?{' '}
+                  <button
                     type="button"
-                    onClick={() => setIsLogin(false)}
+                    onClick={() => router.push(buildUrl({ mode: 'signup', role: selectedRole }))}
                     className="text-[rgb(var(--accent))] hover:underline"
                   >
                     Create a free account
@@ -291,10 +318,10 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
                 </>
               ) : (
                 <>
-                  Already have an account? {" "}
-                  <button 
+                  Already have an account?{' '}
+                  <button
                     type="button"
-                    onClick={() => setIsLogin(true)}
+                    onClick={() => router.push(buildUrl({ mode: 'login', role: selectedRole }))}
                     className="text-[rgb(var(--accent))] hover:underline shadow-sm"
                   >
                     Sign in here
@@ -302,16 +329,65 @@ export const AuthPage = ({ defaultMode = 'login' }: { defaultMode?: 'login' | 's
                 </>
               )}
             </p>
-            
-            {/* <p className="text-[11px] text-center text-[rgb(var(--text-muted))] font-bold uppercase tracking-[0.2em] opacity-50">
-              Enterprise Grade AES-256 Encryption
-            </p> */}
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showEmailModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={() => { setShowEmailModal(false); router.replace(buildUrl({ mode: 'login' })); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 16 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-3xl p-8 sm:p-10 max-w-md w-full shadow-2xl text-center space-y-6"
+            >
+              <div className="flex justify-center">
+                <div className="w-20 h-20 rounded-2xl bg-[rgb(var(--accent))]/10 flex items-center justify-center">
+                  <MailCheck className="w-10 h-10 text-[rgb(var(--accent))]" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h2 className="text-2xl font-extrabold text-[rgb(var(--text-main))]">Check your inbox</h2>
+                <p className="text-[rgb(var(--text-muted))] font-medium leading-relaxed">
+                  We sent a verification link to{' '}
+                  <span className="text-[rgb(var(--text-main))] font-bold">{email}</span>.
+                  Click the link to activate your account.
+                </p>
+              </div>
+
+              <p className="text-xs text-[rgb(var(--text-muted))] font-medium">
+                Can't find it? Check your spam folder.
+              </p>
+
+              <button
+                onClick={() => { setShowEmailModal(false); router.replace(buildUrl({ mode: 'login' })); }}
+                className="w-full py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl hover:bg-[rgb(var(--accent))]/90 active:scale-[0.98] transition-all shadow-lg shadow-[rgb(var(--accent))]/20"
+              >
+                Got it
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
-};
+}
+
+export const AuthPage = () => (
+  <Suspense>
+    <AuthPageInner />
+  </Suspense>
+);
 
 const RoleSelectionCard = ({ icon: Icon, label, selected, onClick }: any) => (
   <button
@@ -331,4 +407,3 @@ const RoleSelectionCard = ({ icon: Icon, label, selected, onClick }: any) => (
     <p className={cn("text-sm font-bold", selected ? "text-[rgb(var(--text-main))]" : "text-[rgb(var(--text-muted))]")}>{label}</p>
   </button>
 );
-

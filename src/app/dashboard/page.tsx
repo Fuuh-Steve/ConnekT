@@ -16,7 +16,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!loading) {
       if (role === 'guest') {
-        router.push('/login');
+        router.push('/auth');
       } else if (role === 'admin') {
         router.push('/admin');
       }

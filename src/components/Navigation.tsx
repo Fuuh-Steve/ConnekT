@@ -220,21 +220,21 @@ export const TopNav = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
       <div className="flex items-center gap-2 sm:gap-4 ml-auto">
         {role === 'guest' && (
           <div className="hidden sm:flex items-center bg-[rgb(var(--bg-side))] p-1 rounded-xl border border-[rgb(var(--border))] mr-2">
-            <Link 
-              href="/signup" 
+            <Link
+              href="/auth?mode=signup"
               className={cn(
                 "px-5 py-2 text-[12px] font-extrabold rounded-lg transition-all uppercase tracking-widest bg-[rgb(var(--accent))] text-white shadow-lg shadow-[rgb(var(--accent))]/20 hover:scale-105 active:scale-95",
-                pathname === '/signup' && "ring-2 ring-white/20"
+                pathname === '/auth' && "ring-2 ring-white/20"
               )}
             >
               Sign Up
             </Link>
             <div className="w-px h-4 bg-[rgb(var(--border))] mx-1"></div>
-            <Link 
-              href="/login" 
+            <Link
+              href="/auth"
               className={cn(
                 "px-5 py-2 text-[12px] font-bold rounded-lg transition-all uppercase tracking-wider",
-                pathname === '/login' ? "bg-[rgb(var(--bg-main))] text-[rgb(var(--accent))] shadow-sm" : "text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))]"
+                pathname === '/auth' ? "bg-[rgb(var(--bg-main))] text-[rgb(var(--accent))] shadow-sm" : "text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))]"
               )}
             >
               Sign In
@@ -379,7 +379,7 @@ export const TopNav = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
           </div>
         ) : (
           <div className="sm:hidden">
-            <Link href="/login" className="p-2 text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] transition-colors">
+            <Link href="/auth" className="p-2 text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] transition-colors">
               <User className="w-6 h-6" />
             </Link>
           </div>

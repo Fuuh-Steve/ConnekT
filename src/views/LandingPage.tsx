@@ -103,7 +103,7 @@ export const LandingPage = () => {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
           >
-            <Link href="/signup" className="w-full sm:w-auto px-10 py-5 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl hover:bg-[rgb(var(--accent))]/90 transition-all text-center flex items-center justify-center shadow-2xl shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 text-lg">
+            <Link href="/auth?mode=signup" className="w-full sm:w-auto px-10 py-5 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl hover:bg-[rgb(var(--accent))]/90 transition-all text-center flex items-center justify-center shadow-2xl shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 text-lg">
               Create Free Account
             </Link>
           </motion.div>
@@ -202,7 +202,7 @@ export const LandingPage = () => {
 
                 <div className="pt-4">
                   <Link
-                    href="/signup"
+                    href="/auth?mode=signup"
                     onClick={() => setSelectedFeature(null)}
                     className="w-full py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 flex items-center justify-center gap-3 text-base transition-all shadow-xl shadow-[rgb(var(--accent))]/20"
                   >
@@ -267,7 +267,7 @@ export const LandingPage = () => {
             <h2 className="text-4xl md:text-7xl font-extrabold tracking-tight">Start Your Career <br /> Journey Today.</h2>
             <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">Don&apos;t miss out on life-changing opportunities. Join thousands of students already building their future.</p>
             <div className="flex justify-center pt-4">
-              <Link href="/signup" className="px-12 py-6 bg-white text-[rgb(var(--accent))] font-bold rounded-2xl hover:bg-blue-50 transition-all flex items-center gap-3 group shadow-2xl hover:scale-105 active:scale-95 text-lg">
+              <Link href="/auth?mode=signup" className="px-12 py-6 bg-white text-[rgb(var(--accent))] font-bold rounded-2xl hover:bg-blue-50 transition-all flex items-center gap-3 group shadow-2xl hover:scale-105 active:scale-95 text-lg">
                 Get Started Now <ChevronRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
               </Link>
             </div>
@@ -298,8 +298,8 @@ export const LandingPage = () => {
           <div className="space-y-4">
             <h4 className="font-bold text-sm">Navigation</h4>
             <div className="flex flex-col gap-2">
-              <FooterLink href="/login">Recruiter Portal</FooterLink>
-              <FooterLink href="/signup">Join as Student</FooterLink>
+              <FooterLink href="/auth">Recruiter Portal</FooterLink>
+              <FooterLink href="/auth?mode=signup">Join as Student</FooterLink>
             </div>
           </div>
 
@@ -461,7 +461,7 @@ const ResourceModal = ({ resource, onClose }: any) => {
             </p>
             {resource.id === 'partner-with-us' && (
               <Link
-                href="/login"
+                href="/auth"
                 onClick={onClose}
                 className="px-6 py-2 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all text-sm"
               >
