@@ -85,7 +85,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
         
         const updateData: any = {};
         if (type === 'avatar') updateData.avatar_url = base64;
-        else updateData.cover_url = base64;
+        else if (type === 'cover') updateData.cover_url = base64;
 
         const { error } = await supabase
           .from('profiles')
@@ -268,19 +268,24 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
               </div>
            </div>
 
-           <div className="pb-2 md:pb-4 w-full md:w-auto">
-              {isOwnProfile ? (
-                 <button 
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl shadow-lg shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
-                 >
-                    Edit Profile <Edit3 className="w-4 h-4" />
-                 </button>
-              ) : (
-                 <button className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--text-main))] text-[rgb(var(--bg-main))] font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
-                    Download Resume <Download className="w-4 h-4" />
-                 </button>
-              )}
+           <div className="pb-2 md:pb-4 w-full md:w-auto space-y-3">
+              <button 
+                onClick={() => setIsEditModalOpen(true)}
+                className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl shadow-lg shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                Edit Profile <Edit3 className="w-4 h-4" />
+              </button>
+
+              {!isOwnProfile && profile.role === 'student' && profile.resume_url ? (
+                <a
+                  href={profile.resume_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--text-main))] text-[rgb(var(--bg-main))] font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  Download Resume <Download className="w-4 h-4" />
+                </a>
+              ) : null}
            </div>
         </div>
       </div>
@@ -479,7 +484,9 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
     linkedin_url: profile.linkedin_url || '',
     twitter_url: profile.twitter_url || '',
     portfolio_url: profile.portfolio_url || '',
+    resume_url: profile.resume_url || '',
   });
+  const resumeInputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab, setActiveTab] = useState<'basic' | 'exp' | 'edu' | 'skills' | 'social'>('basic');
 
@@ -510,6 +517,18 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
       ...formData,
       skills: [...formData.skills, { name: '', level: 50 }]
     });
+  };
+
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setFormData((prev: any) => ({ ...prev, resume_url: base64 }));
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -605,6 +624,40 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                       className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                     />
                   </div>
+
+                  {profile.role === 'student' && (
+                    <div className="space-y-2 pt-2 border-t border-[rgb(var(--border))]">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Resume / CV</label>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <button
+                          type="button"
+                          onClick={() => resumeInputRef.current?.click()}
+                          className={cn(
+                            "w-full sm:w-auto px-6 py-3 rounded-xl font-bold transition-all border",
+                            formData.resume_url
+                              ? "bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700"
+                              : "bg-[rgb(var(--bg-main))] text-[rgb(var(--text-main))] border-[rgb(var(--border))] hover:bg-slate-100 dark:hover:bg-slate-800"
+                          )}
+                        >
+                          {formData.resume_url ? 'Update Resume' : 'Upload Resume'}
+                        </button>
+                        <span className={cn(
+                          "text-sm font-semibold",
+                          formData.resume_url ? 'text-emerald-600' : 'text-[rgb(var(--text-muted))]'
+                        )}>
+                          {formData.resume_url ? 'Uploaded' : 'No resume uploaded yet'}
+                        </span>
+                      </div>
+                      <input
+                        type="file"
+                        aria-label="Upload resume"
+                        ref={resumeInputRef}
+                        onChange={handleResumeUpload}
+                        accept=".pdf,.doc,.docx"
+                        className="hidden"
+                      />
+                    </div>
+                  )}
 
                   {profile.role === 'recruiter' && (
                     <div className="pt-4 border-t border-[rgb(var(--border))] space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
