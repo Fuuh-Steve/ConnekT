@@ -1,0 +1,119 @@
+{
+  "loading": "Chargement du profil...",
+  "notFound": {
+    "title": "Profil introuvable",
+    "backToDashboard": "Retour au tableau de bord"
+  },
+  "header": {
+    "changeCoverPhoto": "Changer la photo de couverture",
+    "updatePhoto": "Mettre à jour la photo",
+    "uploadCoverPhotoAria": "Téléverser une photo de couverture",
+    "uploadProfilePictureAria": "Téléverser une photo de profil",
+    "chooseAvatarFileAria": "Choisir un fichier d'avatar",
+    "nameFallback": "Utilisateur",
+    "verifiedPro": "Pro vérifié",
+    "bioFallback": "Développeur axé produit",
+    "locationFallback": "À distance",
+    "editProfile": "Modifier le profil",
+    "downloadResume": "Télécharger le CV"
+  },
+  "socialLinks": {
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "twitter": "Twitter",
+    "portfolio": "Portfolio"
+  },
+  "skills": {
+    "heading": "Compétences techniques",
+    "aiVerified": "Vérifié par IA",
+    "empty": "Aucune compétence ajoutée pour le moment."
+  },
+  "availability": {
+    "heading": "Disponibilité",
+    "badge": "PRO",
+    "defaultStatus": "Ouvert aux nouvelles opportunités."
+  },
+  "experience": {
+    "heading": "Expérience professionnelle",
+    "subtitle": "Parcours professionnel",
+    "empty": "Aucune expérience documentée pour le moment."
+  },
+  "education": {
+    "heading": "Formation",
+    "subtitle": "Parcours académique",
+    "empty": "Historique de formation non renseigné.",
+    "gpaSuffix": "Moyenne"
+  },
+  "experienceModal": {
+    "closeAriaLabel": "Fermer les détails de l'expérience",
+    "roleContext": "Contexte du poste",
+    "keyResponsibilities": "Responsabilités principales",
+    "technologiesUsed": "Technologies utilisées",
+    "closeDetails": "Fermer les détails"
+  },
+  "editModal": {
+    "title": "Mettre à jour le profil",
+    "closeAriaLabel": "Fermer la fenêtre",
+    "tabs": {
+      "basic": "Infos de base",
+      "exp": "Expérience",
+      "edu": "Formation",
+      "skills": "Compétences",
+      "social": "Réseaux sociaux"
+    },
+    "cancel": "Annuler",
+    "saveProfile": "Enregistrer le profil",
+    "basic": {
+      "fullName": { "label": "Nom complet", "placeholder": "p. ex. Steve Ferguson" },
+      "username": { "label": "Nom d'utilisateur", "placeholder": "p. ex. steveroger" },
+      "bio": { "label": "Bio en une ligne", "placeholder": "p. ex. Développeur full-stack passionné par la création d'applications web évolutives." },
+      "location": { "label": "Localisation", "placeholder": "p. ex. Yaoundé, Cameroun" },
+      "resume": {
+        "label": "CV / Résumé",
+        "update": "Mettre à jour le CV",
+        "upload": "Téléverser le CV",
+        "uploaded": "Téléversé",
+        "notUploaded": "Aucun CV téléversé pour le moment",
+        "ariaLabel": "Téléverser le CV"
+      },
+      "recruiterInfo": {
+        "heading": "Informations du recruteur",
+        "companyName": { "label": "Nom de l'entreprise", "placeholder": "p. ex. TechFlow Inc." },
+        "companyLogo": { "label": "URL du logo de l'entreprise", "placeholder": "https://example.com/logo.png" }
+      }
+    },
+    "experience": {
+      "workHistory": "Historique professionnel",
+      "addRole": "Ajouter un poste",
+      "removeAriaLabel": "Supprimer cette expérience",
+      "role": { "label": "Poste", "placeholder": "p. ex. Ingénieur logiciel" },
+      "company": { "label": "Entreprise", "placeholder": "p. ex. Tech Corp" },
+      "period": { "label": "Période", "placeholder": "p. ex. Janv. 2022 - Présent" },
+      "description": { "label": "Description", "placeholder": "Décrivez brièvement vos responsabilités..." },
+      "empty": "Aucune expérience ajoutée pour le moment."
+    },
+    "education": {
+      "academicBackground": "Parcours académique",
+      "addSchool": "Ajouter un établissement",
+      "removeAriaLabel": "Supprimer cette formation",
+      "degree": { "label": "Diplôme", "placeholder": "p. ex. Licence en informatique" },
+      "school": { "label": "Établissement", "placeholder": "p. ex. Unilag" },
+      "period": { "label": "Période", "placeholder": "p. ex. 2018 - 2022" },
+      "gpa": { "label": "Moyenne (facultatif)", "placeholder": "p. ex. 4.5/5.0" }
+    },
+    "skills": {
+      "technicalSkills": "Compétences techniques",
+      "addSkillTag": "Ajouter une compétence",
+      "skillNamePlaceholder": "p. ex. React",
+      "levelAriaLabel": "Niveau de compétence pour {name}",
+      "removeAriaLabel": "Supprimer la compétence"
+    },
+    "social": {
+      "heading": "Réseaux sociaux et portfolio",
+      "github": { "label": "URL du profil GitHub", "placeholder": "https://github.com/your-username" },
+      "linkedin": { "label": "URL du profil LinkedIn", "placeholder": "https://linkedin.com/in/your-username" },
+      "twitter": { "label": "URL du profil Twitter", "placeholder": "https://twitter.com/your-username" },
+      "portfolio": { "label": "Site web du portfolio", "placeholder": "https://your-portfolio.me" }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "loading": "Chargement des candidatures...",
+  "backToDashboard": "Retour au tableau de bord",
+  "heading": {
+    "title": "Vos candidatures",
+    "subtitle": "Suivez et gérez toutes vos candidatures de stage."
+  },
+  "searchPlaceholder": "Rechercher des candidatures...",
+  "fallbacks": {
+    "unknownRole": "Poste inconnu",
+    "unknownCompany": "Entreprise inconnue",
+    "remoteLocation": "À distance",
+    "noDescription": "Aucune description disponible"
+  },
+  "card": {
+    "appliedLabel": "Postulé"
+  },
+  "statusLabels": {
+    "pending": "En attente",
+    "reviewed": "Examinée",
+    "interview": "Entretien",
+    "accepted": "Acceptée",
+    "rejected": "Rejetée"
+  },
+  "emptyState": {
+    "title": "Aucune candidature trouvée",
+    "subtitle": "Essayez d'ajuster votre recherche."
+  },
+  "modal": {
+    "closeAriaLabel": "Fermer les détails de la candidature",
+    "applied": "Postulé",
+    "location": "Lieu",
+    "status": "Statut",
+    "currentStage": "Étape actuelle",
+    "reviewingTitle": "Examen du test de sélection",
+    "reviewingDesc": "L'équipe examine actuellement votre profil et les résultats de votre test.",
+    "gotIt": "Compris",
+    "viewCompany": "Voir l'entreprise"
+  }
+}

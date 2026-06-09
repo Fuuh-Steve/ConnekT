@@ -1,0 +1,24 @@
+{
+  "loading": "Loading Listings...",
+  "heading": {
+    "title": "Job Management",
+    "subtitle": "Monitor performance and manage applicants for your active roles."
+  },
+  "activeListings": "{count, plural, one {# Active Listing} other {# Active Listings}}",
+  "postNew": "Post New",
+  "card": {
+    "activeBadge": "Active",
+    "engineering": "Engineering",
+    "posted": "Posted {date}",
+    "applications": "Applications",
+    "views": "Views",
+    "manageApplicants": "Manage Applicants",
+    "deleteAriaLabel": "Delete job posting"
+  },
+  "emptyState": {
+    "title": "No active listings",
+    "subtitle": "Ready to find some world-class talent?",
+    "createFirst": "Create Your First Post"
+  },
+  "confirmDelete": "Are you sure you want to delete this listing?"
+}

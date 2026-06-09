@@ -1,64 +1,67 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Check, Zap, Shield, Globe, Star, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-const PLANS = [
-  {
-    name: 'Free',
-    role: 'Student',
-    price: 'XAF 0',
-    frequency: '/forever',
-    description: 'Perfect for getting started and finding your first internship.',
-    features: [
-      'Apply to 5 internships/month',
-      'Smart Match Score',
-      'Basic Portfolio Builder',
-      'Community Access',
-      'Email Notifications'
-    ],
-    buttonText: 'Current Plan',
-    highlight: false
-  },
-  {
-    name: 'Pro',
-    role: 'Student',
-    price: 'XAF 1,000',
-    frequency: '/month',
-    description: 'Advanced tools to fast-track your career growth.',
-    features: [
-      'Unlimited Applications',
-      'Priority Job Matching',
-      'Resume Review Tips',
-      'Verified Badge',
-      'Interview Prep Tools'
-    ],
-    buttonText: 'Upgrade to Pro',
-    highlight: true,
-    color: 'rgb(var(--accent))'
-  },
-  {
-    name: 'Recruiter',
-    role: 'Company',
-    price: 'XAF 3,000',
-    frequency: '/month',
-    description: 'Scale your team with better candidate matching.',
-    features: [
-      'Unlimited Job Postings',
-      'Advanced Candidate Search',
-      'Team Collaboration Tools',
-      'Bulk Messaging',
-      'Dedicated Support'
-    ],
-    buttonText: 'Start Hiring',
-    highlight: true,
-    color: 'rgb(168, 85, 247)'
-  }
-];
-
 export const PricingPage = () => {
+  const t = useTranslations('pricing');
+
+  const PLANS = [
+    {
+      name: t('plans.free.name'),
+      role: t('plans.free.role'),
+      price: t('plans.free.price'),
+      frequency: t('plans.free.frequency'),
+      description: t('plans.free.description'),
+      features: [
+        t('plans.free.features.f1'),
+        t('plans.free.features.f2'),
+        t('plans.free.features.f3'),
+        t('plans.free.features.f4'),
+        t('plans.free.features.f5'),
+      ],
+      buttonText: t('plans.free.buttonText'),
+      highlight: false
+    },
+    {
+      name: t('plans.pro.name'),
+      role: t('plans.pro.role'),
+      price: t('plans.pro.price'),
+      frequency: t('plans.pro.frequency'),
+      description: t('plans.pro.description'),
+      features: [
+        t('plans.pro.features.f1'),
+        t('plans.pro.features.f2'),
+        t('plans.pro.features.f3'),
+        t('plans.pro.features.f4'),
+        t('plans.pro.features.f5'),
+      ],
+      buttonText: t('plans.pro.buttonText'),
+      highlight: true,
+      color: 'rgb(var(--accent))'
+    },
+    {
+      name: t('plans.recruiter.name'),
+      role: t('plans.recruiter.role'),
+      price: t('plans.recruiter.price'),
+      frequency: t('plans.recruiter.frequency'),
+      description: t('plans.recruiter.description'),
+      features: [
+        t('plans.recruiter.features.f1'),
+        t('plans.recruiter.features.f2'),
+        t('plans.recruiter.features.f3'),
+        t('plans.recruiter.features.f4'),
+        t('plans.recruiter.features.f5'),
+      ],
+      buttonText: t('plans.recruiter.buttonText'),
+      highlight: true,
+      color: 'rgb(168, 85, 247)'
+    }
+  ];
+
   return (
     <div className="space-y-12 pb-20">
       <div className="text-center space-y-4 max-w-2xl mx-auto">
@@ -67,9 +70,9 @@ export const PricingPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-2"
         >
-          <span className="text-xs font-bold text-[rgb(var(--accent))] uppercase tracking-widest">Pricing Plans</span>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[rgb(var(--text-main))]">Simple, Transparent Pricing</h1>
-          <p className="text-[rgb(var(--text-muted))] text-sm">Choose the plan that best fits your current needs.</p>
+          <span className="text-xs font-bold text-[rgb(var(--accent))] uppercase tracking-widest">{t('heading.eyebrow')}</span>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[rgb(var(--text-main))]">{t('heading.title')}</h1>
+          <p className="text-[rgb(var(--text-muted))] text-sm">{t('heading.subtitle')}</p>
         </motion.div>
       </div>
 
@@ -88,7 +91,7 @@ export const PricingPage = () => {
           >
             {plan.highlight && (
                <div className="absolute top-0 right-0 px-4 py-1.5 bg-[rgb(var(--accent))] text-[10px] uppercase font-bold tracking-widest text-white rounded-bl-xl rounded-tr-xl">
-                  Most Popular
+                  {t('mostPopular')}
                </div>
             )}
 
@@ -140,20 +143,20 @@ export const PricingPage = () => {
       >
          <div className="flex items-center gap-3 mb-8">
             < Shield className="w-6 h-6 text-[rgb(var(--accent))]" />
-            <h3 className="text-xl font-bold text-[rgb(var(--text-main))]">Security & Trust</h3>
+            <h3 className="text-xl font-bold text-[rgb(var(--text-main))]">{t('trust.heading')}</h3>
          </div>
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-2">
-               <h4 className="text-sm font-bold text-[rgb(var(--text-main))]">Data Privacy</h4>
-               <p className="text-xs text-[rgb(var(--text-muted))] leading-relaxed font-medium">Your data is stored securely and is never shared with third parties without your consent.</p>
+               <h4 className="text-sm font-bold text-[rgb(var(--text-main))]">{t('trust.dataPrivacy.title')}</h4>
+               <p className="text-xs text-[rgb(var(--text-muted))] leading-relaxed font-medium">{t('trust.dataPrivacy.description')}</p>
             </div>
             <div className="space-y-2">
-               <h4 className="text-sm font-bold text-[rgb(var(--text-main))]">Verified Employers</h4>
-               <p className="text-xs text-[rgb(var(--text-muted))] leading-relaxed font-medium">Every company on our platform undergoes a vetting process to ensure safe internships.</p>
+               <h4 className="text-sm font-bold text-[rgb(var(--text-main))]">{t('trust.verifiedEmployers.title')}</h4>
+               <p className="text-xs text-[rgb(var(--text-muted))] leading-relaxed font-medium">{t('trust.verifiedEmployers.description')}</p>
             </div>
             <div className="space-y-2">
-               <h4 className="text-sm font-bold text-[rgb(var(--text-main))]">Secure Payments</h4>
-               <p className="text-xs text-[rgb(var(--text-muted))] leading-relaxed font-medium">All transactions are processed through enterprise-grade encrypted payment gateways.</p>
+               <h4 className="text-sm font-bold text-[rgb(var(--text-main))]">{t('trust.securePayments.title')}</h4>
+               <p className="text-xs text-[rgb(var(--text-muted))] leading-relaxed font-medium">{t('trust.securePayments.description')}</p>
             </div>
          </div>
       </motion.div>

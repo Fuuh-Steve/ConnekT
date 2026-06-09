@@ -1,0 +1,144 @@
+{
+  "student": {
+    "loading": "Loading Dashboard...",
+    "fallbackName": "Member",
+    "overview": "Overview",
+    "welcomeBack": "Welcome back, {name}",
+    "subtitle": "Here's what's happening with your applications today.",
+    "exploreJobs": "Explore Jobs",
+    "stats": {
+      "applicationsSent": {
+        "label": "Applications Sent",
+        "tooltip": "Total number of roles you've applied for.",
+        "trendStart": "Start applying!",
+        "trendActive": "Active tracker"
+      },
+      "interviewRate": {
+        "label": "Interview Rate",
+        "tooltip": "Percentage of applications moving to interview stages.",
+        "trendAbove": "Above average",
+        "trendImprove": "Keep improving"
+      },
+      "profileStrength": {
+        "label": "Profile Strength",
+        "tooltip": "Based on your profile completeness and verified skills.",
+        "trendComplete": "{percent}% complete"
+      },
+      "info": "Info"
+    },
+    "recentApplications": {
+      "heading": "Recent Applications",
+      "searchPlaceholder": "Search...",
+      "viewAll": "View All",
+      "empty": "No recent applications found."
+    },
+    "recommended": {
+      "heading": "Recommended for You",
+      "matchLabel": "{score}% Match",
+      "viewDetails": "View Details"
+    },
+    "applicationModal": {
+      "closeAriaLabel": "Close application details",
+      "applied": "Applied",
+      "location": "Location",
+      "status": "Status",
+      "currentStage": "Current Stage",
+      "reviewingTitle": "Reviewing Screening Test",
+      "reviewingDesc": "The team is currently reviewing your profile and test results.",
+      "nextMilestone": "Next Milestone",
+      "steps": {
+        "technicalInterview": "Technical Interview",
+        "cultureFit": "Culture Fit",
+        "finalOffer": "Final Offer"
+      },
+      "gotIt": "Got it",
+      "viewCompany": "View Company"
+    }
+  },
+  "recruiter": {
+    "loading": "Loading Talent Portal...",
+    "accountBadge": "Recruiter Account",
+    "title": "TALENT PORTAL",
+    "subtitle": "Review incoming applications, optimize your listings, and build your dream team with AI-powered analytics.",
+    "newJobPosting": "New Job Posting",
+    "quickStats": {
+      "activePostings": {
+        "label": "Active Postings",
+        "subValueActive": "Managing active roles",
+        "subValueEmpty": "No active roles"
+      },
+      "totalApplications": {
+        "label": "Total Applications",
+        "subValue": "Incoming talent"
+      },
+      "avgMatchScore": {
+        "label": "Avg. Match Score",
+        "subValue": "Highly compatible"
+      }
+    },
+    "scheduledInterviews": {
+      "heading": "Scheduled Interviews",
+      "candidateFallback": "Candidate",
+      "positionFallback": "Position",
+      "dateFallback": "TBD",
+      "joinLink": "Join Link",
+      "empty": "No Scheduled Interviews"
+    },
+    "globalActivity": {
+      "heading": "Global Activity",
+      "empty": "No activity yet",
+      "events": {
+        "newApplication": "New application received",
+        "applicationReviewed": "Application reviewed",
+        "interviewScheduled": "Interview scheduled",
+        "candidateAccepted": "Candidate accepted",
+        "applicationRejected": "Application rejected"
+      },
+      "noRecentActivity": "No recent activity",
+      "timeNotAvailable": "N/A"
+    },
+    "recentApplications": {
+      "heading": "Recent Applications",
+      "subtitle": "Review your latest applicant matches and scores across all active job postings.",
+      "searchPlaceholder": "Search candidates or roles...",
+      "manageAll": "Manage All",
+      "table": {
+        "candidate": "Candidate",
+        "jobRole": "Job Role",
+        "matchScore": "Match Score",
+        "status": "Status"
+      },
+      "candidateFallback": "Candidate",
+      "universityFallback": "Top Tier University",
+      "avatarAlt": "Avatar",
+      "matchSuffix": "% MATCH",
+      "schedule": "Schedule",
+      "pipeline": "Pipeline",
+      "empty": "No applications found matching your search."
+    },
+    "statusLabels": {
+      "pending": "Pending",
+      "reviewed": "Reviewed",
+      "interview": "Interview",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "scheduleModal": {
+      "heading": "Schedule Interview",
+      "candidateLabel": "Candidate: {name}",
+      "dateLabel": "Date",
+      "datePlaceholder": "Select date",
+      "dateTitle": "Interview date",
+      "timeLabel": "Time",
+      "timePlaceholder": "Select time",
+      "timeTitle": "Interview time",
+      "linkLabel": "Meet Link (optional)",
+      "linkPlaceholder": "https://meet.google.com/...",
+      "cancel": "Cancel",
+      "submit": "Schedule",
+      "fillAllFields": "Please fill in all fields",
+      "scheduleFailed": "Failed to schedule interview",
+      "scheduleSuccess": "Interview scheduled successfully!"
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "loading": "Chargement des paramètres...",
+  "heading": {
+    "title": "Paramètres",
+    "subtitle": "Gérez les préférences de votre compte et les configurations système."
+  },
+  "saveButton": {
+    "saving": "Enregistrement...",
+    "saveChanges": "Enregistrer les modifications"
+  },
+  "tabs": {
+    "general": "Général",
+    "profile": "Profil",
+    "notifications": "Notifications",
+    "security": "Sécurité",
+    "billing": "Facturation"
+  },
+  "profileTab": {
+    "personalInfo": { "title": "Informations personnelles", "subtitle": "Mettez à jour les informations de base de votre compte." },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "professionalRole": "Poste professionnel",
+      "roleFallback": "Développeur professionnel",
+      "nameFallback": "Utilisateur",
+      "emailAddress": "Adresse e-mail",
+      "emailFallback": "user@example.com",
+      "phoneNumber": "Numéro de téléphone",
+      "phoneFallback": "Non renseigné"
+    },
+    "contactDetails": { "title": "Coordonnées", "subtitle": "Comment les recruteurs peuvent vous contacter." }
+  },
+  "appearance": {
+    "title": "Apparence",
+    "subtitle": "Personnalisez l'apparence de l'interface.",
+    "themeMode": { "title": "Mode du thème", "desc": "Basculez entre les thèmes clair et sombre." },
+    "developerMode": { "title": "Mode développeur", "desc": "Activez les fonctionnalités expérimentales et les journaux de débogage." }
+  },
+  "system": {
+    "title": "Système",
+    "subtitle": "Comportements généraux de l'application.",
+    "language": { "title": "Langue", "desc": "Langue système par défaut.", "value": "Anglais (US)" },
+    "autoSave": { "title": "Enregistrement automatique", "desc": "Enregistre automatiquement les modifications pendant l'édition des documents." }
+  },
+  "notifications": {
+    "email": {
+      "title": "Notifications par e-mail",
+      "subtitle": "Décidez quels messages arrivent dans votre boîte de réception.",
+      "jobAlerts": { "title": "Alertes d'emploi", "desc": "Résumé des nouveaux stages correspondant à vos préférences." },
+      "applicationUpdates": { "title": "Mises à jour des candidatures", "desc": "Actualités instantanées sur le statut de vos candidatures." },
+      "newsletter": { "title": "Newsletter", "desc": "Conseils hebdomadaires et astuces pour votre carrière." }
+    },
+    "push": {
+      "title": "Notifications push",
+      "subtitle": "Alertes en temps réel via le navigateur.",
+      "directMessages": { "title": "Messages directs", "desc": "Alertes lorsqu'un recruteur vous envoie un message." },
+      "dashboardHighlights": { "title": "Faits marquants du tableau de bord", "desc": "Résumé quotidien des statistiques d'interaction." }
+    }
+  },
+  "security": {
+    "accountSecurity": { "title": "Sécurité du compte", "subtitle": "Gérez vos mots de passe et la vérification." },
+    "changePassword": { "title": "Changer le mot de passe", "desc": "Dernière mise à jour il y a 3 mois." },
+    "twoFactorAuth": { "title": "Authentification à deux facteurs", "status": "Activée par SMS" },
+    "dangerZone": { "title": "Zone de danger", "subtitle": "Actions irréversibles sur le compte." },
+    "deletePermanently": "Supprimer définitivement le compte",
+    "modal": {
+      "closeAriaLabel": "Fermer la fenêtre",
+      "title": "Supprimer votre compte ?",
+      "warning": "Cette action est <strong>irréversible</strong> et supprimera définitivement tous les paramètres de profil, fichiers de CV, offres d'emploi et candidatures.",
+      "confirmLabel": "Saisissez votre e-mail pour confirmer :",
+      "placeholderFallback": "votre.email@example.com",
+      "cancel": "Annuler",
+      "deleteAccount": "Supprimer le compte",
+      "deleting": "Suppression...",
+      "genericError": "Échec de la suppression du compte. Veuillez réessayer plus tard."
+    }
+  },
+  "billing": {
+    "subscriptionPlan": { "title": "Forfait d'abonnement", "subtitle": "Gérez votre abonnement actuel." },
+    "currentPlan": "Forfait actuel",
+    "proMembership": "Adhésion Pro",
+    "proDescription": "Candidatures illimitées et support prioritaire.",
+    "perMonth": "/mois",
+    "manageBilling": "Gérer la facturation"
+  }
+}

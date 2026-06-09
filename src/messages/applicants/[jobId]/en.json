@@ -1,0 +1,90 @@
+{
+  "loading": "Loading applicants...",
+  "accessDenied": {
+    "title": "Access denied",
+    "message": "Only the recruiter who posted this job can view the candidates who applied to it.",
+    "backToDashboard": "Go back to dashboard"
+  },
+  "backToIntelligence": "Back to Intelligence",
+  "heading": {
+    "role": "Role",
+    "highlight": "Analysis"
+  },
+  "viewingCandidates": "Viewing <accent>{count, plural, one {# candidate} other {# candidates}}</accent> for Job ID: <accent>#{jobId}</accent>. This portal highlights AI-matched talent based on their skills and background.",
+  "liveSyncing": "Live syncing with applicant database",
+  "exportData": "Export Data",
+  "exportingAlert": "Exporting candidate data...",
+  "massInvite": "Mass Invite",
+  "invitationsSentAlert": "Invitations sent to candidates!",
+  "pipeline": {
+    "applied": "Applied",
+    "reviewed": "Reviewed",
+    "interview": "Interview",
+    "offers": "Offers",
+    "trend": "+12%"
+  },
+  "filters": {
+    "heading": "Filters",
+    "subheading": "Fine-tune candidate matching",
+    "matchScore": "Match Score",
+    "matchScoreValue": "80%+",
+    "matchScoreFilterAriaLabel": "Match score filter",
+    "pipelineState": "Pipeline State",
+    "statuses": {
+      "shortlisted": "Shortlisted",
+      "reviewing": "Reviewing",
+      "initialPoll": "Initial Poll",
+      "interview": "Interview"
+    }
+  },
+  "candidatePool": {
+    "unknownApplicantFallback": "Unknown Applicant",
+    "notSpecifiedFallback": "Not specified",
+    "heading": "Candidate Pool",
+    "subheading": "Select a candidate to view their deep-dive profile and AI evaluation.",
+    "sortBy": "Sort by:",
+    "sortAriaLabel": "Sort applicants",
+    "sortOptions": {
+      "highestMatch": "Highest Match",
+      "recentFirst": "Recent First",
+      "score": "Score"
+    },
+    "matchSuffix": "% Match",
+    "statusLabels": {
+      "pending": "Pending",
+      "reviewed": "Reviewed",
+      "interview": "Interview",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "actions": {
+      "processing": "Processing...",
+      "markAsReviewed": "Mark as Reviewed",
+      "scheduleInterview": "Schedule Interview",
+      "rejecting": "Rejecting...",
+      "reject": "Reject",
+      "accept": "Accept"
+    },
+    "empty": "No applicants yet for this job posting",
+    "loadMore": "Synchronizing Database... Load More"
+  },
+  "scheduleModal": {
+    "heading": "Schedule Interview",
+    "subheading": "Set up an interview for <accent>{name}</accent>",
+    "dateTimeLabel": "Interview Date & Time",
+    "dateTimeAriaLabel": "Interview date and time",
+    "meetingLinkLabel": "Meeting Link",
+    "meetingLinkPlaceholder": "https://meet.google.com/...",
+    "generateMeetLink": "Generate Google Meet Link",
+    "notesLabel": "Interview Notes (Optional)",
+    "notesPlaceholder": "Add any preparation notes, agenda items, or special instructions for the interview...",
+    "cancel": "Cancel",
+    "scheduling": "Scheduling Interview...",
+    "submit": "Schedule Interview",
+    "fillRequiredFields": "Please fill in all required fields"
+  },
+  "alerts": {
+    "updateStatusFailed": "Failed to update applicant status",
+    "scheduleFailed": "Failed to schedule interview"
+  }
+}

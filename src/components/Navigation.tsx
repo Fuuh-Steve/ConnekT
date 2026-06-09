@@ -14,6 +14,7 @@ import {
 import { UserRole, NavItem, ProfileMenuItemProps } from '../types';
 import { cn } from '../lib/utils';
 import { ThemeToggle } from './ThemeToggle';
+import { LocaleSwitcher } from './LocaleSwitcher';
 
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -258,7 +259,8 @@ export const TopNav = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
           </div>
         ) : null}
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+            <LocaleSwitcher />
             <ThemeToggle />
         </div>
 

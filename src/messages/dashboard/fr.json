@@ -1,0 +1,144 @@
+{
+  "student": {
+    "loading": "Chargement du tableau de bord...",
+    "fallbackName": "Membre",
+    "overview": "Aperçu",
+    "welcomeBack": "Bon retour, {name}",
+    "subtitle": "Voici ce qui se passe avec vos candidatures aujourd'hui.",
+    "exploreJobs": "Explorer les offres",
+    "stats": {
+      "applicationsSent": {
+        "label": "Candidatures envoyées",
+        "tooltip": "Nombre total de postes pour lesquels vous avez postulé.",
+        "trendStart": "Commencez à postuler !",
+        "trendActive": "Suivi actif"
+      },
+      "interviewRate": {
+        "label": "Taux d'entretien",
+        "tooltip": "Pourcentage de candidatures passant à l'étape d'entretien.",
+        "trendAbove": "Au-dessus de la moyenne",
+        "trendImprove": "À améliorer"
+      },
+      "profileStrength": {
+        "label": "Solidité du profil",
+        "tooltip": "Basé sur l'exhaustivité de votre profil et vos compétences vérifiées.",
+        "trendComplete": "{percent}% complété"
+      },
+      "info": "Info"
+    },
+    "recentApplications": {
+      "heading": "Candidatures récentes",
+      "searchPlaceholder": "Rechercher...",
+      "viewAll": "Tout voir",
+      "empty": "Aucune candidature récente trouvée."
+    },
+    "recommended": {
+      "heading": "Recommandé pour vous",
+      "matchLabel": "{score}% de compatibilité",
+      "viewDetails": "Voir les détails"
+    },
+    "applicationModal": {
+      "closeAriaLabel": "Fermer les détails de la candidature",
+      "applied": "Postulé",
+      "location": "Lieu",
+      "status": "Statut",
+      "currentStage": "Étape actuelle",
+      "reviewingTitle": "Examen du test de présélection",
+      "reviewingDesc": "L'équipe examine actuellement votre profil et les résultats de votre test.",
+      "nextMilestone": "Prochaine étape",
+      "steps": {
+        "technicalInterview": "Entretien technique",
+        "cultureFit": "Adéquation culturelle",
+        "finalOffer": "Offre finale"
+      },
+      "gotIt": "Compris",
+      "viewCompany": "Voir l'entreprise"
+    }
+  },
+  "recruiter": {
+    "loading": "Chargement du portail talents...",
+    "accountBadge": "Compte recruteur",
+    "title": "PORTAIL TALENTS",
+    "subtitle": "Examinez les candidatures entrantes, optimisez vos annonces et constituez l'équipe de vos rêves grâce à des analyses propulsées par l'IA.",
+    "newJobPosting": "Nouvelle offre d'emploi",
+    "quickStats": {
+      "activePostings": {
+        "label": "Annonces actives",
+        "subValueActive": "Gestion des postes actifs",
+        "subValueEmpty": "Aucun poste actif"
+      },
+      "totalApplications": {
+        "label": "Candidatures totales",
+        "subValue": "Talents entrants"
+      },
+      "avgMatchScore": {
+        "label": "Score de compatibilité moyen",
+        "subValue": "Hautement compatibles"
+      }
+    },
+    "scheduledInterviews": {
+      "heading": "Entretiens programmés",
+      "candidateFallback": "Candidat",
+      "positionFallback": "Poste",
+      "dateFallback": "À déterminer",
+      "joinLink": "Rejoindre",
+      "empty": "Aucun entretien programmé"
+    },
+    "globalActivity": {
+      "heading": "Activité globale",
+      "empty": "Aucune activité pour le moment",
+      "events": {
+        "newApplication": "Nouvelle candidature reçue",
+        "applicationReviewed": "Candidature examinée",
+        "interviewScheduled": "Entretien programmé",
+        "candidateAccepted": "Candidat accepté",
+        "applicationRejected": "Candidature rejetée"
+      },
+      "noRecentActivity": "Aucune activité récente",
+      "timeNotAvailable": "N/D"
+    },
+    "recentApplications": {
+      "heading": "Candidatures récentes",
+      "subtitle": "Examinez les profils et scores de compatibilité de vos derniers candidats sur l'ensemble de vos offres actives.",
+      "searchPlaceholder": "Rechercher des candidats ou des postes...",
+      "manageAll": "Tout gérer",
+      "table": {
+        "candidate": "Candidat",
+        "jobRole": "Poste",
+        "matchScore": "Score de compatibilité",
+        "status": "Statut"
+      },
+      "candidateFallback": "Candidat",
+      "universityFallback": "Université de premier plan",
+      "avatarAlt": "Avatar",
+      "matchSuffix": "% DE COMPATIBILITÉ",
+      "schedule": "Programmer",
+      "pipeline": "Pipeline",
+      "empty": "Aucune candidature ne correspond à votre recherche."
+    },
+    "statusLabels": {
+      "pending": "En attente",
+      "reviewed": "Examinée",
+      "interview": "Entretien",
+      "accepted": "Acceptée",
+      "rejected": "Rejetée"
+    },
+    "scheduleModal": {
+      "heading": "Programmer un entretien",
+      "candidateLabel": "Candidat : {name}",
+      "dateLabel": "Date",
+      "datePlaceholder": "Sélectionner une date",
+      "dateTitle": "Date de l'entretien",
+      "timeLabel": "Heure",
+      "timePlaceholder": "Sélectionner une heure",
+      "timeTitle": "Heure de l'entretien",
+      "linkLabel": "Lien de réunion (facultatif)",
+      "linkPlaceholder": "https://meet.google.com/...",
+      "cancel": "Annuler",
+      "submit": "Programmer",
+      "fillAllFields": "Veuillez remplir tous les champs",
+      "scheduleFailed": "Échec de la programmation de l'entretien",
+      "scheduleSuccess": "Entretien programmé avec succès !"
+    }
+  }
+}

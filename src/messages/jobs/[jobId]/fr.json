@@ -1,0 +1,60 @@
+{
+  "loading": "Chargement des détails de l'offre...",
+  "notFound": {
+    "title": "Offre introuvable",
+    "backToBoard": "Retour à la liste des offres"
+  },
+  "backToJobs": "Retour aux offres",
+  "fallbacks": {
+    "company": "Entreprise"
+  },
+  "header": {
+    "posted": "Publiée le {date}"
+  },
+  "description": {
+    "heading": "Description du poste",
+    "body": "Nous recherchons un(e) {role} très motivé(e) pour rejoindre notre équipe principale. Vous serez chargé(e) de nous aider à concevoir des solutions innovantes et à faire évoluer nos plateformes technologiques afin de toucher davantage d'étudiants."
+  },
+  "skills": {
+    "heading": "Compétences requises"
+  },
+  "perks": {
+    "heading": "Avantages de l'entreprise",
+    "items": {
+      "flexibleHours": "Horaires de travail flexibles",
+      "competitiveStipend": "Indemnité compétitive",
+      "mentorshipProgram": "Programme de mentorat",
+      "globalNetwork": "Réseau international"
+    }
+  },
+  "applyForm": {
+    "heading": "Postuler à ce poste",
+    "subheading": "Les informations de votre profil seront automatiquement partagées avec le recruteur.",
+    "portfolioLabel": "Portfolio (GitHub, LinkedIn, etc.)",
+    "portfolioPlaceholder": "https://...",
+    "phoneLabel": "Numéro de téléphone",
+    "phonePlaceholder": "+237 ...",
+    "whyHireLabel": "Pourquoi devrions-nous vous embaucher ?",
+    "whyHirePlaceholder": "Décrivez brièvement votre expérience et votre intérêt...",
+    "sending": "Envoi de la candidature...",
+    "submit": "Envoyer la candidature"
+  },
+  "successCard": {
+    "heading": "Candidature envoyée !",
+    "message": "Le recruteur a été notifié. Vous pouvez suivre l'état de votre candidature dans votre tableau de bord.",
+    "goToDashboard": "Aller au tableau de bord"
+  },
+  "sidebar": {
+    "matchScore": "Score de compatibilité",
+    "aiAnalysis": "Analyse IA",
+    "pro": "PRO",
+    "totalApplicants": "Total des candidats",
+    "verifiedRecruiter": "Recruteur vérifié",
+    "shareRole": "Partager l'offre"
+  },
+  "alerts": {
+    "alreadyApplied": "Vous avez déjà postulé pour ce poste.",
+    "permissionDenied": "Candidature refusée par les autorisations de la base de données. Veuillez vérifier que vous êtes connecté(e) et réessayer.",
+    "submitFailed": "Échec de l'envoi de la candidature. Veuillez réessayer."
+  }
+}

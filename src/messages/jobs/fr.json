@@ -1,0 +1,19 @@
+{
+  "heading": {
+    "title": "Parcourir les stages",
+    "subtitle": "Trouvez votre prochaine opportunité auprès des meilleures entreprises vérifiées dans le monde."
+  },
+  "searchPlaceholder": "Rechercher des postes ou des entreprises...",
+  "emptyState": {
+    "title": "Aucun stage trouvé",
+    "subtitle": "Essayez d'ajuster votre recherche ou revenez plus tard."
+  },
+  "fallbacks": {
+    "companyNotProvided": "Entreprise non précisée"
+  },
+  "card": {
+    "matchSuffix": " % de compatibilité",
+    "applicantsSuffix": " candidats",
+    "details": "Détails"
+  }
+}

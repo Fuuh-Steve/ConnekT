@@ -1,0 +1,131 @@
+{
+  "hero": {
+    "badge": "Empowering Tech Talents",
+    "headline": "Bridging the gap between",
+    "headlineHighlight": "Campus and Career",
+    "subheadline": "ConnekT connects the brightest university tech talents with leading companies. Simple application tracking and smart matching to jumpstart your career.",
+    "cta": "Create Free Account",
+    "stats": {
+      "activeStudents": "Active Students",
+      "verifiedPartners": "Verified Partners",
+      "monthlyPlacements": "Monthly Placements",
+      "matchAccuracy": "Match Accuracy"
+    }
+  },
+  "features": {
+    "title": "Everything you need to",
+    "titleHighlight": "succeed",
+    "subtitle": "Powering your internship search with tools designed for the modern student.",
+    "learnMore": "Learn more",
+    "smartMatching": {
+      "title": "Smart Matching",
+      "desc": "Our intelligent matching system connects your unique skills and interests with the best available roles, ensuring a perfect fit for both you and the company.",
+      "details": [
+        "Algorithm-driven personal recommendations",
+        "Skills assessment integration",
+        "Career trajectory mapping",
+        "Personalized feedback on applications"
+      ]
+    },
+    "jobTracking": {
+      "title": "Job Tracking",
+      "desc": "Stay organized with a centralized dashboard for all your applications. Receive instant notifications on status changes and never miss a follow-up.",
+      "details": [
+        "Real-time application status updates",
+        "Interview scheduling calendar",
+        "Task management for application requirements",
+        "Document storage for resumes and letters"
+      ]
+    },
+    "verifiedCompanies": {
+      "title": "Verified Companies",
+      "desc": "We manually vet every company and internship post to eliminate scams and low-quality roles, so you can apply with absolute confidence.",
+      "details": [
+        "Thorough background checks on recruiters",
+        "Safe payment & stipend verification",
+        "Quality of work-life assessments",
+        "Student-driven company reviews"
+      ]
+    }
+  },
+  "featureModal": {
+    "closeAriaLabel": "Close feature details",
+    "keyAdvantages": "Key Advantages",
+    "startJourney": "Start your journey"
+  },
+  "about": {
+    "kicker": "About ConnekT",
+    "heading": "We help students discover meaningful tech internships while recruiters build stronger campus talent pipelines.",
+    "body": "ConnekT is built for the next generation of innovators. Our mission is to simplify early-career hiring, surface the best-fit opportunities, and create a trusted connection between campus talent and employers."
+  },
+  "ctaSection": {
+    "headingLine1": "Start Your Career",
+    "headingLine2": "Journey Today.",
+    "body": "Don't miss out on life-changing opportunities. Join thousands of students already building their future.",
+    "cta": "Get Started Now"
+  },
+  "footer": {
+    "brand": "ConnekT",
+    "tagline": "Bridging the gap between Campus and Career for the next generation of tech leaders through seamless internship experiences and smart matching.",
+    "socialAriaLabel": "Visit our {network} profile",
+    "socialNetworks": {
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "default": "social media"
+    },
+    "navigationHeading": "Navigation",
+    "recruiterPortal": "Recruiter Portal",
+    "joinAsStudent": "Join as Student",
+    "resourcesHeading": "Resources",
+    "resources": {
+      "successStories": {
+        "title": "Success Stories",
+        "summary": "Read how students landed their dream roles with ConnekT and how companies found the right talent faster.",
+        "details": [
+          "Student-led case studies from top universities.",
+          "Recruiter success metrics and conversion stories.",
+          "Internships that turned into full-time offers."
+        ]
+      },
+      "blog": {
+        "title": "Blog",
+        "summary": "Insights on career growth, interview prep, and navigating the tech internship landscape.",
+        "details": [
+          "Resume tips for campus hires.",
+          "Interview guides for engineering and product roles.",
+          "Emerging tech trends students should know."
+        ]
+      },
+      "partnerWithUs": {
+        "title": "Partner with Us",
+        "summary": "Grow your internship pipeline with trusted student talent and benefit from a dedicated recruiter dashboard.",
+        "details": [
+          "Access verified student talent pools.",
+          "Custom hiring campaigns for your company.",
+          "Dedicated onboarding support for recruiters."
+        ]
+      },
+      "privacyPolicy": {
+        "title": "Privacy Policy",
+        "summary": "We keep student and recruiter data secure with clear privacy controls and trusted handling practices.",
+        "details": [
+          "Transparent data collection and usage.",
+          "Secure profile and application storage.",
+          "Respect for user privacy across the platform."
+        ]
+      }
+    },
+    "contactHeading": "Contact Us",
+    "location": "Bamenda, Cameroon",
+    "copyright": "© 2026 ConnekT. All rights reserved.",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "security": "Security"
+  },
+  "resourceModal": {
+    "keyHighlights": "Key Highlights",
+    "contactPrompt": "Interested in learning more? Contact us at",
+    "getStarted": "Get Started"
+  }
+}

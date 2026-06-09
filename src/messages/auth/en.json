@@ -1,0 +1,54 @@
+{
+  "backToHome": {
+    "full": "Back to Home",
+    "short": "Back"
+  },
+  "hero": {
+    "titleLogin": "Welcome Back",
+    "titleSignup": "Join ConnekT",
+    "subtitleLogin": "Sign in to access your dashboard and manage your tech career.",
+    "subtitleSignup": "Create your account and bridge the gap from campus to career."
+  },
+  "form": {
+    "accessYourPortal": "Access your portal",
+    "chooseYourPath": "Choose your path"
+  },
+  "roles": {
+    "student": "Student",
+    "recruiter": "Recruiter"
+  },
+  "placeholders": {
+    "fullName": "Full Name",
+    "email": "Email address",
+    "password": "Password"
+  },
+  "validation": {
+    "fullNameTooShort": "Full name must be at least 2 characters.",
+    "invalidEmail": "Please enter a valid email address.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordRequired": "Password is required."
+  },
+  "errors": {
+    "authGeneric": "An error occurred during authentication",
+    "rateLimited": "Too many requests. Please wait a few minutes before trying again or try signing in with Google.",
+    "googleAuthGeneric": "An error occurred during Google authentication"
+  },
+  "buttons": {
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "or": "Or",
+    "continueWithGoogle": "Continue with Google"
+  },
+  "footer": {
+    "newToConnekT": "New to ConnekT?",
+    "createFreeAccount": "Create a free account",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInHere": "Sign in here"
+  },
+  "emailModal": {
+    "title": "Check your inbox",
+    "description": "We sent a verification link to <accent>{email}</accent>. Click the link to activate your account.",
+    "spamNote": "Can't find it? Check your spam folder.",
+    "gotIt": "Got it"
+  }
+}

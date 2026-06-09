@@ -1,0 +1,33 @@
+{
+  "title": "Aperçu administrateur",
+  "subtitle": "Surveillez l'activité de la plateforme, gérez les niveaux d'accès et examinez la croissance des comptes.",
+  "platformStatus": "État de la plateforme : Opérationnelle",
+  "errorPrefix": "Impossible de charger les statistiques administrateur.",
+  "errorFallback": "Veuillez vérifier les autorisations Supabase ou la connectivité réseau.",
+  "stats": {
+    "totalUsers": "Utilisateurs totaux",
+    "activeJobs": "Offres actives",
+    "recruiterAccounts": "Comptes recruteurs",
+    "studentAccounts": "Comptes étudiants"
+  },
+  "recruiterSignups": {
+    "heading": "Nouvelles inscriptions de recruteurs",
+    "subheading": "Comptes d'entreprises les plus récents",
+    "liveData": "Données en direct",
+    "loading": "Chargement des données des recruteurs...",
+    "fallbackName": "Compte recruteur",
+    "fallbackCompany": "Entreprise non renseignée",
+    "unknownDate": "Inconnu",
+    "empty": "Aucune activité de recruteur détectée pour le moment."
+  },
+  "jobListings": {
+    "heading": "Dernières offres d'emploi",
+    "subheading": "Postes les plus récemment publiés",
+    "loading": "Chargement des derniers postes...",
+    "fallbackTitle": "Poste sans titre",
+    "fallbackCompany": "Entreprise inconnue",
+    "fallbackLocation": "Télétravail / non précisé",
+    "unknownDate": "Inconnu",
+    "empty": "Aucune offre d'emploi n'a encore été publiée."
+  }
+}

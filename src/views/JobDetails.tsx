@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,6 +17,7 @@ import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 
 export const JobDetails = () => {
+  const t = useTranslations('jobs.jobId');
   const params = useParams();
   const jobId = params?.jobId as string;
   const { user } = useAuth();
@@ -26,7 +28,7 @@ export const JobDetails = () => {
   const [applying, setApplying] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const displayCompany = recruiterCompany || job?.company || 'Company';
+  const displayCompany = recruiterCompany || job?.company || t('fallbacks.company');
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -98,11 +100,11 @@ export const JobDetails = () => {
     } catch (err: any) {
       console.error('Error applying:', err);
       if (err.code === '23505') {
-        alert('You have already applied for this position.');
+        alert(t('alerts.alreadyApplied'));
       } else if (err.code === '42501') {
-        alert('Application denied by database permissions. Please make sure you are signed in and try again.');
+        alert(t('alerts.permissionDenied'));
       } else {
-        alert('Failed to submit application. Please try again.');
+        alert(t('alerts.submitFailed'));
       }
     } finally {
       setApplying(false);
@@ -113,7 +115,7 @@ export const JobDetails = () => {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading Job Details...</p>
+        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('loading')}</p>
       </div>
     );
   }
@@ -121,9 +123,9 @@ export const JobDetails = () => {
   if (!job) {
     return (
       <div className="text-center py-20 px-6">
-        <h2 className="text-2xl font-bold mb-4">Job not found</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('notFound.title')}</h2>
         <button onClick={() => router.push('/jobs')} className="text-[rgb(var(--accent))] font-bold flex items-center justify-center gap-2 mx-auto">
-          <ChevronLeft className="w-4 h-4" /> Back to Job Board
+          <ChevronLeft className="w-4 h-4" /> {t('notFound.backToBoard')}
         </button>
       </div>
     );
@@ -136,7 +138,7 @@ export const JobDetails = () => {
         className="flex items-center gap-2 text-sm font-medium text-[rgb(var(--text-muted))] hover:text-[rgb(var(--accent))] transition-colors group"
       >
         <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        Back to Jobs
+        {t('backToJobs')}
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
@@ -158,7 +160,7 @@ export const JobDetails = () => {
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[rgb(var(--text-muted))] font-medium">
                   <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-[rgb(var(--accent))]" /> {displayCompany}</span>
                   <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-[rgb(var(--accent))]" /> {job.location}</span>
-                  <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-[rgb(var(--accent))]" /> Posted {job.postedDate}</span>
+                  <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-[rgb(var(--accent))]" /> {t('header.posted', { date: job.postedDate })}</span>
                 </div>
               </div>
             </div>
@@ -168,17 +170,17 @@ export const JobDetails = () => {
           <section className="bg-[rgb(var(--bg-main))] p-6 md:p-10 rounded-2xl border border-[rgb(var(--border))] space-y-6 md:space-y-8">
             <div className="space-y-4">
               <h2 className="text-xl font-bold flex items-center gap-3">
-                Job Description
+                {t('description.heading')}
               </h2>
               <div className="w-12 h-1 bg-[rgb(var(--accent))] rounded-full"></div>
               <p className="text-[rgb(var(--text-muted))] leading-relaxed text-base md:text-lg">
-                We are looking for a highly motivated {job.title} to join our core team. You will be responsible for helping us build innovative solutions and scaling our technology platforms to reach more students.
+                {t('description.body', { role: job.title })}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 pt-4">
               <div className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[rgb(var(--accent))]">Required Skills</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[rgb(var(--accent))]">{t('skills.heading')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {job.tags.map(tag => (
                     <div key={tag} className="px-3 py-1.5 bg-[rgb(var(--bg-side))] rounded-lg border border-[rgb(var(--border))] text-[10px] font-bold">
@@ -188,11 +190,11 @@ export const JobDetails = () => {
                 </div>
               </div>
               <div className="space-y-4">
-                 <h3 className="text-xs font-bold uppercase tracking-wider text-purple-600">Company Perks</h3>
+                 <h3 className="text-xs font-bold uppercase tracking-wider text-purple-600">{t('perks.heading')}</h3>
                  <ul className="space-y-2.5">
-                    {['Flexible Working Hours', 'Competitive Stipend', 'Mentorship Program', 'Global Network'].map(perk => (
-                       <li key={perk} className="flex items-center gap-2.5 text-sm text-[rgb(var(--text-muted))] font-medium">
-                          <CheckCircle className="w-4 h-4 text-emerald-500" /> {perk}
+                    {(['flexibleHours', 'competitiveStipend', 'mentorshipProgram', 'globalNetwork'] as const).map(perkKey => (
+                       <li key={perkKey} className="flex items-center gap-2.5 text-sm text-[rgb(var(--text-muted))] font-medium">
+                          <CheckCircle className="w-4 h-4 text-emerald-500" /> {t(`perks.items.${perkKey}`)}
                        </li>
                     ))}
                  </ul>
@@ -204,37 +206,37 @@ export const JobDetails = () => {
           {!success && (
             <section id="apply" className="bg-[rgb(var(--bg-main))] p-6 md:p-10 rounded-2xl border border-[rgb(var(--border))] space-y-6 md:space-y-8">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold tracking-tight">Apply for this Position</h2>
-                <p className="text-sm text-[rgb(var(--text-muted))]">Your profile information will be shared with the recruiter automatically.</p>
+                <h2 className="text-2xl font-bold tracking-tight">{t('applyForm.heading')}</h2>
+                <p className="text-sm text-[rgb(var(--text-muted))]">{t('applyForm.subheading')}</p>
               </div>
 
               <form onSubmit={handleApply} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-[rgb(var(--text-muted))] ml-1">Portfolio (GitHub, LinkedIn, etc.)</label>
-                    <input type="url" placeholder="https://..." className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all" />
+                    <label className="text-xs font-bold text-[rgb(var(--text-muted))] ml-1">{t('applyForm.portfolioLabel')}</label>
+                    <input type="url" placeholder={t('applyForm.portfolioPlaceholder')} className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-[rgb(var(--text-muted))] ml-1">Phone Number</label>
-                    <input type="tel" placeholder="+237 ..." className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all" />
+                    <label className="text-xs font-bold text-[rgb(var(--text-muted))] ml-1">{t('applyForm.phoneLabel')}</label>
+                    <input type="tel" placeholder={t('applyForm.phonePlaceholder')} className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                   <label className="text-xs font-bold text-[rgb(var(--text-muted))] ml-1">Why should we hire you?</label>
-                   <textarea rows={4} placeholder="Briefly describe your experience and interest..." className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"></textarea>
+                   <label className="text-xs font-bold text-[rgb(var(--text-muted))] ml-1">{t('applyForm.whyHireLabel')}</label>
+                   <textarea rows={4} placeholder={t('applyForm.whyHirePlaceholder')} className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"></textarea>
                 </div>
-                
-                <button 
+
+                <button
                   disabled={applying}
                   className="w-full py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[rgb(var(--accent))]/20"
                 >
                   {applying ? (
                     <>
                       <Zap className="w-4 h-4 animate-bounce" />
-                      <span>Sending Application...</span>
+                      <span>{t('applyForm.sending')}</span>
                     </>
                   ) : (
-                    <span>Submit Application</span>
+                    <span>{t('applyForm.submit')}</span>
                   )}
                 </button>
               </form>
@@ -251,11 +253,11 @@ export const JobDetails = () => {
                    <CheckCircle className="w-10 h-10 text-emerald-500" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tight">Application Sent!</h2>
-                  <p className="text-[rgb(var(--text-muted))] text-lg">The recruiter has been notified. You can track your application status in your dashboard.</p>
+                  <h2 className="text-3xl font-bold tracking-tight">{t('successCard.heading')}</h2>
+                  <p className="text-[rgb(var(--text-muted))] text-lg">{t('successCard.message')}</p>
                 </div>
                 <Link href="/dashboard" className="inline-block px-8 py-3 bg-[rgb(var(--text-main))] text-[rgb(var(--bg-main))] font-bold rounded-xl hover:bg-[rgb(var(--accent))] hover:text-white transition-all">
-                  Go to Dashboard
+                  {t('successCard.goToDashboard')}
                 </Link>
               </motion.div>
             )}
@@ -266,29 +268,29 @@ export const JobDetails = () => {
           <div className="bg-[rgb(var(--bg-main))] p-6 md:p-8 rounded-2xl border border-[rgb(var(--border))] space-y-6 sticky top-32 shadow-sm">
             <div className="space-y-1">
                <div className="flex items-center justify-between">
-                  <p className="text-xs font-bold text-[rgb(var(--text-muted))] uppercase tracking-wider">Match Score</p>
-                  <span className="text-[10px] bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full border border-amber-500/20 font-bold uppercase tracking-widest">AI Analysis</span>
+                  <p className="text-xs font-bold text-[rgb(var(--text-muted))] uppercase tracking-wider">{t('sidebar.matchScore')}</p>
+                  <span className="text-[10px] bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full border border-amber-500/20 font-bold uppercase tracking-widest">{t('sidebar.aiAnalysis')}</span>
                </div>
                <div className="flex items-center gap-3">
                   <p className="text-4xl font-bold text-[rgb(var(--accent))]">{job.matchScore}%</p>
-                  <span className="text-[10px] bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold">PRO</span>
+                  <span className="text-[10px] bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold">{t('sidebar.pro')}</span>
                </div>
             </div>
-            
+
             <div className="space-y-4 pt-6 border-t border-[rgb(var(--border))]">
                <div className="flex items-center justify-between text-sm font-medium">
-                  <span className="text-[rgb(var(--text-muted))]">Total Applicants</span>
+                  <span className="text-[rgb(var(--text-muted))]">{t('sidebar.totalApplicants')}</span>
                   <span>142</span>
                </div>
                <div className="flex items-center justify-between text-sm font-medium">
-                  <span className="text-[rgb(var(--text-muted))]">Verified Recruiter</span>
+                  <span className="text-[rgb(var(--text-muted))]">{t('sidebar.verifiedRecruiter')}</span>
                   <ShieldCheck className="w-4 h-4 text-emerald-500" />
                </div>
             </div>
 
             <div className="flex flex-col gap-3 pt-4">
                <button className="w-full py-3 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:border-[rgb(var(--accent))] transition-all">
-                  <Share2 className="w-4 h-4" /> <span>Share Role</span>
+                  <Share2 className="w-4 h-4" /> <span>{t('sidebar.shareRole')}</span>
                </button>
             </div>
           </div>

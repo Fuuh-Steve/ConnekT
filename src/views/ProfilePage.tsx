@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -11,6 +12,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 
 export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
+  const t = useTranslations('profile');
   const params = useParams();
   const paramUsername = params?.username as string;
   const username = lookupBy || paramUsername;
@@ -129,7 +131,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading Profile...</p>
+        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('loading')}</p>
       </div>
     );
   }
@@ -140,9 +142,9 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
         <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-500">
           <User className="w-10 h-10" />
         </div>
-        <h2 className="text-2xl font-bold">Profile not found</h2>
+        <h2 className="text-2xl font-bold">{t('notFound.title')}</h2>
         <Link href="/dashboard" className="text-[rgb(var(--accent))] font-bold flex items-center gap-2">
-          <ChevronRight className="w-4 h-4 rotate-180" /> Back to Dashboard
+          <ChevronRight className="w-4 h-4 rotate-180" /> {t('notFound.backToDashboard')}
         </Link>
       </div>
     );
@@ -175,13 +177,13 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-center justify-center">
               <div className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-full shadow-lg flex items-center gap-2">
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Camera className="w-5 h-5" />}
-                <span className="text-xs font-bold uppercase tracking-wider">Change Cover Photo</span>
+                <span className="text-xs font-bold uppercase tracking-wider">{t('header.changeCoverPhoto')}</span>
               </div>
             </div>
           )}
-          <input 
-            type="file" 
-            aria-label="Upload cover photo"
+          <input
+            type="file"
+            aria-label={t('header.uploadCoverPhotoAria')}
             ref={coverInputRef} 
             onChange={(e) => handleFileUpload(e, 'cover')} 
             accept="image/*" 
@@ -214,23 +216,23 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                     {isOwnProfile && (
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2">
                         {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Camera className="w-6 h-6" />}
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Update Photo</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest">{t('header.updatePhoto')}</span>
                       </div>
                     )}
                   </div>
               </div>
               {isOwnProfile && (
                 <>
-                  <button 
+                  <button
                     onClick={() => avatarInputRef.current?.click()}
-                    aria-label="Upload profile picture"
+                    aria-label={t('header.uploadProfilePictureAria')}
                     className="absolute bottom-3 right-3 w-10 h-10 rounded-lg bg-white dark:bg-slate-700 text-[rgb(var(--text-main))] flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all border border-[rgb(var(--border))] z-20"
                   >
                      <Camera className="w-4 h-4" />
                   </button>
-                  <input 
-                    type="file" 
-                    aria-label="Choose avatar file"
+                  <input
+                    type="file"
+                    aria-label={t('header.chooseAvatarFileAria')}
                     ref={avatarInputRef} 
                     onChange={(e) => handleFileUpload(e, 'avatar')} 
                     accept="image/*" 
@@ -243,16 +245,16 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
            <div className="flex-1 space-y-3 pb-2 text-center md:text-left">
               <div className="space-y-1">
                  <div className="flex flex-col md:flex-row items-center gap-3">
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[rgb(var(--text-main))]">{profile.full_name || `@${profile.username}` || 'User'}</h1>
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[rgb(var(--text-main))]">{profile.full_name || `@${profile.username}` || t('header.nameFallback')}</h1>
                     {profile.role === 'verified' && (
                       <div className="px-2.5 py-0.5 bg-blue-50 text-blue-600 dark:bg-blue-900/10 dark:text-blue-400 border border-blue-100 dark:border-blue-900/20 rounded-full flex items-center gap-1.5">
                          <CheckCircle className="w-3 h-3" />
-                         <span className="text-xs font-bold uppercase tracking-wider">Verified Pro</span>
+                         <span className="text-xs font-bold uppercase tracking-wider">{t('header.verifiedPro')}</span>
                       </div>
                     )}
                  </div>
                  <p className="text-[rgb(var(--text-muted))] font-semibold text-sm">
-                   {profile.bio || 'Product Focused Developer'} • {profile.location || 'Remote'}
+                   {profile.bio || t('header.bioFallback')} • {profile.location || t('header.locationFallback')}
                  </p>
                  {profile.role === 'recruiter' && profile.company_name ? (
                    <p className="text-[rgb(var(--text-muted))] font-semibold text-sm">{profile.company_name}</p>
@@ -261,10 +263,10 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1">
                  <SocialLink icon={Mail} label={profile.email} />
-                 {profile.github_url && <SocialLink icon={Github} label="GitHub" url={profile.github_url} />}
-                 {profile.linkedin_url && <SocialLink icon={Linkedin} label="LinkedIn" url={profile.linkedin_url} />}
-                 {profile.twitter_url && <SocialLink icon={Globe} label="Twitter" url={profile.twitter_url} />}
-                 {profile.portfolio_url && <SocialLink icon={ExternalLink} label="Portfolio" url={profile.portfolio_url} />}
+                 {profile.github_url && <SocialLink icon={Github} label={t('socialLinks.github')} url={profile.github_url} />}
+                 {profile.linkedin_url && <SocialLink icon={Linkedin} label={t('socialLinks.linkedin')} url={profile.linkedin_url} />}
+                 {profile.twitter_url && <SocialLink icon={Globe} label={t('socialLinks.twitter')} url={profile.twitter_url} />}
+                 {profile.portfolio_url && <SocialLink icon={ExternalLink} label={t('socialLinks.portfolio')} url={profile.portfolio_url} />}
               </div>
            </div>
 
@@ -273,7 +275,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                 onClick={() => setIsEditModalOpen(true)}
                 className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl shadow-lg shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
               >
-                Edit Profile <Edit3 className="w-4 h-4" />
+                {t('header.editProfile')} <Edit3 className="w-4 h-4" />
               </button>
 
               {!isOwnProfile && profile.role === 'student' && profile.resume_url ? (
@@ -283,7 +285,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                   rel="noreferrer"
                   className="w-full md:w-auto px-8 py-3 bg-[rgb(var(--text-main))] text-[rgb(var(--bg-main))] font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
-                  Download Resume <Download className="w-4 h-4" />
+                  {t('header.downloadResume')} <Download className="w-4 h-4" />
                 </a>
               ) : null}
            </div>
@@ -296,26 +298,26 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
             <div className="bg-[rgb(var(--bg-main))] p-6 rounded-2xl border border-[rgb(var(--border))] space-y-6 shadow-sm">
                <h3 className="text-sm font-bold uppercase tracking-wider flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-[rgb(var(--accent))]" /> Technical Skills
+                    <Zap className="w-4 h-4 text-[rgb(var(--accent))]" /> {t('skills.heading')}
                   </div>
-                  <span className="text-[10px] bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full border border-amber-500/20">AI Verified</span>
+                  <span className="text-[10px] bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full border border-amber-500/20">{t('skills.aiVerified')}</span>
                </h3>
                <div className="space-y-5">
                   {SKILLS.length > 0 ? SKILLS.map((skill: any, i: number) => (
                     <SkillItem key={i} label={skill.name} progress={skill.level} delay={0.1 * (i + 1)} />
                   )) : (
-                    <p className="text-xs text-[rgb(var(--text-muted))]">No skills added yet.</p>
+                    <p className="text-xs text-[rgb(var(--text-muted))]">{t('skills.empty')}</p>
                   )}
                </div>
             </div>
 
             <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/20">
                <h3 className="text-sm font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-3 flex items-center justify-between">
-                 Availability
-                 <span className="text-[8px] bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold">PRO</span>
+                 {t('availability.heading')}
+                 <span className="text-[8px] bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold">{t('availability.badge')}</span>
                </h3>
                <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed font-medium">
-                 {profile.availability_status || "Open to new opportunities."}
+                 {profile.availability_status || t('availability.defaultStatus')}
                </p>
             </div>
          </div>
@@ -324,28 +326,28 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
          <div className="lg:col-span-2 space-y-10">
             <section className="space-y-6">
                <div className="space-y-1 border-l-4 border-[rgb(var(--accent))] pl-4">
-                  <h2 className="text-2xl font-bold tracking-tight">Work Experience</h2>
-                  <p className="text-[13px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider">Professional Journey</p>
+                  <h2 className="text-2xl font-bold tracking-tight">{t('experience.heading')}</h2>
+                  <p className="text-[13px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider">{t('experience.subtitle')}</p>
                </div>
 
                <div className="space-y-4">
                   {EXPERIENCES.length > 0 ? EXPERIENCES.map((exp: any, idx: number) => (
-                    <ExperienceCard 
+                    <ExperienceCard
                       key={idx}
                       {...exp}
                       delay={0.1 * (idx + 1)}
                       onClick={() => setSelectedExperience(exp)}
                     />
                   )) : (
-                    <p className="text-sm text-[rgb(var(--text-muted))] italic">No experience documented yet.</p>
+                    <p className="text-sm text-[rgb(var(--text-muted))] italic">{t('experience.empty')}</p>
                   )}
                </div>
             </section>
 
             <section className="space-y-6">
                <div className="space-y-1 border-l-4 border-slate-300 dark:border-slate-700 pl-4">
-                  <h2 className="text-2xl font-bold tracking-tight">Education</h2>
-                  <p className="text-[13px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider">Academic Background</p>
+                  <h2 className="text-2xl font-bold tracking-tight">{t('education.heading')}</h2>
+                  <p className="text-[13px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider">{t('education.subtitle')}</p>
                </div>
 
                <div className="space-y-4">
@@ -369,13 +371,13 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                           </div>
                           {edu.gpa && (
                             <div className="px-3 py-1 bg-[rgb(var(--accent))]/10 dark:bg-slate-800 rounded-lg border border-[rgb(var(--accent))]/20 shadow-sm">
-                                 <span className="text-xs font-extrabold text-[rgb(var(--accent))] font-mono">{edu.gpa} GPA</span>
+                                 <span className="text-xs font-extrabold text-[rgb(var(--accent))] font-mono">{edu.gpa} {t('education.gpaSuffix')}</span>
                             </div>
                           )}
                        </div>
                     </motion.div>
                   )) : (
-                    <p className="text-sm text-[rgb(var(--text-muted))] italic">Education history not provided.</p>
+                    <p className="text-sm text-[rgb(var(--text-muted))] italic">{t('education.empty')}</p>
                   )}
                </div>
             </section>
@@ -404,14 +406,14 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                   <h3 className="text-xl font-bold text-[rgb(var(--text-main))]">{selectedExperience.role}</h3>
                   <p className="text-sm font-bold text-[rgb(var(--accent))] uppercase tracking-wider mt-1">{selectedExperience.company}</p>
                 </div>
-                <button onClick={() => setSelectedExperience(null)} aria-label="Close experience details" className="p-2 hover:bg-[rgb(var(--bg-main))] rounded-xl transition-all">
+                <button onClick={() => setSelectedExperience(null)} aria-label={t('experienceModal.closeAriaLabel')} className="p-2 hover:bg-[rgb(var(--bg-main))] rounded-xl transition-all">
                   <X className="w-5 h-5 text-[rgb(var(--text-main))]" />
                 </button>
               </div>
 
               <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Role Context</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('experienceModal.roleContext')}</p>
                   <p className="text-sm text-[rgb(var(--text-main))] leading-relaxed font-medium">
                     {selectedExperience.desc}
                   </p>
@@ -419,7 +421,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
 
                 {selectedExperience.details && (
                   <div className="space-y-3">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Key Responsibilities</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('experienceModal.keyResponsibilities')}</p>
                     <ul className="space-y-3">
                       {selectedExperience.details.map((detail: string, i: number) => (
                         <li key={i} className="flex items-start gap-3 text-sm font-medium text-[rgb(var(--text-muted))]">
@@ -433,7 +435,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
 
                 {selectedExperience.skills && (
                   <div className="space-y-3">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Technologies Used</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('experienceModal.technologiesUsed')}</p>
                     <div className="flex flex-wrap gap-2">
                       {selectedExperience.skills.map((skill: string) => (
                         <span key={skill} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold border border-[rgb(var(--border))] text-[rgb(var(--text-main))]">
@@ -450,7 +452,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                   onClick={() => setSelectedExperience(null)}
                   className="w-full py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl shadow-xl shadow-[rgb(var(--accent))]/20 transition-all active:scale-95 flex items-center justify-center underline-offset-4 decoration-2"
                 >
-                  Close Details
+                  {t('experienceModal.closeDetails')}
                 </button>
               </div>
             </motion.div>
@@ -470,6 +472,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
 };
 
 const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => {
+  const t = useTranslations('profile');
   const [formData, setFormData] = useState({
     full_name: profile.full_name || '',
     username: profile.username || '',
@@ -549,19 +552,19 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
             className="relative w-full max-w-2xl bg-[rgb(var(--bg-main))] rounded-3xl shadow-2xl border border-[rgb(var(--border))] overflow-hidden flex flex-col max-h-[90vh]"
           >
             <div className="p-6 border-b border-[rgb(var(--border))] flex items-center justify-between bg-[rgb(var(--bg-side))]">
-              <h3 className="text-xl font-bold">Update Profile</h3>
-              <button onClick={onClose} aria-label="Close dialog" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+              <h3 className="text-xl font-bold">{t('editModal.title')}</h3>
+              <button onClick={onClose} aria-label={t('editModal.closeAriaLabel')} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="flex border-b border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] overflow-x-auto">
               {[
-                { id: 'basic', label: 'Basic Info', icon: User },
-                { id: 'exp', label: 'Experience', icon: Briefcase },
-                { id: 'edu', label: 'Education', icon: GraduationCap },
-                { id: 'skills', label: 'Skills', icon: Zap },
-                { id: 'social', label: 'Social', icon: Globe },
+                { id: 'basic', label: t('editModal.tabs.basic'), icon: User },
+                { id: 'exp', label: t('editModal.tabs.exp'), icon: Briefcase },
+                { id: 'edu', label: t('editModal.tabs.edu'), icon: GraduationCap },
+                { id: 'skills', label: t('editModal.tabs.skills'), icon: Zap },
+                { id: 'social', label: t('editModal.tabs.social'), icon: Globe },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -584,50 +587,50 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Full Name</label>
-                      <input 
-                        type="text" 
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">{t('editModal.basic.fullName.label')}</label>
+                      <input
+                        type="text"
                         value={formData.full_name}
                         onChange={(e) => setFormData({...formData, full_name: e.target.value})}
-                        placeholder="e.g. Steve Ferguson"
+                        placeholder={t('editModal.basic.fullName.placeholder')}
                         className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Username</label>
-                      <input 
-                        type="text" 
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">{t('editModal.basic.username.label')}</label>
+                      <input
+                        type="text"
                         value={formData.username}
                         onChange={(e) => setFormData({...formData, username: e.target.value})}
-                        placeholder="e.g. steveroger"
+                        placeholder={t('editModal.basic.username.placeholder')}
                         className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">One-line Bio</label>
-                    <textarea 
+                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">{t('editModal.basic.bio.label')}</label>
+                    <textarea
                       rows={2}
                       value={formData.bio}
                       onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                      placeholder="e.g. Full-stack developer passionate about building scalable web applications."
+                      placeholder={t('editModal.basic.bio.placeholder')}
                       className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all resize-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Location</label>
-                    <input 
-                      type="text" 
+                    <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">{t('editModal.basic.location.label')}</label>
+                    <input
+                      type="text"
                       value={formData.location}
                       onChange={(e) => setFormData({...formData, location: e.target.value})}
-                      placeholder="e.g. Yaoundé, Cameroon"
+                      placeholder={t('editModal.basic.location.placeholder')}
                       className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                     />
                   </div>
 
                   {profile.role === 'student' && (
                     <div className="space-y-2 pt-2 border-t border-[rgb(var(--border))]">
-                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Resume / CV</label>
+                      <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">{t('editModal.basic.resume.label')}</label>
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                         <button
                           type="button"
@@ -639,18 +642,18 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                               : "bg-[rgb(var(--bg-main))] text-[rgb(var(--text-main))] border-[rgb(var(--border))] hover:bg-slate-100 dark:hover:bg-slate-800"
                           )}
                         >
-                          {formData.resume_url ? 'Update Resume' : 'Upload Resume'}
+                          {formData.resume_url ? t('editModal.basic.resume.update') : t('editModal.basic.resume.upload')}
                         </button>
                         <span className={cn(
                           "text-sm font-semibold",
                           formData.resume_url ? 'text-emerald-600' : 'text-[rgb(var(--text-muted))]'
                         )}>
-                          {formData.resume_url ? 'Uploaded' : 'No resume uploaded yet'}
+                          {formData.resume_url ? t('editModal.basic.resume.uploaded') : t('editModal.basic.resume.notUploaded')}
                         </span>
                       </div>
                       <input
                         type="file"
-                        aria-label="Upload resume"
+                        aria-label={t('editModal.basic.resume.ariaLabel')}
                         ref={resumeInputRef}
                         onChange={handleResumeUpload}
                         accept=".pdf,.doc,.docx"
@@ -661,25 +664,25 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
 
                   {profile.role === 'recruiter' && (
                     <div className="pt-4 border-t border-[rgb(var(--border))] space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                      <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--accent))]">Recruiter Information</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--accent))]">{t('editModal.basic.recruiterInfo.heading')}</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Company Name</label>
-                          <input 
-                            type="text" 
+                          <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">{t('editModal.basic.recruiterInfo.companyName.label')}</label>
+                          <input
+                            type="text"
                             value={formData.company_name}
                             onChange={(e) => setFormData({...formData, company_name: e.target.value})}
-                            placeholder="e.g. TechFlow Inc."
+                            placeholder={t('editModal.basic.recruiterInfo.companyName.placeholder')}
                             className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">Company Logo URL</label>
-                          <input 
-                            type="text" 
+                          <label className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] ml-1">{t('editModal.basic.recruiterInfo.companyLogo.label')}</label>
+                          <input
+                            type="text"
                             value={formData.company_logo}
                             onChange={(e) => setFormData({...formData, company_logo: e.target.value})}
-                            placeholder="https://example.com/logo.png"
+                            placeholder={t('editModal.basic.recruiterInfo.companyLogo.placeholder')}
                             className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                           />
                         </div>
@@ -692,12 +695,12 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
               {activeTab === 'exp' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Work History</p>
-                    <button 
+                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('editModal.experience.workHistory')}</p>
+                    <button
                       onClick={addExperience}
                       className="flex items-center gap-2 text-[rgb(var(--accent))] font-bold text-xs"
                     >
-                      <Plus className="w-4 h-4" /> Add Role
+                      <Plus className="w-4 h-4" /> {t('editModal.experience.addRole')}
                     </button>
                   </div>
                   
@@ -710,16 +713,16 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                             newExp.splice(i, 1);
                             setFormData({...formData, experience: newExp});
                           }}
-                          aria-label="Remove experience entry"
+                          aria-label={t('editModal.experience.removeAriaLabel')}
                           className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all border-2 border-[rgb(var(--bg-main))]"
                         >
                           <X className="w-4 h-4" />
                         </button>
-                        
+
                         <div className="grid grid-cols-2 gap-4">
-                          <InputField 
-                            label="Role" 
-                            placeholder="e.g. Software Engineer" 
+                          <InputField
+                            label={t('editModal.experience.role.label')}
+                            placeholder={t('editModal.experience.role.placeholder')}
                             value={exp.role}
                             onChange={(val) => {
                               const newExp = [...formData.experience];
@@ -727,9 +730,9 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                               setFormData({...formData, experience: newExp});
                             }}
                           />
-                          <InputField 
-                            label="Company" 
-                            placeholder="e.g. Tech Corp" 
+                          <InputField
+                            label={t('editModal.experience.company.label')}
+                            placeholder={t('editModal.experience.company.placeholder')}
                             value={exp.company}
                             onChange={(val) => {
                               const newExp = [...formData.experience];
@@ -739,9 +742,9 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                          <InputField 
-                            label="Period" 
-                            placeholder="e.g. Jan 2022 - Present" 
+                          <InputField
+                            label={t('editModal.experience.period.label')}
+                            placeholder={t('editModal.experience.period.placeholder')}
                             value={exp.period}
                             onChange={(val) => {
                               const newExp = [...formData.experience];
@@ -751,8 +754,8 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                           />
                         </div>
                         <div className="space-y-1.5 leading-none">
-                          <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest">Description</label>
-                          <textarea 
+                          <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest">{t('editModal.experience.description.label')}</label>
+                          <textarea
                             value={exp.desc}
                             onChange={(e) => {
                               const newExp = [...formData.experience];
@@ -761,7 +764,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                             }}
                             className="w-full bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-xl p-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all resize-none"
                             rows={3}
-                            placeholder="Briefly describe your responsibilities..."
+                            placeholder={t('editModal.experience.description.placeholder')}
                           />
                         </div>
                       </div>
@@ -770,7 +773,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                     {formData.experience.length === 0 && (
                       <div className="text-center py-10 border-2 border-dashed border-[rgb(var(--border))] rounded-2xl">
                         <Briefcase className="w-8 h-8 text-[rgb(var(--text-muted))] mx-auto mb-3 opacity-20" />
-                        <p className="text-sm font-bold text-[rgb(var(--text-muted))]">No experience added yet.</p>
+                        <p className="text-sm font-bold text-[rgb(var(--text-muted))]">{t('editModal.experience.empty')}</p>
                       </div>
                     )}
                   </div>
@@ -780,12 +783,12 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
               {activeTab === 'edu' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Academic Background</p>
-                    <button 
+                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('editModal.education.academicBackground')}</p>
+                    <button
                       onClick={addEducation}
                       className="flex items-center gap-2 text-[rgb(var(--accent))] font-bold text-xs"
                     >
-                      <Plus className="w-4 h-4" /> Add School
+                      <Plus className="w-4 h-4" /> {t('editModal.education.addSchool')}
                     </button>
                   </div>
 
@@ -798,16 +801,16 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                             newEdu.splice(i, 1);
                             setFormData({...formData, education: newEdu});
                           }}
-                          aria-label="Remove education entry"
+                          aria-label={t('editModal.education.removeAriaLabel')}
                           className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all border-2 border-[rgb(var(--bg-main))]"
                         >
                           <X className="w-4 h-4" />
                         </button>
-                        
+
                         <div className="grid grid-cols-2 gap-4">
-                          <InputField 
-                            label="Degree" 
-                            placeholder="e.g. B.Sc Computer Science" 
+                          <InputField
+                            label={t('editModal.education.degree.label')}
+                            placeholder={t('editModal.education.degree.placeholder')}
                             value={edu.degree}
                             onChange={(val) => {
                               const newEdu = [...formData.education];
@@ -815,9 +818,9 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                               setFormData({...formData, education: newEdu});
                             }}
                           />
-                          <InputField 
-                            label="School" 
-                            placeholder="e.g. Unilag" 
+                          <InputField
+                            label={t('editModal.education.school.label')}
+                            placeholder={t('editModal.education.school.placeholder')}
                             value={edu.school}
                             onChange={(val) => {
                               const newEdu = [...formData.education];
@@ -827,9 +830,9 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                          <InputField 
-                            label="Period" 
-                            placeholder="e.g. 2018 - 2022" 
+                          <InputField
+                            label={t('editModal.education.period.label')}
+                            placeholder={t('editModal.education.period.placeholder')}
                             value={edu.period}
                             onChange={(val) => {
                               const newEdu = [...formData.education];
@@ -837,9 +840,9 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                               setFormData({...formData, education: newEdu});
                             }}
                           />
-                          <InputField 
-                            label="GPA (optional)" 
-                            placeholder="e.g. 4.5/5.0" 
+                          <InputField
+                            label={t('editModal.education.gpa.label')}
+                            placeholder={t('editModal.education.gpa.placeholder')}
                             value={edu.gpa}
                             onChange={(val) => {
                               const newEdu = [...formData.education];
@@ -857,12 +860,12 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
               {activeTab === 'skills' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Technical Skills</p>
-                    <button 
+                    <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('editModal.skills.technicalSkills')}</p>
+                    <button
                       onClick={addSkill}
                       className="flex items-center gap-2 text-[rgb(var(--accent))] font-bold text-xs"
                     >
-                      <Plus className="w-4 h-4" /> Add Skill Tag
+                      <Plus className="w-4 h-4" /> {t('editModal.skills.addSkillTag')}
                     </button>
                   </div>
 
@@ -879,14 +882,14 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                                 newSkills[i].name = e.target.value;
                                 setFormData({...formData, skills: newSkills});
                               }}
-                              placeholder="e.g. React"
+                              placeholder={t('editModal.skills.skillNamePlaceholder')}
                               className="bg-transparent font-bold text-sm focus:outline-none w-full"
                              />
                              <span className="text-[10px] font-mono text-[rgb(var(--accent))] font-bold">{skill.level}%</span>
                           </div>
-                          <input 
-                            type="range" 
-                            aria-label={`Skill level for ${skill.name}`}
+                          <input
+                            type="range"
+                            aria-label={t('editModal.skills.levelAriaLabel', { name: skill.name })}
                             min="0" 
                             max="100" 
                             value={skill.level}
@@ -904,7 +907,7 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
                             newSkills.splice(i, 1);
                             setFormData({...formData, skills: newSkills});
                           }}
-                          aria-label="Remove skill"
+                          aria-label={t('editModal.skills.removeAriaLabel')}
                           className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                         >
                           <XCircle className="w-4 h-4" />
@@ -917,29 +920,29 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
 
               {activeTab === 'social' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Social Media & Portfolio</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('editModal.social.heading')}</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputField 
-                      label="GitHub Profile URL" 
-                      placeholder="https://github.com/your-username" 
+                    <InputField
+                      label={t('editModal.social.github.label')}
+                      placeholder={t('editModal.social.github.placeholder')}
                       value={formData.github_url}
                       onChange={(val: string) => setFormData({...formData, github_url: val})}
                     />
-                    <InputField 
-                      label="LinkedIn Profile URL" 
-                      placeholder="https://linkedin.com/in/your-username" 
+                    <InputField
+                      label={t('editModal.social.linkedin.label')}
+                      placeholder={t('editModal.social.linkedin.placeholder')}
                       value={formData.linkedin_url}
                       onChange={(val: string) => setFormData({...formData, linkedin_url: val})}
                     />
-                    <InputField 
-                      label="Twitter Profile URL" 
-                      placeholder="https://twitter.com/your-username" 
+                    <InputField
+                      label={t('editModal.social.twitter.label')}
+                      placeholder={t('editModal.social.twitter.placeholder')}
                       value={formData.twitter_url}
                       onChange={(val: string) => setFormData({...formData, twitter_url: val})}
                     />
-                    <InputField 
-                      label="Portfolio Website" 
-                      placeholder="https://your-portfolio.me" 
+                    <InputField
+                      label={t('editModal.social.portfolio.label')}
+                      placeholder={t('editModal.social.portfolio.placeholder')}
                       value={formData.portfolio_url}
                       onChange={(val: string) => setFormData({...formData, portfolio_url: val})}
                     />
@@ -949,19 +952,19 @@ const EditProfileModal = ({ isOpen, onClose, onSave, profile, saving }: any) => 
             </div>
 
             <div className="p-6 bg-[rgb(var(--bg-side))] border-t border-[rgb(var(--border))] flex items-center justify-between gap-4">
-              <button 
+              <button
                 onClick={onClose}
                 className="px-6 py-4 text-sm font-bold text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] underline-offset-4 hover:underline"
               >
-                Cancel
+                {t('editModal.cancel')}
               </button>
-              <button 
+              <button
                 onClick={() => onSave(formData)}
                 disabled={saving}
                 className="px-8 py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl shadow-xl shadow-[rgb(var(--accent))]/20 flex items-center justify-center gap-2 disabled:opacity-70 flex-1 md:flex-none md:min-w-50"
               >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-4 h-4" />}
-                Save Profile
+                {t('editModal.saveProfile')}
               </button>
             </div>
           </motion.div>

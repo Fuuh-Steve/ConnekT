@@ -1,0 +1,24 @@
+{
+  "loading": "Chargement des offres...",
+  "heading": {
+    "title": "Gestion des offres",
+    "subtitle": "Suivez les performances et gérez les candidats de vos postes actifs."
+  },
+  "activeListings": "{count, plural, one {# offre active} other {# offres actives}}",
+  "postNew": "Publier une offre",
+  "card": {
+    "activeBadge": "Active",
+    "engineering": "Ingénierie",
+    "posted": "Publiée le {date}",
+    "applications": "Candidatures",
+    "views": "Vues",
+    "manageApplicants": "Gérer les candidats",
+    "deleteAriaLabel": "Supprimer l'offre d'emploi"
+  },
+  "emptyState": {
+    "title": "Aucune offre active",
+    "subtitle": "Prêt à dénicher des talents de classe mondiale ?",
+    "createFirst": "Créer votre première offre"
+  },
+  "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette offre ?"
+}

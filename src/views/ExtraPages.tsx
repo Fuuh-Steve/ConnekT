@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -12,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import { MOCK_JOBS } from '../mockData';
 
 export const PostJobPage = () => {
+    const t = useTranslations('post');
     const { user } = useAuth();
     const router = useRouter();
     const [step, setStep] = useState(1);
@@ -42,7 +44,7 @@ export const PostJobPage = () => {
                 .from('jobs')
                 .insert({
                     title: formData.title,
-                    company: profile?.company_name || 'Company not provided',
+                    company: profile?.company_name || t('fallbacks.companyNotProvided'),
                     location: formData.location,
                     description: formData.description,
                     tags: [formData.department, 'Full-time'],
@@ -56,7 +58,7 @@ export const PostJobPage = () => {
             setStep(3);
         } catch (err) {
             console.error('Error posting job:', err);
-            alert('Failed to post job. Please try again.');
+            alert(t('alerts.publishFailed'));
         } finally {
             setLoading(false);
         }
@@ -65,8 +67,8 @@ export const PostJobPage = () => {
     return (
         <div className="max-w-3xl mx-auto space-y-10 py-10">
             <div className="space-y-2 text-center">
-                <h1 className="text-4xl font-bold tracking-tight text-[rgb(var(--text-main))] text-center">Create Job Posting</h1>
-                <p className="text-[rgb(var(--text-muted))] text-center">Define the role and start finding the right talent for your team.</p>
+                <h1 className="text-4xl font-bold tracking-tight text-[rgb(var(--text-main))] text-center">{t('heading.title')}</h1>
+                <p className="text-[rgb(var(--text-muted))] text-center">{t('heading.subtitle')}</p>
             </div>
 
             <div className="flex items-center justify-between px-10 relative">
@@ -84,30 +86,30 @@ export const PostJobPage = () => {
             <div className="bg-[rgb(var(--bg-main))] p-8 md:p-10 rounded-2xl border border-[rgb(var(--border))] space-y-8 shadow-sm">
                 {step === 1 && (
                     <div className="space-y-6">
-                        <h2 className="text-xl font-bold text-[rgb(var(--text-main))] border-l-4 border-[rgb(var(--accent))] pl-4">Job Details</h2>
+                        <h2 className="text-xl font-bold text-[rgb(var(--text-main))] border-l-4 border-[rgb(var(--accent))] pl-4">{t('steps.jobDetails')}</h2>
                          <div className="space-y-4">
-                            <InputField 
-                                label="Job Title" 
-                                placeholder="e.g. Senior Frontend Developer" 
+                            <InputField
+                                label={t('fields.jobTitle.label')}
+                                placeholder={t('fields.jobTitle.placeholder')}
                                 value={formData.title}
                                 onChange={(val: string) => setFormData({...formData, title: val})}
                             />
-                            <InputField 
-                                label="Department" 
-                                placeholder="e.g. Engineering" 
+                            <InputField
+                                label={t('fields.department.label')}
+                                placeholder={t('fields.department.placeholder')}
                                 value={formData.department}
                                 onChange={(val: string) => setFormData({...formData, department: val})}
                             />
                             <div className="grid grid-cols-2 gap-6">
-                                <InputField 
-                                    label="Location" 
-                                    placeholder="e.g. Remote / Douala, CM" 
+                                <InputField
+                                    label={t('fields.location.label')}
+                                    placeholder={t('fields.location.placeholder')}
                                     value={formData.location}
                                     onChange={(val: string) => setFormData({...formData, location: val})}
                                 />
-                                <InputField 
-                                    label="Monthly Stipend (Range)" 
-                                    placeholder="e.g. $500 - $1000" 
+                                <InputField
+                                    label={t('fields.stipend.label')}
+                                    placeholder={t('fields.stipend.placeholder')}
                                     value={formData.stipend}
                                     onChange={(val: string) => setFormData({...formData, stipend: val})}
                                 />
@@ -117,12 +119,12 @@ export const PostJobPage = () => {
                 )}
                 {step === 2 && (
                     <div className="space-y-6">
-                        <h2 className="text-xl font-bold text-[rgb(var(--text-main))] border-l-4 border-[rgb(var(--accent))] pl-4">Job Description & Requirements</h2>
-                        <textarea 
+                        <h2 className="text-xl font-bold text-[rgb(var(--text-main))] border-l-4 border-[rgb(var(--accent))] pl-4">{t('steps.descriptionRequirements')}</h2>
+                        <textarea
                             value={formData.description}
                             onChange={(e) => setFormData({...formData, description: e.target.value})}
                             className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl p-6 h-40 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
-                            placeholder="Provide a detailed description of the role, responsibilities, and key requirements..."
+                            placeholder={t('fields.description.placeholder')}
                         ></textarea>
                     </div>
                 )}
@@ -132,15 +134,15 @@ export const PostJobPage = () => {
                             <CheckCircle className="w-10 h-10 text-emerald-500" />
                         </div>
                         <div className="space-y-2">
-                             <h2 className="text-2xl font-bold text-[rgb(var(--text-main))]">Posting is Live!</h2>
-                             <p className="text-[rgb(var(--text-muted))] text-sm">Your job has been published and is now visible to students.</p>
+                             <h2 className="text-2xl font-bold text-[rgb(var(--text-main))]">{t('success.title')}</h2>
+                             <p className="text-[rgb(var(--text-muted))] text-sm">{t('success.message')}</p>
                         </div>
                         <div className="flex justify-center">
-                            <button 
+                            <button
                                 onClick={() => router.push('/listings')}
                                 className="px-8 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl shadow-lg shadow-[rgb(var(--accent))]/20"
                             >
-                                Manage Listings
+                                {t('success.manageListings')}
                             </button>
                         </div>
                     </div>
@@ -148,19 +150,19 @@ export const PostJobPage = () => {
 
                 {step < 3 && (
                     <div className="flex items-center justify-between pt-6 border-t border-[rgb(var(--border))]">
-                        <button 
+                        <button
                             onClick={() => setStep(s => Math.max(1, s - 1))}
                             className="px-6 py-2 text-sm font-bold text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] transition-colors"
                         >
-                            Back
+                            {t('buttons.back')}
                         </button>
-                        <button 
+                        <button
                             onClick={() => step === 1 ? setStep(2) : handlePublish()}
                             disabled={loading}
                             className="px-8 py-3 bg-[rgb(var(--text-main))] text-[rgb(var(--bg-main))] font-bold rounded-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2"
                         >
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                            {step === 2 ? 'Publish Job' : 'Next Step'}
+                            {step === 2 ? t('buttons.publishJob') : t('buttons.nextStep')}
                         </button>
                     </div>
                 )}
@@ -170,6 +172,7 @@ export const PostJobPage = () => {
 };
 
 export const ManageListingsPage = () => {
+    const t = useTranslations('listings');
     const { user } = useAuth();
     const router = useRouter();
     const [jobs, setJobs] = useState<any[]>([]);
@@ -202,7 +205,7 @@ export const ManageListingsPage = () => {
     }, [fetchJobs]);
 
     const deleteJob = async (id: string) => {
-        if (!window.confirm('Are you sure you want to delete this listing?')) return;
+        if (!window.confirm(t('confirmDelete'))) return;
         try {
             const { error } = await supabase
                 .from('jobs')
@@ -219,7 +222,7 @@ export const ManageListingsPage = () => {
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
                 <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-                <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading Listings...</p>
+                <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('loading')}</p>
             </div>
         );
     }
@@ -228,19 +231,19 @@ export const ManageListingsPage = () => {
     <div className="space-y-10 pb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-[rgb(var(--text-main))]">Job Management</h1>
-                <p className="text-[rgb(var(--text-muted))] text-sm">Monitor performance and manage applicants for your active roles.</p>
+                <h1 className="text-3xl font-bold tracking-tight text-[rgb(var(--text-main))]">{t('heading.title')}</h1>
+                <p className="text-[rgb(var(--text-muted))] text-sm">{t('heading.subtitle')}</p>
             </div>
             <div className="flex items-center gap-3">
                 <div className="bg-[rgb(var(--bg-main))] px-4 py-2 rounded-xl border border-[rgb(var(--border))] flex items-center gap-3">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                   <span className="text-xs font-bold uppercase tracking-widest leading-none">{jobs.length} Active Listings</span>
+                   <span className="text-xs font-bold uppercase tracking-widest leading-none">{t('activeListings', { count: jobs.length })}</span>
                 </div>
-                <button 
+                <button
                     onClick={() => router.push('/post')}
                     className="px-6 py-2 bg-[rgb(var(--accent))] text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-[rgb(var(--accent))]/20"
                 >
-                    Post New
+                    {t('postNew')}
                 </button>
             </div>
         </div>
@@ -256,7 +259,7 @@ export const ManageListingsPage = () => {
                 >
                     <div className="absolute top-0 right-0 p-4">
                        <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[9px] font-bold uppercase tracking-widest border border-emerald-500/20">
-                          Active
+                          {t('card.activeBadge')}
                        </span>
                     </div>
 
@@ -273,11 +276,11 @@ export const ManageListingsPage = () => {
                         <div>
                             <h3 className="text-xl md:text-2xl font-bold text-[rgb(var(--text-main))] group-hover:text-[rgb(var(--accent))] transition-colors">{job.title}</h3>
                             <div className="flex flex-wrap items-center gap-3 text-xs text-[rgb(var(--text-muted))] mt-1 font-medium">
-                                <span className="flex items-center gap-1.5 font-bold"><Search className="w-3.5 h-3.5" /> Engineering</span>
+                                <span className="flex items-center gap-1.5 font-bold"><Search className="w-3.5 h-3.5" /> {t('card.engineering')}</span>
                                 <span className="w-1 h-1 rounded-full bg-[rgb(var(--border))]"></span>
                                 <span>{job.location}</span>
                                 <span className="w-1 h-1 rounded-full bg-[rgb(var(--border))]"></span>
-                                <span>Posted {new Date(job.posted_date).toLocaleDateString()}</span>
+                                <span>{t('card.posted', { date: new Date(job.posted_date).toLocaleDateString() })}</span>
                             </div>
                         </div>
                     </div>
@@ -285,25 +288,25 @@ export const ManageListingsPage = () => {
                     <div className="flex flex-wrap items-center gap-4 sm:gap-10 justify-between lg:justify-end">
                         <div className="flex items-center gap-8 md:gap-12 h-14">
                             <div className="text-center group/stat">
-                                <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest mb-1">Applications</p>
+                                <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest mb-1">{t('card.applications')}</p>
                                 <p className="text-2xl font-bold text-[rgb(var(--text-main))] transition-transform group-hover/stat:scale-110">{job.applications?.length || 0}</p>
                             </div>
                             <div className="w-px h-full bg-[rgb(var(--border))]"></div>
                             <div className="text-center group/stat">
-                                <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest mb-1">Views</p>
+                                <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest mb-1">{t('card.views')}</p>
                                 <p className="text-2xl font-bold text-[rgb(var(--accent))] transition-transform group-hover/stat:scale-110">{124 + idx * 45} <span className="text-xs"></span></p>
                             </div>
                         </div>
                          <div className="flex items-center gap-3 w-full sm:w-auto">
-                            <button 
+                            <button
                                 onClick={() => router.push(`/applicants/${job.id}`)}
                                 className="flex-1 sm:flex-none px-6 py-3.5 bg-[rgb(var(--accent))] text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                             >
-                                Manage Applicants
+                                {t('card.manageApplicants')}
                             </button>
-                            <button 
+                            <button
                                 onClick={() => deleteJob(job.id)}
-                                aria-label="Delete job posting"
+                                aria-label={t('card.deleteAriaLabel')}
                                 className="p-3.5 text-[rgb(var(--text-muted))] hover:text-red-500 hover:bg-red-50 rounded-xl dark:hover:bg-red-900/10 transition-all border border-[rgb(var(--border))]"
                             >
                                 <XCircle className="w-5 h-5" />
@@ -314,13 +317,13 @@ export const ManageListingsPage = () => {
             )) : (
                 <div className="text-center py-24 bg-[rgb(var(--bg-side))] rounded-[3rem] border border-dashed border-[rgb(var(--border))]">
                     <FileText className="w-16 h-16 text-[rgb(var(--text-muted))] mx-auto mb-6 opacity-20" />
-                    <h3 className="text-xl font-bold mb-2">No active listings</h3>
-                    <p className="text-[rgb(var(--text-muted))] mb-8">Ready to find some world-class talent?</p>
-                    <button 
+                    <h3 className="text-xl font-bold mb-2">{t('emptyState.title')}</h3>
+                    <p className="text-[rgb(var(--text-muted))] mb-8">{t('emptyState.subtitle')}</p>
+                    <button
                         onClick={() => router.push('/post')}
                         className="px-8 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl shadow-lg shadow-[rgb(var(--accent))]/20"
                     >
-                        Create Your First Post
+                        {t('emptyState.createFirst')}
                     </button>
                 </div>
             )}

@@ -1,0 +1,90 @@
+{
+  "loading": "Chargement des candidats...",
+  "accessDenied": {
+    "title": "Accès refusé",
+    "message": "Seul le recruteur ayant publié cette offre peut consulter les candidats qui y ont postulé.",
+    "backToDashboard": "Retour au tableau de bord"
+  },
+  "backToIntelligence": "Retour à l'intelligence",
+  "heading": {
+    "role": "Analyse",
+    "highlight": "des Candidats"
+  },
+  "viewingCandidates": "Vous consultez <accent>{count, plural, one {# candidat} other {# candidats}}</accent> pour l'offre n° <accent>{jobId}</accent>. Ce portail met en avant les talents identifiés par IA selon leurs compétences et leur parcours.",
+  "liveSyncing": "Synchronisation en direct avec la base de données des candidats",
+  "exportData": "Exporter les données",
+  "exportingAlert": "Exportation des données des candidats...",
+  "massInvite": "Invitation groupée",
+  "invitationsSentAlert": "Invitations envoyées aux candidats !",
+  "pipeline": {
+    "applied": "Candidatures",
+    "reviewed": "Examinées",
+    "interview": "Entretien",
+    "offers": "Offres",
+    "trend": "+12 %"
+  },
+  "filters": {
+    "heading": "Filtres",
+    "subheading": "Affinez la mise en correspondance des candidats",
+    "matchScore": "Score de compatibilité",
+    "matchScoreValue": "80 % et plus",
+    "matchScoreFilterAriaLabel": "Filtre du score de compatibilité",
+    "pipelineState": "État du pipeline",
+    "statuses": {
+      "shortlisted": "Présélectionnés",
+      "reviewing": "En cours d'examen",
+      "initialPoll": "Sondage initial",
+      "interview": "Entretien"
+    }
+  },
+  "candidatePool": {
+    "unknownApplicantFallback": "Candidat inconnu",
+    "notSpecifiedFallback": "Non précisé",
+    "heading": "Vivier de candidats",
+    "subheading": "Sélectionnez un candidat pour voir son profil détaillé et son évaluation par IA.",
+    "sortBy": "Trier par :",
+    "sortAriaLabel": "Trier les candidats",
+    "sortOptions": {
+      "highestMatch": "Meilleure compatibilité",
+      "recentFirst": "Plus récents",
+      "score": "Score"
+    },
+    "matchSuffix": "% de compatibilité",
+    "statusLabels": {
+      "pending": "En attente",
+      "reviewed": "Examinée",
+      "interview": "Entretien",
+      "accepted": "Acceptée",
+      "rejected": "Rejetée"
+    },
+    "actions": {
+      "processing": "Traitement...",
+      "markAsReviewed": "Marquer comme examinée",
+      "scheduleInterview": "Programmer un entretien",
+      "rejecting": "Rejet en cours...",
+      "reject": "Rejeter",
+      "accept": "Accepter"
+    },
+    "empty": "Aucun candidat pour le moment pour cette offre d'emploi",
+    "loadMore": "Synchronisation de la base de données... Charger plus"
+  },
+  "scheduleModal": {
+    "heading": "Programmer un entretien",
+    "subheading": "Configurez un entretien pour <accent>{name}</accent>",
+    "dateTimeLabel": "Date et heure de l'entretien",
+    "dateTimeAriaLabel": "Date et heure de l'entretien",
+    "meetingLinkLabel": "Lien de réunion",
+    "meetingLinkPlaceholder": "https://meet.google.com/...",
+    "generateMeetLink": "Générer un lien Google Meet",
+    "notesLabel": "Notes d'entretien (facultatif)",
+    "notesPlaceholder": "Ajoutez des notes de préparation, des points à l'ordre du jour ou des instructions particulières pour l'entretien...",
+    "cancel": "Annuler",
+    "scheduling": "Programmation de l'entretien...",
+    "submit": "Programmer l'entretien",
+    "fillRequiredFields": "Veuillez remplir tous les champs obligatoires"
+  },
+  "alerts": {
+    "updateStatusFailed": "Échec de la mise à jour du statut du candidat",
+    "scheduleFailed": "Échec de la programmation de l'entretien"
+  }
+}

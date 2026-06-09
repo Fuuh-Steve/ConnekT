@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Briefcase, ChevronRight, Clock, MapPin, Search, ListFilter, ArrowLeft, CheckCircle, X, ShieldCheck, Mail, Building2, TrendingUp, Loader2 } from 'lucide-react';
 import Image from 'next/image';
@@ -10,11 +11,18 @@ import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 
 export const ApplicationsPage = () => {
+  const t = useTranslations('applications');
   const { user } = useAuth();
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const statusLabel = (status: string) => {
+    const key = status.toLowerCase();
+    const known = ['pending', 'reviewed', 'interview', 'accepted', 'rejected'];
+    return known.includes(key) ? t(`statusLabels.${key}` as 'statusLabels.pending') : status;
+  };
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -34,14 +42,14 @@ export const ApplicationsPage = () => {
         } else if (data) {
           const transformedApps = data.map(app => ({
             id: app.id,
-            role: app.jobs?.title || 'Unknown Role',
-            company: app.jobs?.company || 'Unknown Company',
+            role: app.jobs?.title || t('fallbacks.unknownRole'),
+            company: app.jobs?.company || t('fallbacks.unknownCompany'),
             logo: app.jobs?.logo || 'https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=100&h=100&fit=crop',
-            location: app.jobs?.location || 'Remote',
+            location: app.jobs?.location || t('fallbacks.remoteLocation'),
             status: app.status.charAt(0).toUpperCase() + app.status.slice(1),
             progress: app.status === 'Accepted' ? 100 : app.status === 'Interview' ? 60 : app.status === 'Reviewed' ? 40 : 20,
             appliedDate: new Date(app.created_at).toLocaleDateString(),
-            desc: app.jobs?.description || 'No description available'
+            desc: app.jobs?.description || t('fallbacks.noDescription')
           }));
           setApplications(transformedApps);
         }
@@ -53,9 +61,9 @@ export const ApplicationsPage = () => {
     };
 
     fetchApplications();
-  }, [user]);
+  }, [user, t]);
 
-  const filteredApps = applications.filter(app => 
+  const filteredApps = applications.filter(app =>
     app.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
     app.company.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -64,7 +72,7 @@ export const ApplicationsPage = () => {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading Applications...</p>
+        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('loading')}</p>
       </div>
     );
   }
@@ -75,19 +83,19 @@ export const ApplicationsPage = () => {
         <div className="space-y-4">
           <Link href="/dashboard" className="flex items-center gap-2 text-sm font-bold text-[rgb(var(--text-muted))] hover:text-[rgb(var(--accent))] transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span>Back to Dashboard</span>
+            <span>{t('backToDashboard')}</span>
           </Link>
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight">Your Applications</h1>
-            <p className="text-[rgb(var(--text-muted))] text-sm">Track and manage all your internship submissions.</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t('heading.title')}</h1>
+            <p className="text-[rgb(var(--text-muted))] text-sm">{t('heading.subtitle')}</p>
           </div>
         </div>
 
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgb(var(--text-muted))]" />
-          <input 
-            type="text" 
-            placeholder="Search applications..." 
+          <input
+            type="text"
+            placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-xl py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] focus:ring-4 focus:ring-[rgb(var(--accent))]/5 transition-all shadow-sm"
@@ -131,7 +139,7 @@ export const ApplicationsPage = () => {
               
               <div className="flex items-center justify-between sm:justify-end gap-8 w-full sm:w-auto border-t sm:border-t-0 pt-4 sm:pt-0 border-[rgb(var(--border))]">
                 <div className="space-y-2 text-right hidden md:block">
-                  <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest leading-none">Applied</p>
+                  <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest leading-none">{t('card.appliedLabel')}</p>
                   <p className="text-xs font-bold leading-none">{app.appliedDate}</p>
                 </div>
 
@@ -142,7 +150,7 @@ export const ApplicationsPage = () => {
                     app.status === 'Interview' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' :
                     'bg-slate-100 dark:bg-slate-800 text-[rgb(var(--text-muted))] border-[rgb(var(--border))]'
                   )}>
-                    {app.status}
+                    {statusLabel(app.status)}
                   </span>
                   <div className="flex items-center gap-2 justify-end">
                     <div className="w-24 h-1.5 bg-[rgb(var(--bg-side))] rounded-full overflow-hidden border border-[rgb(var(--border))]">
@@ -168,8 +176,8 @@ export const ApplicationsPage = () => {
             <div className="w-20 h-20 bg-[rgb(var(--bg-side))] rounded-3xl flex items-center justify-center mx-auto mb-6">
               <Search className="w-10 h-10 text-[rgb(var(--text-muted))] opacity-20" />
             </div>
-            <h3 className="text-xl font-bold">No applications found</h3>
-            <p className="text-[rgb(var(--text-muted))] text-sm mt-2">Try adjusting your search query.</p>
+            <h3 className="text-xl font-bold">{t('emptyState.title')}</h3>
+            <p className="text-[rgb(var(--text-muted))] text-sm mt-2">{t('emptyState.subtitle')}</p>
           </div>
         )}
       </div>
@@ -209,7 +217,7 @@ export const ApplicationsPage = () => {
                 </div>
                 <button 
                   onClick={() => setSelectedApp(null)}
-                  aria-label="Close application details"
+                  aria-label={t('modal.closeAriaLabel')}
                   className="p-2 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -221,52 +229,52 @@ export const ApplicationsPage = () => {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[rgb(var(--text-muted))]">
                       <Clock className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Applied</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('modal.applied')}</span>
                     </div>
                     <p className="text-sm font-bold">{selectedApp.appliedDate}</p>
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[rgb(var(--text-muted))]">
                       <MapPin className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Location</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('modal.location')}</span>
                     </div>
                     <p className="text-sm font-bold truncate">{selectedApp.location}</p>
                   </div>
                   <div className="space-y-1 col-span-2 sm:col-span-1">
                     <div className="flex items-center gap-2 text-[rgb(var(--text-muted))]">
                    <TrendingUp className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Status</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('modal.status')}</span>
                     </div>
-                    <p className="text-sm font-bold text-blue-600 dark:text-blue-400">{selectedApp.status}</p>
+                    <p className="text-sm font-bold text-blue-600 dark:text-blue-400">{statusLabel(selectedApp.status)}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">Current Stage</h4>
+                  <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('modal.currentStage')}</h4>
                   <div className="p-4 sm:p-5 rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 flex items-start gap-4">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-sm">
                       <CheckCircle className="w-5 h-5 text-blue-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-blue-950 dark:text-blue-100">Reviewing Screening Test</p>
+                      <p className="text-sm font-bold text-blue-950 dark:text-blue-100">{t('modal.reviewingTitle')}</p>
                       <p className="text-[12px] text-blue-700 dark:text-blue-300 mt-1 font-medium leading-relaxed">
-                        The team is currently reviewing your profile and test results.
+                        {t('modal.reviewingDesc')}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-4 sticky bottom-0 bg-[rgb(var(--bg-main))] py-4 -mx-5 px-5 sm:-mx-8 sm:px-8 border-t border-[rgb(var(--border))] shrink-0">
-                  <button 
+                  <button
                     onClick={() => setSelectedApp(null)}
                     className="flex-1 py-3 sm:py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-xl sm:rounded-2xl shadow-xl shadow-[rgb(var(--accent))]/20 hover:bg-[rgb(var(--accent))]/90 transition-all flex items-center justify-center gap-2"
                   >
                     <CheckCircle className="w-4 h-4" />
-                    <span>Got it</span>
+                    <span>{t('modal.gotIt')}</span>
                   </button>
                   <button className="flex-1 py-3 sm:py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] text-[rgb(var(--text-main))] font-bold rounded-xl sm:rounded-2xl hover:bg-[rgb(var(--border))]/30 transition-all flex items-center justify-center gap-2">
                     <Building2 className="w-4 h-4" />
-                    <span>View Company</span>
+                    <span>{t('modal.viewCompany')}</span>
                   </button>
                 </div>
               </div>

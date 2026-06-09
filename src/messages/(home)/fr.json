@@ -1,0 +1,131 @@
+{
+  "hero": {
+    "badge": "Valoriser les talents tech",
+    "headline": "Combler le fossé entre",
+    "headlineHighlight": "le Campus et la Carrière",
+    "subheadline": "ConnekT connecte les talents technologiques universitaires les plus brillants avec les meilleures entreprises. Suivi simplifié des candidatures et mise en correspondance intelligente pour lancer votre carrière.",
+    "cta": "Créer un compte gratuit",
+    "stats": {
+      "activeStudents": "Étudiants actifs",
+      "verifiedPartners": "Partenaires vérifiés",
+      "monthlyPlacements": "Placements mensuels",
+      "matchAccuracy": "Précision de correspondance"
+    }
+  },
+  "features": {
+    "title": "Tout ce dont vous avez besoin pour",
+    "titleHighlight": "réussir",
+    "subtitle": "Optimisez votre recherche de stage avec des outils conçus pour l'étudiant moderne.",
+    "learnMore": "En savoir plus",
+    "smartMatching": {
+      "title": "Correspondance intelligente",
+      "desc": "Notre système de correspondance intelligent associe vos compétences et centres d'intérêt uniques aux meilleurs postes disponibles, garantissant un parfait équilibre pour vous et l'entreprise.",
+      "details": [
+        "Recommandations personnalisées basées sur des algorithmes",
+        "Intégration d'évaluations de compétences",
+        "Cartographie de parcours de carrière",
+        "Retours personnalisés sur les candidatures"
+      ]
+    },
+    "jobTracking": {
+      "title": "Suivi des candidatures",
+      "desc": "Restez organisé grâce à un tableau de bord centralisé pour toutes vos candidatures. Recevez des notifications instantanées en cas de changement de statut et ne manquez plus jamais une relance.",
+      "details": [
+        "Mises à jour en temps réel du statut des candidatures",
+        "Calendrier de planification des entretiens",
+        "Gestion des tâches liées aux exigences de candidature",
+        "Stockage de documents pour CV et lettres de motivation"
+      ]
+    },
+    "verifiedCompanies": {
+      "title": "Entreprises vérifiées",
+      "desc": "Nous vérifions manuellement chaque entreprise et chaque offre de stage afin d'éliminer les arnaques et les postes de mauvaise qualité, pour que vous puissiez postuler en toute confiance.",
+      "details": [
+        "Vérifications approfondies des antécédents des recruteurs",
+        "Vérification sécurisée des paiements et indemnités",
+        "Évaluations de la qualité de vie au travail",
+        "Avis d'entreprises rédigés par des étudiants"
+      ]
+    }
+  },
+  "featureModal": {
+    "closeAriaLabel": "Fermer les détails de la fonctionnalité",
+    "keyAdvantages": "Avantages clés",
+    "startJourney": "Commencez votre parcours"
+  },
+  "about": {
+    "kicker": "À propos de ConnekT",
+    "heading": "Nous aidons les étudiants à découvrir des stages technologiques enrichissants, tandis que les recruteurs renforcent leurs viviers de talents universitaires.",
+    "body": "ConnekT est conçu pour la prochaine génération d'innovateurs. Notre mission est de simplifier le recrutement en début de carrière, de mettre en avant les meilleures opportunités et de créer un lien de confiance entre les talents universitaires et les employeurs."
+  },
+  "ctaSection": {
+    "headingLine1": "Commencez votre carrière",
+    "headingLine2": "dès aujourd'hui.",
+    "body": "Ne manquez pas des opportunités qui peuvent changer votre vie. Rejoignez des milliers d'étudiants qui construisent déjà leur avenir.",
+    "cta": "Commencer maintenant"
+  },
+  "footer": {
+    "brand": "ConnekT",
+    "tagline": "Combler le fossé entre le campus et la carrière pour la prochaine génération de leaders technologiques grâce à des expériences de stage fluides et une mise en correspondance intelligente.",
+    "socialAriaLabel": "Visitez notre profil {network}",
+    "socialNetworks": {
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "default": "réseaux sociaux"
+    },
+    "navigationHeading": "Navigation",
+    "recruiterPortal": "Portail recruteur",
+    "joinAsStudent": "Rejoindre en tant qu'étudiant",
+    "resourcesHeading": "Ressources",
+    "resources": {
+      "successStories": {
+        "title": "Témoignages de réussite",
+        "summary": "Découvrez comment des étudiants ont décroché le poste de leurs rêves grâce à ConnekT et comment des entreprises ont trouvé les bons talents plus rapidement.",
+        "details": [
+          "Études de cas menées par des étudiants des meilleures universités.",
+          "Statistiques de réussite des recruteurs et témoignages de conversion.",
+          "Des stages transformés en offres à temps plein."
+        ]
+      },
+      "blog": {
+        "title": "Blog",
+        "summary": "Conseils sur l'évolution de carrière, la préparation aux entretiens et la navigation dans le monde des stages technologiques.",
+        "details": [
+          "Conseils de CV pour les recrutements sur les campus.",
+          "Guides d'entretien pour les postes d'ingénierie et de produit.",
+          "Tendances technologiques émergentes à connaître pour les étudiants."
+        ]
+      },
+      "partnerWithUs": {
+        "title": "Devenez partenaire",
+        "summary": "Développez votre vivier de stagiaires avec des talents étudiants de confiance et bénéficiez d'un tableau de bord recruteur dédié.",
+        "details": [
+          "Accédez à des viviers de talents étudiants vérifiés.",
+          "Campagnes de recrutement personnalisées pour votre entreprise.",
+          "Accompagnement dédié à l'intégration pour les recruteurs."
+        ]
+      },
+      "privacyPolicy": {
+        "title": "Politique de confidentialité",
+        "summary": "Nous protégeons les données des étudiants et des recruteurs grâce à des contrôles de confidentialité clairs et des pratiques de traitement fiables.",
+        "details": [
+          "Collecte et utilisation transparentes des données.",
+          "Stockage sécurisé des profils et des candidatures.",
+          "Respect de la confidentialité des utilisateurs sur l'ensemble de la plateforme."
+        ]
+      }
+    },
+    "contactHeading": "Contactez-nous",
+    "location": "Bamenda, Cameroun",
+    "copyright": "© 2026 ConnekT. Tous droits réservés.",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "security": "Sécurité"
+  },
+  "resourceModal": {
+    "keyHighlights": "Points clés",
+    "contactPrompt": "Vous souhaitez en savoir plus ? Contactez-nous à",
+    "getStarted": "Commencer"
+  }
+}

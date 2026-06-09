@@ -1,0 +1,40 @@
+{
+  "loading": "Loading Applications...",
+  "backToDashboard": "Back to Dashboard",
+  "heading": {
+    "title": "Your Applications",
+    "subtitle": "Track and manage all your internship submissions."
+  },
+  "searchPlaceholder": "Search applications...",
+  "fallbacks": {
+    "unknownRole": "Unknown Role",
+    "unknownCompany": "Unknown Company",
+    "remoteLocation": "Remote",
+    "noDescription": "No description available"
+  },
+  "card": {
+    "appliedLabel": "Applied"
+  },
+  "statusLabels": {
+    "pending": "Pending",
+    "reviewed": "Reviewed",
+    "interview": "Interview",
+    "accepted": "Accepted",
+    "rejected": "Rejected"
+  },
+  "emptyState": {
+    "title": "No applications found",
+    "subtitle": "Try adjusting your search query."
+  },
+  "modal": {
+    "closeAriaLabel": "Close application details",
+    "applied": "Applied",
+    "location": "Location",
+    "status": "Status",
+    "currentStage": "Current Stage",
+    "reviewingTitle": "Reviewing Screening Test",
+    "reviewingDesc": "The team is currently reviewing your profile and test results.",
+    "gotIt": "Got it",
+    "viewCompany": "View Company"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "heading": {
+    "title": "Browse Internships",
+    "subtitle": "Find your next opportunity from top vetted companies globally."
+  },
+  "searchPlaceholder": "Search roles or companies...",
+  "emptyState": {
+    "title": "No internships found",
+    "subtitle": "Try adjusting your search query or check back later."
+  },
+  "fallbacks": {
+    "companyNotProvided": "Company not provided"
+  },
+  "card": {
+    "matchSuffix": "% Match",
+    "applicantsSuffix": " applicants",
+    "details": "Details"
+  }
+}

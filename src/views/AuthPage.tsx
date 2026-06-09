@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, Suspense } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
@@ -8,8 +9,10 @@ import { User, Briefcase, ChevronRight, Zap, Globe, ShieldCheck, Mail, Lock, Mai
 import { cn } from '../lib/utils';
 import { UserRole } from '../types';
 import { supabase } from '../lib/supabase';
+import { LocaleSwitcher } from '../components/LocaleSwitcher';
 
 function AuthPageInner() {
+  const t = useTranslations('auth');
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -56,13 +59,13 @@ function AuthPageInner() {
   const validate = () => {
     const errors: { fullName?: string; email?: string; password?: string } = {};
     if (!isLogin && fullName.trim().length < 2)
-      errors.fullName = 'Full name must be at least 2 characters.';
+      errors.fullName = t('validation.fullNameTooShort');
     if (!emailRegex.test(email.trim()))
-      errors.email = 'Please enter a valid email address.';
+      errors.email = t('validation.invalidEmail');
     if (!isLogin && password.length < 8)
-      errors.password = 'Password must be at least 8 characters.';
+      errors.password = t('validation.passwordTooShort');
     else if (isLogin && !password)
-      errors.password = 'Password is required.';
+      errors.password = t('validation.passwordRequired');
     return errors;
   };
 
@@ -112,9 +115,9 @@ function AuthPageInner() {
       await new Promise(resolve => setTimeout(resolve, 500));
       router.push('/dashboard');
     } catch (err: any) {
-      let msg = err.message || 'An error occurred during authentication';
+      let msg = err.message || t('errors.authGeneric');
       if (msg.includes('Email rate limit exceeded')) {
-        msg = 'Too many requests. Please wait a few minutes before trying again or try signing in with Google.';
+        msg = t('errors.rateLimited');
       }
       setError(msg);
     } finally {
@@ -137,7 +140,7 @@ function AuthPageInner() {
       });
       if (error) throw error;
     } catch (err: any) {
-      setError(err.message || 'An error occurred during Google authentication');
+      setError(err.message || t('errors.googleAuthGeneric'));
     }
   };
 
@@ -155,9 +158,13 @@ function AuthPageInner() {
         <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center group-hover:bg-[rgb(var(--accent))] group-hover:text-white transition-all shadow-sm">
           <ChevronRight className="w-5 h-5 rotate-180" />
         </div>
-        <span className="hidden sm:inline">Back to Home</span>
-        <span className="sm:hidden">Back</span>
+        <span className="hidden sm:inline">{t('backToHome.full')}</span>
+        <span className="sm:hidden">{t('backToHome.short')}</span>
       </Link>
+
+      <div className="absolute top-6 sm:top-10 right-6 sm:right-10 z-50">
+        <LocaleSwitcher />
+      </div>
 
       <div className="max-w-4xl w-full bg-[rgb(var(--bg-main))] p-8 sm:p-10 md:p-14 rounded-[2.5rem] sm:rounded-[4rem] shadow-hard border border-[rgb(var(--border))] flex flex-col md:flex-row gap-10 sm:gap-14 mt-28 sm:mt-10 md:mt-0 relative z-10">
         <div className="flex-1 space-y-8">
@@ -166,10 +173,10 @@ function AuthPageInner() {
               <Zap className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[rgb(var(--text-main))] font-display leading-[1.1]">
-              {isLogin ? "Welcome Back" : "Join ConnekT"}
+              {isLogin ? t('hero.titleLogin') : t('hero.titleSignup')}
             </h1>
             <p className="text-[rgb(var(--text-muted))] text-base sm:text-lg font-medium leading-relaxed">
-              {isLogin ? "Sign in to access your dashboard and manage your tech career." : "Create your account and bridge the gap from campus to career."}
+              {isLogin ? t('hero.subtitleLogin') : t('hero.subtitleSignup')}
             </p>
           </div>
         </div>
@@ -178,20 +185,20 @@ function AuthPageInner() {
           <form onSubmit={handleAuth} className="space-y-8">
             <div className="space-y-5">
               <label className="text-xs font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest ml-1">
-                {isLogin ? 'Access your portal' : 'Choose your path'}
+                {isLogin ? t('form.accessYourPortal') : t('form.chooseYourPath')}
               </label>
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <RoleSelectionCard
                   id="student"
                   icon={User}
-                  label="Student"
+                  label={t('roles.student')}
                   selected={selectedRole === 'student'}
                   onClick={() => router.replace(buildUrl({ role: 'student' }))}
                 />
                 <RoleSelectionCard
                   id="recruiter"
                   icon={Briefcase}
-                  label="Recruiter"
+                  label={t('roles.recruiter')}
                   selected={selectedRole === 'recruiter'}
                   onClick={() => router.replace(buildUrl({ role: 'recruiter' }))}
                 />
@@ -220,7 +227,7 @@ function AuthPageInner() {
                       type="text"
                       value={fullName}
                       onChange={(e) => { setFullName(e.target.value); setFieldErrors(prev => ({ ...prev, fullName: undefined })); }}
-                      placeholder="Full Name"
+                      placeholder={t('placeholders.fullName')}
                       className={cn(
                         "w-full bg-[rgb(var(--bg-side))] border rounded-2xl py-4.5 pl-12 pr-6 text-[15px] font-medium focus:outline-none transition-all shadow-sm",
                         fieldErrors.fullName ? "border-red-500 focus:border-red-500" : "border-[rgb(var(--border))] focus:border-[rgb(var(--accent))]"
@@ -238,7 +245,7 @@ function AuthPageInner() {
                     type="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setFieldErrors(prev => ({ ...prev, email: undefined })); }}
-                    placeholder="Email address"
+                    placeholder={t('placeholders.email')}
                     className={cn(
                       "w-full bg-[rgb(var(--bg-side))] border rounded-2xl py-4.5 pl-12 pr-6 text-[15px] font-medium focus:outline-none transition-all shadow-sm",
                       fieldErrors.email ? "border-red-500 focus:border-red-500" : "border-[rgb(var(--border))] focus:border-[rgb(var(--accent))]"
@@ -254,7 +261,7 @@ function AuthPageInner() {
                     type="password"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setFieldErrors(prev => ({ ...prev, password: undefined })); }}
-                    placeholder="Password"
+                    placeholder={t('placeholders.password')}
                     className={cn(
                       "w-full bg-[rgb(var(--bg-side))] border rounded-2xl py-4.5 pl-12 pr-6 text-[15px] focus:outline-none transition-all font-mono shadow-sm",
                       fieldErrors.password ? "border-red-500 focus:border-red-500" : "border-[rgb(var(--border))] focus:border-[rgb(var(--accent))]"
@@ -275,7 +282,7 @@ function AuthPageInner() {
                   <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
                 ) : (
                   <>
-                    <span>{isLogin ? "Sign In" : "Create Account"}</span>
+                    <span>{isLogin ? t('buttons.signIn') : t('buttons.createAccount')}</span>
                     <ChevronRight className="w-5 h-5" />
                   </>
                 )}
@@ -283,7 +290,7 @@ function AuthPageInner() {
 
               <div className="relative flex items-center py-2">
                 <div className="grow border-t border-[rgb(var(--border))]"></div>
-                <span className="shrink mx-4 text-[11px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest">Or</span>
+                <span className="shrink mx-4 text-[11px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest">{t('buttons.or')}</span>
                 <div className="grow border-t border-[rgb(var(--border))]"></div>
               </div>
 
@@ -298,7 +305,7 @@ function AuthPageInner() {
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                <span>Continue with Google</span>
+                <span>{t('buttons.continueWithGoogle')}</span>
               </button>
             </div>
           </form>
@@ -307,24 +314,24 @@ function AuthPageInner() {
             <p className="text-base text-[rgb(var(--text-muted))] font-bold">
               {isLogin ? (
                 <>
-                  New to ConnekT?{' '}
+                  {t('footer.newToConnekT')}{' '}
                   <button
                     type="button"
                     onClick={() => router.push(buildUrl({ mode: 'signup', role: selectedRole }))}
                     className="text-[rgb(var(--accent))] hover:underline"
                   >
-                    Create a free account
+                    {t('footer.createFreeAccount')}
                   </button>
                 </>
               ) : (
                 <>
-                  Already have an account?{' '}
+                  {t('footer.alreadyHaveAccount')}{' '}
                   <button
                     type="button"
                     onClick={() => router.push(buildUrl({ mode: 'login', role: selectedRole }))}
                     className="text-[rgb(var(--accent))] hover:underline shadow-sm"
                   >
-                    Sign in here
+                    {t('footer.signInHere')}
                   </button>
                 </>
               )}
@@ -357,23 +364,24 @@ function AuthPageInner() {
               </div>
 
               <div className="space-y-2">
-                <h2 className="text-2xl font-extrabold text-[rgb(var(--text-main))]">Check your inbox</h2>
+                <h2 className="text-2xl font-extrabold text-[rgb(var(--text-main))]">{t('emailModal.title')}</h2>
                 <p className="text-[rgb(var(--text-muted))] font-medium leading-relaxed">
-                  We sent a verification link to{' '}
-                  <span className="text-[rgb(var(--text-main))] font-bold">{email}</span>.
-                  Click the link to activate your account.
+                  {t.rich('emailModal.description', {
+                    email,
+                    accent: (chunks) => <span className="text-[rgb(var(--text-main))] font-bold">{chunks}</span>,
+                  })}
                 </p>
               </div>
 
               <p className="text-xs text-[rgb(var(--text-muted))] font-medium">
-                Can't find it? Check your spam folder.
+                {t('emailModal.spamNote')}
               </p>
 
               <button
                 onClick={() => { setShowEmailModal(false); router.replace(buildUrl({ mode: 'login' })); }}
                 className="w-full py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl hover:bg-[rgb(var(--accent))]/90 active:scale-[0.98] transition-all shadow-lg shadow-[rgb(var(--accent))]/20"
               >
-                Got it
+                {t('emailModal.gotIt')}
               </button>
             </motion.div>
           </motion.div>

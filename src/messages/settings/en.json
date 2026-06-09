@@ -1,0 +1,86 @@
+{
+  "loading": "Loading Settings...",
+  "heading": {
+    "title": "Settings",
+    "subtitle": "Manage your account preferences and system configurations."
+  },
+  "saveButton": {
+    "saving": "Saving...",
+    "saveChanges": "Save Changes"
+  },
+  "tabs": {
+    "general": "General",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "security": "Security",
+    "billing": "Billing"
+  },
+  "profileTab": {
+    "personalInfo": { "title": "Personal Information", "subtitle": "Update your basic account details." },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "professionalRole": "Professional Role",
+      "roleFallback": "Professional Developer",
+      "nameFallback": "User",
+      "emailAddress": "Email Address",
+      "emailFallback": "user@example.com",
+      "phoneNumber": "Phone Number",
+      "phoneFallback": "Not set"
+    },
+    "contactDetails": { "title": "Contact Details", "subtitle": "How recruiters can reach you." }
+  },
+  "appearance": {
+    "title": "Appearance",
+    "subtitle": "Customize the interface look and feel.",
+    "themeMode": { "title": "Theme Mode", "desc": "Switch between light and dark themes." },
+    "developerMode": { "title": "Developer Mode", "desc": "Enable experimental features and debug logs." }
+  },
+  "system": {
+    "title": "System",
+    "subtitle": "Global application behaviors.",
+    "language": { "title": "Language", "desc": "Default system language.", "value": "English (US)" },
+    "autoSave": { "title": "Auto-Save", "desc": "Automatically save changes while editing documents." }
+  },
+  "notifications": {
+    "email": {
+      "title": "Email Notifications",
+      "subtitle": "Decide what messages arrive in your inbox.",
+      "jobAlerts": { "title": "Job Alerts", "desc": "Summary of new internships matching your preferences." },
+      "applicationUpdates": { "title": "Application Updates", "desc": "Instant news about your submission status." },
+      "newsletter": { "title": "Newsletter", "desc": "Weekly insights and career growth tips." }
+    },
+    "push": {
+      "title": "Push Notifications",
+      "subtitle": "Real-time alerts via browser.",
+      "directMessages": { "title": "Direct Messages", "desc": "Alerts when a recruiter messsages you." },
+      "dashboardHighlights": { "title": "Dashboard Highlights", "desc": "Daily summary of interaction stats." }
+    }
+  },
+  "security": {
+    "accountSecurity": { "title": "Account Security", "subtitle": "Manage passwords and verification." },
+    "changePassword": { "title": "Change Password", "desc": "Last updated 3 months ago." },
+    "twoFactorAuth": { "title": "Two-Factor Auth", "status": "Enabled via SMS" },
+    "dangerZone": { "title": "Danger Zone", "subtitle": "Irreversible account actions." },
+    "deletePermanently": "Delete Account Permanently",
+    "modal": {
+      "closeAriaLabel": "Close modal",
+      "title": "Delete your account?",
+      "warning": "This action is <strong>irreversible</strong> and will permanently delete all profile settings, resume files, job listings, and applications.",
+      "confirmLabel": "Type your email to confirm:",
+      "placeholderFallback": "your.email@example.com",
+      "cancel": "Cancel",
+      "deleteAccount": "Delete Account",
+      "deleting": "Deleting...",
+      "genericError": "Failed to delete account. Please try again later."
+    }
+  },
+  "billing": {
+    "subscriptionPlan": { "title": "Subscription Plan", "subtitle": "Manage your current membership." },
+    "currentPlan": "Current Plan",
+    "proMembership": "Pro Membership",
+    "proDescription": "Unlimited applications & priority support.",
+    "perMonth": "/month",
+    "manageBilling": "Manage Billing"
+  }
+}

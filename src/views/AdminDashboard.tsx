@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ShieldCheck, CreditCard, Activity, User, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
@@ -25,6 +26,7 @@ type JobSummary = {
 };
 
 export const AdminDashboard = () => {
+  const t = useTranslations('admin');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalUsers, setTotalUsers] = useState(0);
@@ -80,7 +82,7 @@ export const AdminDashboard = () => {
       } catch (err) {
         console.error('Admin dashboard load failed', err);
         const message = err instanceof Error ? err.message : JSON.stringify(err, null, 2);
-        setError(`Unable to load admin metrics. ${message || 'Please check Supabase permissions or network connectivity.'}`);
+        setError(`${t('errorPrefix')} ${message || t('errorFallback')}`);
       } finally {
         setLoading(false);
       }
@@ -90,10 +92,10 @@ export const AdminDashboard = () => {
   }, []);
 
   const stats = [
-    { icon: <User className="w-5 h-5" />, label: 'Total Users', value: totalUsers, color: 'text-blue-500', delay: 0.1 },
-    { icon: <Briefcase className="w-5 h-5" />, label: 'Active Jobs', value: jobCount, color: 'text-indigo-500', delay: 0.2 },
-    { icon: <CreditCard className="w-5 h-5" />, label: 'Recruiter Accounts', value: recruiterCount, color: 'text-emerald-500', delay: 0.3 },
-    { icon: <Activity className="w-5 h-5" />, label: 'Student Accounts', value: studentCount, color: 'text-purple-500', delay: 0.4 },
+    { icon: <User className="w-5 h-5" />, label: t('stats.totalUsers'), value: totalUsers, color: 'text-blue-500', delay: 0.1 },
+    { icon: <Briefcase className="w-5 h-5" />, label: t('stats.activeJobs'), value: jobCount, color: 'text-indigo-500', delay: 0.2 },
+    { icon: <CreditCard className="w-5 h-5" />, label: t('stats.recruiterAccounts'), value: recruiterCount, color: 'text-emerald-500', delay: 0.3 },
+    { icon: <Activity className="w-5 h-5" />, label: t('stats.studentAccounts'), value: studentCount, color: 'text-purple-500', delay: 0.4 },
   ];
 
   return (
@@ -106,9 +108,9 @@ export const AdminDashboard = () => {
         >
           <h1 className="text-3xl font-bold tracking-tight text-[rgb(var(--text-main))] flex items-center gap-3">
             <ShieldCheck className="w-8 h-8 text-[rgb(var(--accent))]" />
-            Admin Overview
+            {t('title')}
           </h1>
-          <p className="text-[rgb(var(--text-muted))] text-sm">Monitor platform activity, manage access levels, and review account growth.</p>
+          <p className="text-[rgb(var(--text-muted))] text-sm">{t('subtitle')}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, x: 20 }}
@@ -116,7 +118,7 @@ export const AdminDashboard = () => {
           className="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 px-4 py-2 rounded-xl text-xs font-bold text-emerald-600 dark:text-emerald-400 shadow-sm"
         >
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          Platform Status: Healthy
+          {t('platformStatus')}
         </motion.div>
       </div>
 
@@ -143,14 +145,14 @@ export const AdminDashboard = () => {
         <section className="lg:col-span-3 space-y-6">
           <div className="flex items-center justify-between border-l-4 border-amber-400 pl-4">
             <div>
-              <h2 className="text-lg font-bold text-[rgb(var(--text-main))]">Recent Recruiter Signups</h2>
-              <p className="text-xs text-[rgb(var(--text-muted))] font-medium uppercase tracking-wider">Newest company accounts</p>
+              <h2 className="text-lg font-bold text-[rgb(var(--text-main))]">{t('recruiterSignups.heading')}</h2>
+              <p className="text-xs text-[rgb(var(--text-muted))] font-medium uppercase tracking-wider">{t('recruiterSignups.subheading')}</p>
             </div>
-            <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 text-[10px] px-2 py-1 rounded-lg font-bold uppercase tracking-wider shadow-sm">Live data</span>
+            <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 text-[10px] px-2 py-1 rounded-lg font-bold uppercase tracking-wider shadow-sm">{t('recruiterSignups.liveData')}</span>
           </div>
 
           {loading ? (
-            <div className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] p-6 text-center text-sm text-[rgb(var(--text-muted))]">Loading recruiter data...</div>
+            <div className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] p-6 text-center text-sm text-[rgb(var(--text-muted))]">{t('recruiterSignups.loading')}</div>
           ) : (
             <div className="space-y-3">
               {recentRecruiters.length > 0 ? (
@@ -165,21 +167,21 @@ export const AdminDashboard = () => {
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="font-bold text-[rgb(var(--text-main))]">
-                          {recruiter.full_name || recruiter.email || 'Recruiter account'}
+                          {recruiter.full_name || recruiter.email || t('recruiterSignups.fallbackName')}
                         </p>
                         <p className="text-[10px] uppercase tracking-widest text-[rgb(var(--text-muted))]">
-                          {recruiter.company_name || 'Company not provided'}
+                          {recruiter.company_name || t('recruiterSignups.fallbackCompany')}
                         </p>
                       </div>
                       <p className="text-[10px] text-[rgb(var(--text-muted))] uppercase tracking-wider">
-                        {recruiter.updated_at ? new Date(recruiter.updated_at).toLocaleDateString() : 'Unknown'}
+                        {recruiter.updated_at ? new Date(recruiter.updated_at).toLocaleDateString() : t('recruiterSignups.unknownDate')}
                       </p>
                     </div>
                   </motion.div>
                 ))
               ) : (
                 <div className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] p-6 text-center text-sm text-[rgb(var(--text-muted))]">
-                  No recruiter activity detected yet.
+                  {t('recruiterSignups.empty')}
                 </div>
               )}
             </div>
@@ -188,12 +190,12 @@ export const AdminDashboard = () => {
 
         <section className="lg:col-span-3 space-y-6">
           <div className="space-y-1 border-l-4 border-purple-400 pl-4">
-            <h2 className="text-lg font-bold text-[rgb(var(--text-main))]">Latest Job Listings</h2>
-            <p className="text-xs text-[rgb(var(--text-muted))] font-medium uppercase tracking-wider">Most recent roles posted</p>
+            <h2 className="text-lg font-bold text-[rgb(var(--text-main))]">{t('jobListings.heading')}</h2>
+            <p className="text-xs text-[rgb(var(--text-muted))] font-medium uppercase tracking-wider">{t('jobListings.subheading')}</p>
           </div>
 
           {loading ? (
-            <div className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] p-6 text-center text-sm text-[rgb(var(--text-muted))]">Loading latest roles...</div>
+            <div className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-side))] p-6 text-center text-sm text-[rgb(var(--text-muted))]">{t('jobListings.loading')}</div>
           ) : (
             <div className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-main))] overflow-hidden shadow-sm">
               {recentJobs.length > 0 ? (
@@ -206,19 +208,19 @@ export const AdminDashboard = () => {
                     className="flex flex-col gap-2 p-5 border-b last:border-b-0 border-[rgb(var(--border))] hover:bg-[rgb(var(--bg-side))] transition-all"
                   >
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className="font-bold text-[rgb(var(--text-main))] truncate">{job.title || 'Untitled role'}</h3>
+                      <h3 className="font-bold text-[rgb(var(--text-main))] truncate">{job.title || t('jobListings.fallbackTitle')}</h3>
                       <span className="text-[10px] uppercase tracking-wider text-[rgb(var(--text-muted))]">
-                        {job.posted_date ? new Date(job.posted_date).toLocaleDateString() : 'Unknown'}
+                        {job.posted_date ? new Date(job.posted_date).toLocaleDateString() : t('jobListings.unknownDate')}
                       </span>
                     </div>
-                    <p className="text-sm text-[rgb(var(--text-muted))] truncate">{job.company || 'Unknown company'}</p>
+                    <p className="text-sm text-[rgb(var(--text-muted))] truncate">{job.company || t('jobListings.fallbackCompany')}</p>
                     <p className="text-[10px] uppercase tracking-tight text-[rgb(var(--text-muted))]">
-                      {job.location || 'Remote / unspecified'}
+                      {job.location || t('jobListings.fallbackLocation')}
                     </p>
                   </motion.div>
                 ))
               ) : (
-                <div className="p-6 text-center text-sm text-[rgb(var(--text-muted))]">No jobs have been posted yet.</div>
+                <div className="p-6 text-center text-sm text-[rgb(var(--text-muted))]">{t('jobListings.empty')}</div>
               )}
             </div>
           )}

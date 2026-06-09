@@ -1,0 +1,54 @@
+{
+  "backToHome": {
+    "full": "Retour à l'accueil",
+    "short": "Retour"
+  },
+  "hero": {
+    "titleLogin": "Bon retour",
+    "titleSignup": "Rejoindre ConnekT",
+    "subtitleLogin": "Connectez-vous pour accéder à votre tableau de bord et gérer votre carrière tech.",
+    "subtitleSignup": "Créez votre compte et faites le pont entre le campus et votre carrière."
+  },
+  "form": {
+    "accessYourPortal": "Accédez à votre portail",
+    "chooseYourPath": "Choisissez votre voie"
+  },
+  "roles": {
+    "student": "Étudiant",
+    "recruiter": "Recruteur"
+  },
+  "placeholders": {
+    "fullName": "Nom complet",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe"
+  },
+  "validation": {
+    "fullNameTooShort": "Le nom complet doit contenir au moins 2 caractères.",
+    "invalidEmail": "Veuillez saisir une adresse e-mail valide.",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+    "passwordRequired": "Le mot de passe est requis."
+  },
+  "errors": {
+    "authGeneric": "Une erreur s'est produite lors de l'authentification",
+    "rateLimited": "Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer ou connectez-vous avec Google.",
+    "googleAuthGeneric": "Une erreur s'est produite lors de l'authentification Google"
+  },
+  "buttons": {
+    "signIn": "Se connecter",
+    "createAccount": "Créer un compte",
+    "or": "Ou",
+    "continueWithGoogle": "Continuer avec Google"
+  },
+  "footer": {
+    "newToConnekT": "Nouveau sur ConnekT ?",
+    "createFreeAccount": "Créer un compte gratuit",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "signInHere": "Connectez-vous ici"
+  },
+  "emailModal": {
+    "title": "Consultez votre boîte de réception",
+    "description": "Nous avons envoyé un lien de vérification à <accent>{email}</accent>. Cliquez sur le lien pour activer votre compte.",
+    "spamNote": "Vous ne le trouvez pas ? Vérifiez votre dossier spam.",
+    "gotIt": "Compris"
+  }
+}

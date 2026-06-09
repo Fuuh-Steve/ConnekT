@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 export const ApplicantView = () => {
+  const t = useTranslations('applicants.jobId');
   const params = useParams();
   const jobId = params?.jobId;
   const router = useRouter();
@@ -38,6 +40,12 @@ export const ApplicantView = () => {
       default:
         return status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Pending';
     }
+  };
+
+  const statusLabel = (status: string) => {
+    const key = status.toLowerCase();
+    const known = ['pending', 'reviewed', 'interview', 'accepted', 'rejected'];
+    return known.includes(key) ? t(`candidatePool.statusLabels.${key}` as 'candidatePool.statusLabels.pending') : status;
   };
 
   useEffect(() => {
@@ -124,9 +132,9 @@ export const ApplicantView = () => {
           return {
             id: app.id,
             student_id: app.student_id,
-            name: profile?.full_name || 'Unknown Applicant',
-            school: profile?.education?.[0]?.school || 'Not specified',
-            role: 'Applied',
+            name: profile?.full_name || t('candidatePool.unknownApplicantFallback'),
+            school: profile?.education?.[0]?.school || t('candidatePool.notSpecifiedFallback'),
+            role: t('pipeline.applied'),
             score: Math.floor(Math.random() * 30) + 70,
             status: normalizeStatus(app.status)
           };
@@ -143,7 +151,7 @@ export const ApplicantView = () => {
     };
 
     fetchApplicants();
-  }, [jobId, user, authLoading]);
+  }, [jobId, user, authLoading, t]);
 
   const updateApplicantStatus = async (applicationId: string, newStatus: string) => {
     setUpdatingStatus(applicationId);
@@ -163,7 +171,7 @@ export const ApplicantView = () => {
       console.log(`Status updated to ${newStatus}`);
     } catch (err) {
       console.error('Error updating status:', err);
-      alert('Failed to update applicant status');
+      alert(t('alerts.updateStatusFailed'));
     } finally {
       setUpdatingStatus(null);
     }
@@ -192,7 +200,7 @@ export const ApplicantView = () => {
       console.log('Interview scheduled successfully');
     } catch (err) {
       console.error('Error scheduling interview:', err);
-      alert('Failed to schedule interview');
+      alert(t('alerts.scheduleFailed'));
     } finally {
       setSchedulingInterview(false);
     }
@@ -208,7 +216,7 @@ export const ApplicantView = () => {
 
   const handleScheduleInterview = async () => {
     if (!interviewModal.applicant || !interviewForm.dateTime || !interviewForm.meetLink) {
-      alert('Please fill in all required fields');
+      alert(t('scheduleModal.fillRequiredFields'));
       return;
     }
 
@@ -230,7 +238,7 @@ export const ApplicantView = () => {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading applicants...</p>
+        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('loading')}</p>
       </div>
     );
   }
@@ -238,9 +246,9 @@ export const ApplicantView = () => {
   if (unauthorized) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-6">
-        <p className="text-2xl font-bold">Access denied</p>
-        <p className="text-[rgb(var(--text-muted))] max-w-md">Only the recruiter who posted this job can view the candidates who applied to it.</p>
-        <Link href="/dashboard" className="px-6 py-3 bg-[rgb(var(--accent))] text-white rounded-2xl font-bold hover:bg-[rgb(var(--accent))]/90 transition-all">Go back to dashboard</Link>
+        <p className="text-2xl font-bold">{t('accessDenied.title')}</p>
+        <p className="text-[rgb(var(--text-muted))] max-w-md">{t('accessDenied.message')}</p>
+        <Link href="/dashboard" className="px-6 py-3 bg-[rgb(var(--accent))] text-white rounded-2xl font-bold hover:bg-[rgb(var(--accent))]/90 transition-all">{t('accessDenied.backToDashboard')}</Link>
       </div>
     );
   }
@@ -250,36 +258,40 @@ export const ApplicantView = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="space-y-4">
           <Link href="/dashboard" className="flex items-center gap-2 text-[10px] font-bold text-[rgb(var(--text-muted))] hover:text-[rgb(var(--accent))] uppercase tracking-[0.3em] transition-all group">
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Intelligence
+            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> {t('backToIntelligence')}
           </Link>
           <div className="space-y-4">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight uppercase leading-none">
-              Role <span className="text-[rgb(var(--accent))]">Analysis</span>
+              {t('heading.role')} <span className="text-[rgb(var(--accent))]">{t('heading.highlight')}</span>
             </h1>
             <div className="flex flex-col gap-4">
               <p className="text-md font-bold text-[rgb(var(--text-main))] uppercase tracking-widest opacity-90 max-w-xl">
-                 Viewing <span className="text-[rgb(var(--accent))]">{applicants.length} candidate{applicants.length !== 1 ? 's' : ''}</span> for Job ID: <span className="text-[rgb(var(--accent))]">#{jobId}</span>. This portal highlights AI-matched talent based on their skills and background.
+                 {t.rich('viewingCandidates', {
+                   count: applicants.length,
+                   jobId: String(jobId),
+                   accent: (chunks) => <span className="text-[rgb(var(--accent))]">{chunks}</span>,
+                 })}
               </p>
               <div className="flex items-center gap-2 px-4 py-2 bg-[rgb(var(--bg-side))] rounded-full border border-[rgb(var(--border))] w-fit">
                 <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">Live syncing with applicant database</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('liveSyncing')}</span>
               </div>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-           <button 
-            onClick={() => alert('Exporting candidate data...')}
+           <button
+            onClick={() => alert(t('exportingAlert'))}
             className="px-8 py-5 border border-[rgb(var(--border))] rounded-3xl text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-all flex items-center gap-3 shadow-sm"
            >
-              <Download className="w-5 h-5" /> Export Data
+              <Download className="w-5 h-5" /> {t('exportData')}
            </button>
-           <button 
-            onClick={() => alert('Invitations sent to candidates!')}
+           <button
+            onClick={() => alert(t('invitationsSentAlert'))}
             className="px-10 py-5 bg-[rgb(var(--accent))] text-black font-bold rounded-3xl accent-glow uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[rgb(var(--accent))]/20"
            >
-              Mass Invite
+              {t('massInvite')}
            </button>
         </div>
       </div>
@@ -287,25 +299,25 @@ export const ApplicantView = () => {
       {/* Pipeline Visualization */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
-          { 
-            label: 'Applied', 
-            count: applicants.length, 
-            color: 'bg-blue-500' 
+          {
+            label: t('pipeline.applied'),
+            count: applicants.length,
+            color: 'bg-blue-500'
           },
-          { 
-            label: 'Reviewed', 
-            count: applicants.filter(a => a.status === 'Reviewed').length, 
-            color: 'bg-purple-500' 
+          {
+            label: t('pipeline.reviewed'),
+            count: applicants.filter(a => a.status === 'Reviewed').length,
+            color: 'bg-purple-500'
           },
-          { 
-            label: 'Interview', 
-            count: applicants.filter(a => a.status === 'Interview').length, 
-            color: 'bg-[rgb(var(--accent))]' 
+          {
+            label: t('pipeline.interview'),
+            count: applicants.filter(a => a.status === 'Interview').length,
+            color: 'bg-[rgb(var(--accent))]'
           },
-          { 
-            label: 'Offers', 
-            count: applicants.filter(a => a.status === 'Accepted').length, 
-            color: 'bg-emerald-500' 
+          {
+            label: t('pipeline.offers'),
+            count: applicants.filter(a => a.status === 'Accepted').length,
+            color: 'bg-emerald-500'
           }
         ].map((step, i) => (
           <motion.div 
@@ -319,7 +331,7 @@ export const ApplicantView = () => {
             <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))] mb-4">{step.label}</p>
             <div className="flex items-end gap-3">
               <span className="text-4xl font-bold tracking-tight leading-none">{step.count}</span>
-              <span className="text-[10px] font-bold text-emerald-500 mb-1">+12%</span>
+              <span className="text-[10px] font-bold text-emerald-500 mb-1">{t('pipeline.trend')}</span>
             </div>
           </motion.div>
         ))}
@@ -331,24 +343,29 @@ export const ApplicantView = () => {
            <div className="bg-[rgb(var(--bg-main))] p-10 rounded-[3rem] border border-[rgb(var(--border))] space-y-8 shadow-sm">
               <div className="space-y-2">
                  <h3 className="text-lg font-bold uppercase tracking-widest flex items-center gap-3">
-                    <ListFilter className="w-5 h-5 text-[rgb(var(--accent))]" /> Filters
+                    <ListFilter className="w-5 h-5 text-[rgb(var(--accent))]" /> {t('filters.heading')}
                  </h3>
-                 <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-tight opacity-60">Fine-tune candidate matching</p>
+                 <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-tight opacity-60">{t('filters.subheading')}</p>
               </div>
 
               <div className="space-y-8 pt-8 border-t border-[rgb(var(--border))]">
                  <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em]">Match Score</label>
-                      <span className="text-[10px] font-bold text-[rgb(var(--accent))]">80%+</span>
+                      <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em]">{t('filters.matchScore')}</label>
+                      <span className="text-[10px] font-bold text-[rgb(var(--accent))]">{t('filters.matchScoreValue')}</span>
                     </div>
-                    <input type="range" aria-label="Match score filter" className="w-full accent-[rgb(var(--accent))] h-1 bg-[rgb(var(--bg-side))] rounded-full appearance-none cursor-pointer" />
+                    <input type="range" aria-label={t('filters.matchScoreFilterAriaLabel')} className="w-full accent-[rgb(var(--accent))] h-1 bg-[rgb(var(--bg-side))] rounded-full appearance-none cursor-pointer" />
                  </div>
-                 
+
                  <div className="space-y-4">
-                    <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em]">Pipeline State</label>
+                    <label className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em]">{t('filters.pipelineState')}</label>
                     <div className="space-y-3">
-                       {['Shortlisted', 'Reviewing', 'Initial Poll', 'Interview'].map(status => (
+                       {[
+                         t('filters.statuses.shortlisted'),
+                         t('filters.statuses.reviewing'),
+                         t('filters.statuses.initialPoll'),
+                         t('filters.statuses.interview'),
+                       ].map(status => (
                          <label key={status} className="flex items-center gap-3 group cursor-pointer">
                             <div className="w-5 h-5 rounded-lg border-2 border-[rgb(var(--border))] group-hover:border-[rgb(var(--accent))]/50 flex items-center justify-center transition-all bg-[rgb(var(--bg-side))]">
                                <div className="w-2.5 h-2.5 rounded-sm bg-[rgb(var(--accent))] scale-0 group-hover:scale-50 transition-transform"></div>
@@ -366,15 +383,15 @@ export const ApplicantView = () => {
         <div className="lg:col-span-3 space-y-8">
            <div className="flex flex-col md:flex-row md:items-center justify-between px-4 gap-4">
              <div>
-               <h3 className="text-2xl font-bold uppercase tracking-tight">Candidate Pool</h3>
-               <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest mt-1">Select a candidate to view their deep-dive profile and AI evaluation.</p>
+               <h3 className="text-2xl font-bold uppercase tracking-tight">{t('candidatePool.heading')}</h3>
+               <p className="text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest mt-1">{t('candidatePool.subheading')}</p>
              </div>
              <div className="flex items-center gap-4 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-widest">
-               <span>Sort by:</span>
-               <select aria-label="Sort applicants" className="bg-transparent border-none focus:ring-0 cursor-pointer text-[rgb(var(--accent))]">
-                 <option>Highest Match</option>
-                 <option>Recent First</option>
-                 <option>Score</option>
+               <span>{t('candidatePool.sortBy')}</span>
+               <select aria-label={t('candidatePool.sortAriaLabel')} className="bg-transparent border-none focus:ring-0 cursor-pointer text-[rgb(var(--accent))]">
+                 <option>{t('candidatePool.sortOptions.highestMatch')}</option>
+                 <option>{t('candidatePool.sortOptions.recentFirst')}</option>
+                 <option>{t('candidatePool.sortOptions.score')}</option>
                </select>
              </div>
            </div>
@@ -417,7 +434,7 @@ export const ApplicantView = () => {
                        <div className="flex flex-col items-center gap-2 md:gap-3">
                           <div className="flex items-baseline gap-1">
                             <span className="text-2xl md:text-3xl font-bold tracking-tight text-[rgb(var(--accent))]">{applicant.score}</span>
-                            <span className="text-[9px] md:text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase opacity-60">% Match</span>
+                            <span className="text-[9px] md:text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase opacity-60">{t('candidatePool.matchSuffix')}</span>
                           </div>
                           <div className="w-24 md:w-32 h-1.5 md:h-2 bg-[rgb(var(--bg-side))] rounded-full overflow-hidden border border-[rgb(var(--border))]">
                             <motion.div 
@@ -438,9 +455,9 @@ export const ApplicantView = () => {
                             applicant.status === 'Rejected' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
                             'bg-blue-500/10 text-blue-400 border-blue-500/20'
                           )}>
-                            {applicant.status}
+                            {statusLabel(applicant.status)}
                           </span>
-                          
+
                           {/* Status Action Buttons */}
                           <div className="space-y-3">
                             {applicant.status === 'Pending' && (
@@ -449,28 +466,28 @@ export const ApplicantView = () => {
                                 disabled={updatingStatus === applicant.id}
                                 className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-purple-500 text-white border border-purple-500 rounded-2xl hover:bg-purple-600 transition-all disabled:opacity-50 shadow-sm"
                               >
-                                {updatingStatus === applicant.id ? 'Processing...' : 'Mark as Reviewed'}
+                                {updatingStatus === applicant.id ? t('candidatePool.actions.processing') : t('candidatePool.actions.markAsReviewed')}
                               </button>
                             )}
-                            
+
                             {applicant.status === 'Reviewed' && (
                               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); setInterviewModal({ open: true, applicant }); }}
                                   className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-[rgb(var(--accent))] text-white rounded-2xl hover:bg-[rgb(var(--accent))]/90 transition-all shadow-sm"
                                 >
-                                  Schedule Interview
+                                  {t('candidatePool.actions.scheduleInterview')}
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Rejected'); }}
                                   disabled={updatingStatus === applicant.id}
                                   className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-2xl hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
-                                  {updatingStatus === applicant.id ? 'Rejecting...' : 'Reject'}
+                                  {updatingStatus === applicant.id ? t('candidatePool.actions.rejecting') : t('candidatePool.actions.reject')}
                                 </button>
                               </div>
                             )}
-                            
+
                             {applicant.status === 'Interview' && (
                               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                 <button
@@ -478,14 +495,14 @@ export const ApplicantView = () => {
                                   disabled={updatingStatus === applicant.id}
                                   className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-green-500 text-white rounded-2xl hover:bg-green-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
-                                  {updatingStatus === applicant.id ? 'Processing...' : 'Accept'}
+                                  {updatingStatus === applicant.id ? t('candidatePool.actions.processing') : t('candidatePool.actions.accept')}
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); updateApplicantStatus(applicant.id, 'Rejected'); }}
                                   disabled={updatingStatus === applicant.id}
                                   className="w-full px-4 py-3 text-[10px] font-bold uppercase tracking-widest bg-red-500 text-white border border-red-500 rounded-2xl hover:bg-red-600 transition-all disabled:opacity-50 shadow-sm"
                                 >
-                                  {updatingStatus === applicant.id ? 'Rejecting...' : 'Reject'}
+                                  {updatingStatus === applicant.id ? t('candidatePool.actions.rejecting') : t('candidatePool.actions.reject')}
                                 </button>
                               </div>
                             )}
@@ -502,12 +519,12 @@ export const ApplicantView = () => {
                ))
              ) : (
                <div className="text-center py-16">
-                 <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-sm">No applicants yet for this job posting</p>
+                 <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-sm">{t('candidatePool.empty')}</p>
                </div>
              )}
 
              <button className="w-full py-8 border-2 border-dashed border-[rgb(var(--border))] rounded-[3rem] text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.6em] hover:bg-[rgb(var(--accent))]/5 hover:border-[rgb(var(--accent))]/30 transition-all opacity-60 hover:opacity-100 shadow-sm">
-                Synchronizing Database... Load More
+                {t('candidatePool.loadMore')}
              </button>
            </div>
         </div>
@@ -524,8 +541,8 @@ export const ApplicantView = () => {
           >
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h3 className="text-2xl font-bold text-[rgb(var(--text-main))] mb-2">Schedule Interview</h3>
-                <p className="text-[rgb(var(--text-muted))] text-sm">Set up an interview for <span className="font-semibold text-[rgb(var(--accent))]">{interviewModal.applicant.name}</span></p>
+                <h3 className="text-2xl font-bold text-[rgb(var(--text-main))] mb-2">{t('scheduleModal.heading')}</h3>
+                <p className="text-[rgb(var(--text-muted))] text-sm">{t.rich('scheduleModal.subheading', { name: interviewModal.applicant.name, accent: (chunks) => <span className="font-semibold text-[rgb(var(--accent))]">{chunks}</span> })}</p>
               </div>
               <button
                 onClick={() => setInterviewModal({ open: false, applicant: null })}
@@ -539,11 +556,11 @@ export const ApplicantView = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-[rgb(var(--text-main))] mb-3 uppercase tracking-widest">
-                    Interview Date & Time
+                    {t('scheduleModal.dateTimeLabel')}
                   </label>
                   <input
                     type="datetime-local"
-                    aria-label="Interview date and time"
+                    aria-label={t('scheduleModal.dateTimeAriaLabel')}
                     value={interviewForm.dateTime}
                     onChange={(e) => setInterviewForm(prev => ({ ...prev, dateTime: e.target.value }))}
                     className="w-full px-4 py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50 focus:border-[rgb(var(--accent))] transition-all text-base"
@@ -553,14 +570,14 @@ export const ApplicantView = () => {
 
                 <div>
                   <label className="block text-sm font-bold text-[rgb(var(--text-main))] mb-3 uppercase tracking-widest">
-                    Meeting Link
+                    {t('scheduleModal.meetingLinkLabel')}
                   </label>
                   <div className="space-y-3">
                     <input
                       type="url"
                       value={interviewForm.meetLink}
                       onChange={(e) => setInterviewForm(prev => ({ ...prev, meetLink: e.target.value }))}
-                      placeholder="https://meet.google.com/..."
+                      placeholder={t('scheduleModal.meetingLinkPlaceholder')}
                       className="w-full px-4 py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50 focus:border-[rgb(var(--accent))] transition-all text-base"
                       required
                     />
@@ -568,7 +585,7 @@ export const ApplicantView = () => {
                       onClick={() => generateMeetLink()}
                       className="w-full px-4 py-3 bg-[rgb(var(--accent))]/10 text-[rgb(var(--accent))] border border-[rgb(var(--accent))]/20 rounded-xl hover:bg-[rgb(var(--accent))]/20 transition-all font-semibold text-sm"
                     >
-                      Generate Google Meet Link
+                      {t('scheduleModal.generateMeetLink')}
                     </button>
                   </div>
                 </div>
@@ -576,12 +593,12 @@ export const ApplicantView = () => {
 
               <div>
                 <label className="block text-sm font-bold text-[rgb(var(--text-main))] mb-3 uppercase tracking-widest">
-                  Interview Notes (Optional)
+                  {t('scheduleModal.notesLabel')}
                 </label>
                 <textarea
                   value={interviewForm.notes}
                   onChange={(e) => setInterviewForm(prev => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Add any preparation notes, agenda items, or special instructions for the interview..."
+                  placeholder={t('scheduleModal.notesPlaceholder')}
                   rows={4}
                   className="w-full px-4 py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]/50 focus:border-[rgb(var(--accent))] transition-all resize-none text-base"
                 />
@@ -592,14 +609,14 @@ export const ApplicantView = () => {
                   onClick={() => setInterviewModal({ open: false, applicant: null })}
                   className="flex-1 py-4 px-6 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-2xl text-[rgb(var(--text-main))] hover:bg-[rgb(var(--bg-hover))] transition-all font-semibold text-base"
                 >
-                  Cancel
+                  {t('scheduleModal.cancel')}
                 </button>
                 <button
                   onClick={() => handleScheduleInterview()}
                   disabled={schedulingInterview || !interviewForm.dateTime || !interviewForm.meetLink}
                   className="flex-1 py-4 px-6 bg-[rgb(var(--accent))] text-white rounded-2xl hover:bg-[rgb(var(--accent))]/90 transition-all font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[rgb(var(--accent))]/20"
                 >
-                  {schedulingInterview ? 'Scheduling Interview...' : 'Schedule Interview'}
+                  {schedulingInterview ? t('scheduleModal.scheduling') : t('scheduleModal.submit')}
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Plus, CheckCircle, ChevronRight, Search, Users, Briefcase, User, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -11,6 +12,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 export const RecruiterDashboard = () => {
+  const t = useTranslations('dashboard.recruiter');
   const router = useRouter();
   const { user } = useAuth();
   const [applications, setApplications] = useState<any[]>([]);
@@ -42,6 +44,12 @@ export const RecruiterDashboard = () => {
       default:
         return status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Pending';
     }
+  };
+
+  const statusLabel = (status: string) => {
+    const key = status.toLowerCase();
+    const known = ['pending', 'reviewed', 'interview', 'accepted', 'rejected'];
+    return known.includes(key) ? t(`statusLabels.${key}` as 'statusLabels.pending') : status;
   };
 
  const getTimeAgo = (dateString: string) => {
@@ -112,20 +120,20 @@ export const RecruiterDashboard = () => {
         // Generate activity feed from applications
         const activities = validApps.slice(0, 3).map((app: any) => {
           const statuses: any = {
-            Pending: { text: 'New application received', type: 'new' },
-            Reviewed: { text: 'Application reviewed', type: 'shortlist' },
-            Interview: { text: 'Interview scheduled', type: 'alert' },
-            Accepted: { text: 'Candidate accepted', type: 'shortlist' },
-            Rejected: { text: 'Application rejected', type: 'alert' }
+            Pending: { text: t('globalActivity.events.newApplication'), type: 'new' },
+            Reviewed: { text: t('globalActivity.events.applicationReviewed'), type: 'shortlist' },
+            Interview: { text: t('globalActivity.events.interviewScheduled'), type: 'alert' },
+            Accepted: { text: t('globalActivity.events.candidateAccepted'), type: 'shortlist' },
+            Rejected: { text: t('globalActivity.events.applicationRejected'), type: 'alert' }
           };
           return {
-            text: statuses[app.status || 'Pending']?.text || 'New application received',
+            text: statuses[app.status || 'Pending']?.text || t('globalActivity.events.newApplication'),
             type: statuses[app.status || 'Pending']?.type || 'new',
             time: getTimeAgo(app.created_at)
           };
         });
         setActivityFeed(activities.length > 0 ? activities : [
-          { text: "No recent activity", type: "new", time: "N/A" }
+          { text: t('globalActivity.noRecentActivity'), type: "new", time: t('globalActivity.timeNotAvailable') }
         ]);
 
         const applicationsWithDetails = validApps.map((app: any) => {
@@ -185,7 +193,7 @@ export const RecruiterDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, t]);
 
 useEffect(() => {
   fetchDashboardData();
@@ -201,7 +209,7 @@ const filteredApplications = applications.filter(app => {
 const handleScheduleInterview = async (e: React.FormEvent) => {
   e.preventDefault();
   if (!selectedApp || !interviewDate || !interviewTime) {
-    alert('Please fill in all fields');
+    alert(t('scheduleModal.fillAllFields'));
     return;
   }
 
@@ -220,11 +228,11 @@ const handleScheduleInterview = async (e: React.FormEvent) => {
 
     if (error) {
       console.error('Error scheduling interview:', error);
-      alert('Failed to schedule interview');
+      alert(t('scheduleModal.scheduleFailed'));
       return;
     }
 
-    alert('Interview scheduled successfully!');
+    alert(t('scheduleModal.scheduleSuccess'));
     setShowScheduleModal(false);
     setSelectedApp(null);
     setInterviewDate('');
@@ -235,7 +243,7 @@ const handleScheduleInterview = async (e: React.FormEvent) => {
     fetchDashboardData();
   } catch (err) {
     console.error('Error:', err);
-    alert('Failed to schedule interview');
+    alert(t('scheduleModal.scheduleFailed'));
   }
 };
 
@@ -243,7 +251,7 @@ if (loading) {
   return (
     <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
       <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-      <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading Talent Portal...</p>
+      <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('loading')}</p>
     </div>
   );
 }
@@ -258,13 +266,13 @@ return (
       >
         <div className="flex items-center gap-3">
           <span className="px-3 py-1 bg-[rgb(var(--accent))]/10 text-[rgb(var(--accent))] text-[10px] font-bold uppercase tracking-widest rounded-full border border-[rgb(var(--accent))]/20">
-            Recruiter Account
+            {t('accountBadge')}
           </span>
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
         </div>
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[rgb(var(--text-main))] mb-2">TALENT PORTAL</h1>
-          <p className="text-[rgb(var(--text-muted))] text-lg font-medium max-w-2xl leading-relaxed">Review incoming applications, optimize your listings, and build your dream team with AI-powered analytics.</p>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[rgb(var(--text-main))] mb-2">{t('title')}</h1>
+          <p className="text-[rgb(var(--text-muted))] text-lg font-medium max-w-2xl leading-relaxed">{t('subtitle')}</p>
         </div>
       </motion.div>
       <motion.button
@@ -273,34 +281,34 @@ return (
         onClick={() => router.push('/post')}
         className="px-10 py-5 bg-[rgb(var(--accent))] text-white font-bold uppercase tracking-widest rounded-4xl hover:bg-[rgb(var(--accent))]/90 transition-all flex items-center justify-center gap-3 shadow-[0_20px_50px_rgba(var(--accent),0.2)] hover:scale-[1.05] active:scale-95 group">
         <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-500" />
-        <span>New Job Posting</span>
+        <span>{t('newJobPosting')}</span>
       </motion.button>
     </div>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
       <QuickStat
-        label="Active Postings"
+        label={t('quickStats.activePostings.label')}
         value={jobs.length}
         prefix=""
-        subValue={`${jobs.length > 0 ? 'Managing active roles' : 'No active roles'}`}
+        subValue={jobs.length > 0 ? t('quickStats.activePostings.subValueActive') : t('quickStats.activePostings.subValueEmpty')}
         icon={Briefcase}
         delay={0.1}
         onClick={() => router.push('/listings')}
       />
       <QuickStat
-        label="Total Applications"
+        label={t('quickStats.totalApplications.label')}
         value={applications.length}
-        subValue="Incoming talent"
+        subValue={t('quickStats.totalApplications.subValue')}
         icon={Users}
         highlight
         delay={0.2}
         onClick={() => { }}
       />
       <QuickStat
-        label="Avg. Match Score"
+        label={t('quickStats.avgMatchScore.label')}
         value={84}
         suffix="%"
-        subValue="Highly compatible"
+        subValue={t('quickStats.avgMatchScore.subValue')}
         icon={Search}
         delay={0.3}
         onClick={() => { }}
@@ -311,7 +319,7 @@ return (
       <section className="space-y-8">
         <h3 className="text-2xl font-extrabold uppercase tracking-widest flex items-center gap-3">
           <CheckCircle className="w-7 h-7 text-emerald-500" />
-          Scheduled Interviews
+          {t('scheduledInterviews.heading')}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
           {scheduledInterviews.length > 0 ? (
@@ -329,7 +337,7 @@ return (
                     {interview.profiles?.avatar_url ? (
                       <Image
                         src={interview.profiles.avatar_url}
-                        alt="Candidate"
+                        alt={t('scheduledInterviews.candidateFallback')}
                         width={48}
                         height={48}
                         className="w-full h-full object-cover"
@@ -339,17 +347,17 @@ return (
                     )}
                   </div>
                   <div>
-                    <p className="text-lg font-bold group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{interview.profiles?.full_name || 'Candidate'}</p>
-                    <p className="text-[10px] text-[rgb(var(--text-muted))] uppercase font-bold tracking-widest opacity-80">{interview.jobs?.title || 'Position'}</p>
+                    <p className="text-lg font-bold group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight">{interview.profiles?.full_name || t('scheduledInterviews.candidateFallback')}</p>
+                    <p className="text-[10px] text-[rgb(var(--text-muted))] uppercase font-bold tracking-widest opacity-80">{interview.jobs?.title || t('scheduledInterviews.positionFallback')}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-8">
                   <div className="px-4 py-2 rounded-xl bg-[rgb(var(--bg-side))] text-[rgb(var(--accent))] text-[11px] font-bold tracking-widest uppercase border border-[rgb(var(--border))]">
-                    {interview.interview_details?.date || 'TBD'}, {interview.interview_details?.time || ''}
+                    {interview.interview_details?.date || t('scheduledInterviews.dateFallback')}, {interview.interview_details?.time || ''}
                   </div>
                   {interview.interview_details?.meet_link && (
                     <button className="text-[11px] font-bold text-[rgb(var(--accent))] underline underline-offset-8 uppercase tracking-widest group-hover:translate-x-2 transition-transform">
-                      Join Link
+                      {t('scheduledInterviews.joinLink')}
                     </button>
                   )}
                 </div>
@@ -357,14 +365,14 @@ return (
             ))
           ) : (
             <div className="p-8 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-[2.5rem] text-center">
-              <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-sm">No Scheduled Interviews</p>
+              <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-sm">{t('scheduledInterviews.empty')}</p>
             </div>
           )}
         </div>
       </section>
 
       <section className="space-y-8">
-        <h3 className="text-2xl font-extrabold uppercase tracking-widest">Global Activity</h3>
+        <h3 className="text-2xl font-extrabold uppercase tracking-widest">{t('globalActivity.heading')}</h3>
         <div className="relative space-y-12 before:absolute before:left-5 before:top-2 before:bottom-2 before:w-0.75 before:bg-[rgb(var(--border))]">
           {activityFeed.length > 0 ? (
             activityFeed.map((activity: any, i: number) => (
@@ -384,7 +392,7 @@ return (
             ))
           ) : (
             <div className="text-center py-8">
-              <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">No activity yet</p>
+              <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('globalActivity.empty')}</p>
             </div>
           )}
         </div>
@@ -396,16 +404,16 @@ return (
         <div>
           <h2 className="text-3xl font-bold flex items-center gap-4">
             <Users className="w-8 h-8 text-[rgb(var(--accent))]" />
-            Recent Applications
+            {t('recentApplications.heading')}
           </h2>
-          <p className="text-base text-[rgb(var(--text-muted))] mt-2 tracking-tight">Review your latest applicant matches and scores across all active job postings.</p>
+          <p className="text-base text-[rgb(var(--text-muted))] mt-2 tracking-tight">{t('recentApplications.subtitle')}</p>
         </div>
         <div className="flex items-center gap-6">
           <div className="relative hidden md:block">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgb(var(--text-muted))]" />
             <input
               type="text"
-              placeholder="Search candidates or roles..."
+              placeholder={t('recentApplications.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-2xl py-3.5 pl-12 pr-6 text-sm focus:outline-none focus:border-[rgb(var(--accent))] w-96 transition-all shadow-sm focus:ring-4 focus:ring-[rgb(var(--accent))]/5"
@@ -415,7 +423,7 @@ return (
             onClick={() => router.push('/listings')}
             className="px-8 py-3.5 border border-[rgb(var(--border))] rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-[rgb(var(--bg-side))] hover:border-[rgb(var(--accent))]/30 transition-all shadow-sm active:scale-95 flex items-center gap-3 group"
           >
-            Manage All
+            {t('recentApplications.manageAll')}
             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
@@ -431,10 +439,10 @@ return (
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[rgb(var(--bg-side))] border-b border-[rgb(var(--border))]">
-                <th className="px-6 md:px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em]">Candidate</th>
-                <th className="px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em] hidden lg:table-cell">Job Role</th>
-                <th className="px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em] text-center hidden md:table-cell">Match Score</th>
-                <th className="px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em] text-center hidden sm:table-cell">Status</th>
+                <th className="px-6 md:px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em]">{t('recentApplications.table.candidate')}</th>
+                <th className="px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em] hidden lg:table-cell">{t('recentApplications.table.jobRole')}</th>
+                <th className="px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em] text-center hidden md:table-cell">{t('recentApplications.table.matchScore')}</th>
+                <th className="px-10 py-7 text-[10px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-[0.2em] text-center hidden sm:table-cell">{t('recentApplications.table.status')}</th>
                 <th className="px-6 md:px-10 py-7"></th>
               </tr>
             </thead>
@@ -455,7 +463,7 @@ return (
                         {app.profiles?.avatar_url ? (
                           <Image
                             src={app.profiles.avatar_url}
-                            alt="Avatar"
+                            alt={t('recentApplications.avatarAlt')}
                             width={56}
                             height={56}
                             className="w-full h-full object-cover"
@@ -465,8 +473,8 @@ return (
                         )}
                       </div>
                       <div className="min-w-0">
-                        <span className="block font-bold text-base md:text-lg text-[rgb(var(--text-main))] group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight truncate">{app.profiles?.full_name || 'Candidate'}</span>
-                        <span className="text-[9px] md:text-[10px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider block truncate">{app.profiles?.university || 'Top Tier University'}</span>
+                        <span className="block font-bold text-base md:text-lg text-[rgb(var(--text-main))] group-hover:text-[rgb(var(--accent))] transition-colors tracking-tight truncate">{app.profiles?.full_name || t('recentApplications.candidateFallback')}</span>
+                        <span className="text-[9px] md:text-[10px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider block truncate">{app.profiles?.university || t('recentApplications.universityFallback')}</span>
                       </div>
                     </div>
                   </td>
@@ -475,7 +483,7 @@ return (
                   </td>
                   <td className="px-10 py-8 hidden md:table-cell">
                     <div className="flex flex-col items-center gap-3">
-                      <span className="text-sm font-bold text-[rgb(var(--accent))] tracking-tight">{80 + Math.floor(Math.random() * 20)}% MATCH</span>
+                      <span className="text-sm font-bold text-[rgb(var(--accent))] tracking-tight">{80 + Math.floor(Math.random() * 20)}{t('recentApplications.matchSuffix')}</span>
                       <div className="w-28 h-2 bg-[rgb(var(--bg-side))] rounded-full overflow-hidden border border-[rgb(var(--border))]">
                         <motion.div
                           initial={{ width: 0 }}
@@ -497,7 +505,7 @@ return (
                               app.status === 'Rejected' ? "bg-red-500/10 text-red-600 border-red-500/20" :
                                 "bg-slate-100 dark:bg-slate-800 text-[rgb(var(--text-muted))] border-[rgb(var(--border))]"
                     )}>
-                      {app.status}
+                      {statusLabel(app.status)}
                     </span>
                   </td>
                   <td className="px-6 md:px-10 py-8 text-right">
@@ -510,13 +518,13 @@ return (
                         }}
                         className="px-3 md:px-4 py-2 bg-[rgb(var(--bg-side))] rounded-xl border border-[rgb(var(--border))] text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:border-[rgb(var(--accent))] transition-all whitespace-nowrap"
                       >
-                        Schedule
+                        {t('recentApplications.schedule')}
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); router.push(`/applicants/${app.job_id}`); }}
                         className="px-3 md:px-4 py-2 bg-[rgb(var(--bg-side))] rounded-xl border border-[rgb(var(--border))] text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:border-[rgb(var(--accent))] transition-all whitespace-nowrap"
                       >
-                        Pipeline
+                        {t('recentApplications.pipeline')}
                       </button>
                       <div className="p-2 md:p-3 bg-[rgb(var(--bg-side))] rounded-2xl border border-[rgb(var(--border))] group-hover:bg-[rgb(var(--accent))] group-hover:text-white transition-all inline-block group-hover:px-4 md:group-hover:px-5 group-hover:shadow-lg group-hover:shadow-[rgb(var(--accent))]/30">
                         <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
@@ -527,7 +535,7 @@ return (
               )) : (
                 <tr>
                   <td colSpan={5} className="text-center py-20 text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">
-                    No applications found matching your search.
+                    {t('recentApplications.empty')}
                   </td>
                 </tr>
               )}
@@ -553,44 +561,44 @@ return (
             onClick={(e) => e.stopPropagation()}
             className="bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-3xl p-8 max-w-md w-full shadow-2xl"
           >
-            <h2 className="text-2xl font-bold mb-6">Schedule Interview</h2>
+            <h2 className="text-2xl font-bold mb-6">{t('scheduleModal.heading')}</h2>
             <form onSubmit={handleScheduleInterview} className="space-y-6">
               <div>
                 <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">
-                  Candidate: {selectedApp?.profiles?.full_name}
+                  {t('scheduleModal.candidateLabel', { name: selectedApp?.profiles?.full_name })}
                 </label>
               </div>
               <div>
-                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">Date</label>
+                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">{t('scheduleModal.dateLabel')}</label>
                 <input
                   type="date"
                   value={interviewDate}
                   onChange={(e) => setInterviewDate(e.target.value)}
                   required
-                  placeholder="Select date"
-                  title="Interview date"
+                  placeholder={t('scheduleModal.datePlaceholder')}
+                  title={t('scheduleModal.dateTitle')}
                   className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">Time</label>
+                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">{t('scheduleModal.timeLabel')}</label>
                 <input
                   type="time"
                   value={interviewTime}
                   onChange={(e) => setInterviewTime(e.target.value)}
                   required
-                  placeholder="Select time"
-                  title="Interview time"
+                  placeholder={t('scheduleModal.timePlaceholder')}
+                  title={t('scheduleModal.timeTitle')}
                   className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">Meet Link (optional)</label>
+                <label className="block text-xs font-bold text-[rgb(var(--text-muted))] mb-2 uppercase tracking-widest">{t('scheduleModal.linkLabel')}</label>
                 <input
                   type="url"
                   value={interviewLink}
                   onChange={(e) => setInterviewLink(e.target.value)}
-                  placeholder="https://meet.google.com/..."
+                  placeholder={t('scheduleModal.linkPlaceholder')}
                   className="w-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[rgb(var(--accent))] transition-all"
                 />
               </div>
@@ -600,13 +608,13 @@ return (
                   onClick={() => setShowScheduleModal(false)}
                   className="flex-1 py-3 border border-[rgb(var(--border))] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[rgb(var(--bg-side))] transition-all"
                 >
-                  Cancel
+                  {t('scheduleModal.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="flex-1 py-3 bg-[rgb(var(--accent))] text-white rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[rgb(var(--accent))]/90 transition-all"
                 >
-                  Schedule
+                  {t('scheduleModal.submit')}
                 </button>
               </div>
             </form>

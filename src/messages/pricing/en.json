@@ -1,0 +1,70 @@
+{
+  "heading": {
+    "eyebrow": "Pricing Plans",
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Choose the plan that best fits your current needs."
+  },
+  "mostPopular": "Most Popular",
+  "plans": {
+    "free": {
+      "name": "Free",
+      "role": "Student",
+      "price": "XAF 0",
+      "frequency": "/forever",
+      "description": "Perfect for getting started and finding your first internship.",
+      "features": {
+        "f1": "Apply to 5 internships/month",
+        "f2": "Smart Match Score",
+        "f3": "Basic Portfolio Builder",
+        "f4": "Community Access",
+        "f5": "Email Notifications"
+      },
+      "buttonText": "Current Plan"
+    },
+    "pro": {
+      "name": "Pro",
+      "role": "Student",
+      "price": "XAF 1,000",
+      "frequency": "/month",
+      "description": "Advanced tools to fast-track your career growth.",
+      "features": {
+        "f1": "Unlimited Applications",
+        "f2": "Priority Job Matching",
+        "f3": "Resume Review Tips",
+        "f4": "Verified Badge",
+        "f5": "Interview Prep Tools"
+      },
+      "buttonText": "Upgrade to Pro"
+    },
+    "recruiter": {
+      "name": "Recruiter",
+      "role": "Company",
+      "price": "XAF 3,000",
+      "frequency": "/month",
+      "description": "Scale your team with better candidate matching.",
+      "features": {
+        "f1": "Unlimited Job Postings",
+        "f2": "Advanced Candidate Search",
+        "f3": "Team Collaboration Tools",
+        "f4": "Bulk Messaging",
+        "f5": "Dedicated Support"
+      },
+      "buttonText": "Start Hiring"
+    }
+  },
+  "trust": {
+    "heading": "Security & Trust",
+    "dataPrivacy": {
+      "title": "Data Privacy",
+      "description": "Your data is stored securely and is never shared with third parties without your consent."
+    },
+    "verifiedEmployers": {
+      "title": "Verified Employers",
+      "description": "Every company on our platform undergoes a vetting process to ensure safe internships."
+    },
+    "securePayments": {
+      "title": "Secure Payments",
+      "description": "All transactions are processed through enterprise-grade encrypted payment gateways."
+    }
+  }
+}

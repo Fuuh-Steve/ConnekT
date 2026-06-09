@@ -1,0 +1,119 @@
+{
+  "loading": "Loading Profile...",
+  "notFound": {
+    "title": "Profile not found",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "header": {
+    "changeCoverPhoto": "Change Cover Photo",
+    "updatePhoto": "Update Photo",
+    "uploadCoverPhotoAria": "Upload cover photo",
+    "uploadProfilePictureAria": "Upload profile picture",
+    "chooseAvatarFileAria": "Choose avatar file",
+    "nameFallback": "User",
+    "verifiedPro": "Verified Pro",
+    "bioFallback": "Product Focused Developer",
+    "locationFallback": "Remote",
+    "editProfile": "Edit Profile",
+    "downloadResume": "Download Resume"
+  },
+  "socialLinks": {
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "twitter": "Twitter",
+    "portfolio": "Portfolio"
+  },
+  "skills": {
+    "heading": "Technical Skills",
+    "aiVerified": "AI Verified",
+    "empty": "No skills added yet."
+  },
+  "availability": {
+    "heading": "Availability",
+    "badge": "PRO",
+    "defaultStatus": "Open to new opportunities."
+  },
+  "experience": {
+    "heading": "Work Experience",
+    "subtitle": "Professional Journey",
+    "empty": "No experience documented yet."
+  },
+  "education": {
+    "heading": "Education",
+    "subtitle": "Academic Background",
+    "empty": "Education history not provided.",
+    "gpaSuffix": "GPA"
+  },
+  "experienceModal": {
+    "closeAriaLabel": "Close experience details",
+    "roleContext": "Role Context",
+    "keyResponsibilities": "Key Responsibilities",
+    "technologiesUsed": "Technologies Used",
+    "closeDetails": "Close Details"
+  },
+  "editModal": {
+    "title": "Update Profile",
+    "closeAriaLabel": "Close dialog",
+    "tabs": {
+      "basic": "Basic Info",
+      "exp": "Experience",
+      "edu": "Education",
+      "skills": "Skills",
+      "social": "Social"
+    },
+    "cancel": "Cancel",
+    "saveProfile": "Save Profile",
+    "basic": {
+      "fullName": { "label": "Full Name", "placeholder": "e.g. Steve Ferguson" },
+      "username": { "label": "Username", "placeholder": "e.g. steveroger" },
+      "bio": { "label": "One-line Bio", "placeholder": "e.g. Full-stack developer passionate about building scalable web applications." },
+      "location": { "label": "Location", "placeholder": "e.g. Yaoundé, Cameroon" },
+      "resume": {
+        "label": "Resume / CV",
+        "update": "Update Resume",
+        "upload": "Upload Resume",
+        "uploaded": "Uploaded",
+        "notUploaded": "No resume uploaded yet",
+        "ariaLabel": "Upload resume"
+      },
+      "recruiterInfo": {
+        "heading": "Recruiter Information",
+        "companyName": { "label": "Company Name", "placeholder": "e.g. TechFlow Inc." },
+        "companyLogo": { "label": "Company Logo URL", "placeholder": "https://example.com/logo.png" }
+      }
+    },
+    "experience": {
+      "workHistory": "Work History",
+      "addRole": "Add Role",
+      "removeAriaLabel": "Remove experience entry",
+      "role": { "label": "Role", "placeholder": "e.g. Software Engineer" },
+      "company": { "label": "Company", "placeholder": "e.g. Tech Corp" },
+      "period": { "label": "Period", "placeholder": "e.g. Jan 2022 - Present" },
+      "description": { "label": "Description", "placeholder": "Briefly describe your responsibilities..." },
+      "empty": "No experience added yet."
+    },
+    "education": {
+      "academicBackground": "Academic Background",
+      "addSchool": "Add School",
+      "removeAriaLabel": "Remove education entry",
+      "degree": { "label": "Degree", "placeholder": "e.g. B.Sc Computer Science" },
+      "school": { "label": "School", "placeholder": "e.g. Unilag" },
+      "period": { "label": "Period", "placeholder": "e.g. 2018 - 2022" },
+      "gpa": { "label": "GPA (optional)", "placeholder": "e.g. 4.5/5.0" }
+    },
+    "skills": {
+      "technicalSkills": "Technical Skills",
+      "addSkillTag": "Add Skill Tag",
+      "skillNamePlaceholder": "e.g. React",
+      "levelAriaLabel": "Skill level for {name}",
+      "removeAriaLabel": "Remove skill"
+    },
+    "social": {
+      "heading": "Social Media & Portfolio",
+      "github": { "label": "GitHub Profile URL", "placeholder": "https://github.com/your-username" },
+      "linkedin": { "label": "LinkedIn Profile URL", "placeholder": "https://linkedin.com/in/your-username" },
+      "twitter": { "label": "Twitter Profile URL", "placeholder": "https://twitter.com/your-username" },
+      "portfolio": { "label": "Portfolio Website", "placeholder": "https://your-portfolio.me" }
+    }
+  }
+}

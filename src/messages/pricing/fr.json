@@ -1,0 +1,70 @@
+{
+  "heading": {
+    "eyebrow": "Forfaits tarifaires",
+    "title": "Des tarifs simples et transparents",
+    "subtitle": "Choisissez le forfait qui correspond le mieux à vos besoins actuels."
+  },
+  "mostPopular": "Le plus populaire",
+  "plans": {
+    "free": {
+      "name": "Gratuit",
+      "role": "Étudiant",
+      "price": "XAF 0",
+      "frequency": "/pour toujours",
+      "description": "Idéal pour démarrer et trouver votre premier stage.",
+      "features": {
+        "f1": "Postuler à 5 stages/mois",
+        "f2": "Score de compatibilité intelligent",
+        "f3": "Créateur de portfolio basique",
+        "f4": "Accès à la communauté",
+        "f5": "Notifications par e-mail"
+      },
+      "buttonText": "Forfait actuel"
+    },
+    "pro": {
+      "name": "Pro",
+      "role": "Étudiant",
+      "price": "XAF 1 000",
+      "frequency": "/mois",
+      "description": "Des outils avancés pour accélérer votre évolution de carrière.",
+      "features": {
+        "f1": "Candidatures illimitées",
+        "f2": "Mise en correspondance prioritaire des offres",
+        "f3": "Conseils de relecture de CV",
+        "f4": "Badge vérifié",
+        "f5": "Outils de préparation aux entretiens"
+      },
+      "buttonText": "Passer à Pro"
+    },
+    "recruiter": {
+      "name": "Recruteur",
+      "role": "Entreprise",
+      "price": "XAF 3 000",
+      "frequency": "/mois",
+      "description": "Développez votre équipe grâce à une meilleure mise en correspondance des candidats.",
+      "features": {
+        "f1": "Offres d'emploi illimitées",
+        "f2": "Recherche avancée de candidats",
+        "f3": "Outils de collaboration d'équipe",
+        "f4": "Messagerie groupée",
+        "f5": "Support dédié"
+      },
+      "buttonText": "Commencer à recruter"
+    }
+  },
+  "trust": {
+    "heading": "Sécurité et confiance",
+    "dataPrivacy": {
+      "title": "Confidentialité des données",
+      "description": "Vos données sont stockées en toute sécurité et ne sont jamais partagées avec des tiers sans votre consentement."
+    },
+    "verifiedEmployers": {
+      "title": "Employeurs vérifiés",
+      "description": "Chaque entreprise sur notre plateforme passe par un processus de vérification pour garantir des stages sûrs."
+    },
+    "securePayments": {
+      "title": "Paiements sécurisés",
+      "description": "Toutes les transactions sont traitées via des passerelles de paiement chiffrées de niveau professionnel."
+    }
+  }
+}

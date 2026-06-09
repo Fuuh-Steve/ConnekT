@@ -1,0 +1,60 @@
+{
+  "loading": "Loading Job Details...",
+  "notFound": {
+    "title": "Job not found",
+    "backToBoard": "Back to Job Board"
+  },
+  "backToJobs": "Back to Jobs",
+  "fallbacks": {
+    "company": "Company"
+  },
+  "header": {
+    "posted": "Posted {date}"
+  },
+  "description": {
+    "heading": "Job Description",
+    "body": "We are looking for a highly motivated {role} to join our core team. You will be responsible for helping us build innovative solutions and scaling our technology platforms to reach more students."
+  },
+  "skills": {
+    "heading": "Required Skills"
+  },
+  "perks": {
+    "heading": "Company Perks",
+    "items": {
+      "flexibleHours": "Flexible Working Hours",
+      "competitiveStipend": "Competitive Stipend",
+      "mentorshipProgram": "Mentorship Program",
+      "globalNetwork": "Global Network"
+    }
+  },
+  "applyForm": {
+    "heading": "Apply for this Position",
+    "subheading": "Your profile information will be shared with the recruiter automatically.",
+    "portfolioLabel": "Portfolio (GitHub, LinkedIn, etc.)",
+    "portfolioPlaceholder": "https://...",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "+237 ...",
+    "whyHireLabel": "Why should we hire you?",
+    "whyHirePlaceholder": "Briefly describe your experience and interest...",
+    "sending": "Sending Application...",
+    "submit": "Submit Application"
+  },
+  "successCard": {
+    "heading": "Application Sent!",
+    "message": "The recruiter has been notified. You can track your application status in your dashboard.",
+    "goToDashboard": "Go to Dashboard"
+  },
+  "sidebar": {
+    "matchScore": "Match Score",
+    "aiAnalysis": "AI Analysis",
+    "pro": "PRO",
+    "totalApplicants": "Total Applicants",
+    "verifiedRecruiter": "Verified Recruiter",
+    "shareRole": "Share Role"
+  },
+  "alerts": {
+    "alreadyApplied": "You have already applied for this position.",
+    "permissionDenied": "Application denied by database permissions. Please make sure you are signed in and try again.",
+    "submitFailed": "Failed to submit application. Please try again."
+  }
+}

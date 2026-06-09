@@ -1,0 +1,47 @@
+{
+  "heading": {
+    "title": "Créer une offre d'emploi",
+    "subtitle": "Définissez le poste et commencez à trouver le bon talent pour votre équipe."
+  },
+  "steps": {
+    "jobDetails": "Détails du poste",
+    "descriptionRequirements": "Description et exigences du poste"
+  },
+  "fields": {
+    "jobTitle": {
+      "label": "Intitulé du poste",
+      "placeholder": "p. ex. Développeur Frontend Senior"
+    },
+    "department": {
+      "label": "Département",
+      "placeholder": "p. ex. Ingénierie"
+    },
+    "location": {
+      "label": "Lieu",
+      "placeholder": "p. ex. À distance / Douala, CM"
+    },
+    "stipend": {
+      "label": "Indemnité mensuelle (fourchette)",
+      "placeholder": "p. ex. 500 $ - 1000 $"
+    },
+    "description": {
+      "placeholder": "Fournissez une description détaillée du poste, des responsabilités et des exigences clés..."
+    }
+  },
+  "success": {
+    "title": "L'offre est en ligne !",
+    "message": "Votre offre d'emploi a été publiée et est désormais visible par les étudiants.",
+    "manageListings": "Gérer les offres"
+  },
+  "buttons": {
+    "back": "Retour",
+    "publishJob": "Publier l'offre",
+    "nextStep": "Étape suivante"
+  },
+  "fallbacks": {
+    "companyNotProvided": "Entreprise non précisée"
+  },
+  "alerts": {
+    "publishFailed": "Échec de la publication de l'offre. Veuillez réessayer."
+  }
+}

@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Zap, Briefcase, ShieldCheck, Globe, ChevronRight, Star, Twitter, Linkedin, Github, Mail, MapPin, Phone, X, Check } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { CountUp } from '../components/CountUp';
 
 export const LandingPage = () => {
+  const t = useTranslations('home');
   const { scrollYProgress } = useScroll();
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
@@ -18,40 +20,25 @@ export const LandingPage = () => {
     {
       id: 'smart-matching',
       icon: Zap,
-      title: "Smart Matching",
-      desc: "Our intelligent matching system connects your unique skills and interests with the best available roles, ensuring a perfect fit for both you and the company.",
-      details: [
-        "Algorithm-driven personal recommendations",
-        "Skills assessment integration",
-        "Career trajectory mapping",
-        "Personalized feedback on applications"
-      ],
+      title: t('features.smartMatching.title'),
+      desc: t('features.smartMatching.desc'),
+      details: t.raw('features.smartMatching.details') as string[],
       color: "blue"
     },
     {
       id: 'job-tracking',
       icon: Globe,
-      title: "Job Tracking",
-      desc: "Stay organized with a centralized dashboard for all your applications. Receive instant notifications on status changes and never miss a follow-up.",
-      details: [
-        "Real-time application status updates",
-        "Interview scheduling calendar",
-        "Task management for application requirements",
-        "Document storage for resumes and letters"
-      ],
+      title: t('features.jobTracking.title'),
+      desc: t('features.jobTracking.desc'),
+      details: t.raw('features.jobTracking.details') as string[],
       color: "purple"
     },
     {
       id: 'verified-companies',
       icon: ShieldCheck,
-      title: "Verified Companies",
-      desc: "We manually vet every company and internship post to eliminate scams and low-quality roles, so you can apply with absolute confidence.",
-      details: [
-        "Thorough background checks on recruiters",
-        "Safe payment & stipend verification",
-        "Quality of work-life assessments",
-        "Student-driven company reviews"
-      ],
+      title: t('features.verifiedCompanies.title'),
+      desc: t('features.verifiedCompanies.desc'),
+      details: t.raw('features.verifiedCompanies.details') as string[],
       color: "emerald"
     }
   ];
@@ -75,7 +62,7 @@ export const LandingPage = () => {
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[rgb(var(--accent))]/10 border border-[rgb(var(--accent))]/20 text-[rgb(var(--accent))] text-sm font-bold mb-4"
           >
             <Zap className="w-4 h-4 fill-current" />
-            <span className="uppercase tracking-widest text-[9px] sm:text-[10px]">Empowering Tech Talents</span>
+            <span className="uppercase tracking-widest text-[9px] sm:text-[10px]">{t('hero.badge')}</span>
           </motion.div>
 
           <motion.h1
@@ -84,8 +71,8 @@ export const LandingPage = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-[rgb(var(--text-main))] leading-[1.1]"
           >
-            Bridging the gap <br className="hidden sm:block" /> between <br className="sm:hidden" />
-            <span className="text-[rgb(var(--accent))] bg-clip-text text-transparent bg-linear-to-r from-[rgb(var(--accent))] to-blue-500">Campus and Career</span>
+            {t('hero.headline')} <br className="hidden sm:block" />
+            <span className="text-[rgb(var(--accent))] bg-clip-text text-transparent bg-linear-to-r from-[rgb(var(--accent))] to-blue-500">{t('hero.headlineHighlight')}</span>
           </motion.h1>
 
           <motion.p
@@ -94,7 +81,7 @@ export const LandingPage = () => {
             transition={{ delay: 0.2 }}
             className="text-base sm:text-lg md:text-[22px] text-[rgb(var(--text-muted))] max-w-3xl mx-auto font-medium leading-relaxed"
           >
-            ConnekT connects the brightest university tech talents with leading companies. Simple application tracking and smart matching to jumpstart your career.
+            {t('hero.subheadline')}
           </motion.p>
 
           <motion.div
@@ -104,7 +91,7 @@ export const LandingPage = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
           >
             <Link href="/auth?mode=signup" className="w-full sm:w-auto px-10 py-5 bg-[rgb(var(--accent))] text-white font-bold rounded-2xl hover:bg-[rgb(var(--accent))]/90 transition-all text-center flex items-center justify-center shadow-2xl shadow-[rgb(var(--accent))]/20 hover:scale-[1.02] active:scale-95 text-lg">
-              Create Free Account
+              {t('hero.cta')}
             </Link>
           </motion.div>
         </motion.div>
@@ -112,10 +99,10 @@ export const LandingPage = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-[rgb(var(--border))] mt-16 relative">
           {[
-            { label: 'Active Students', value: 1000, suffix: '+' },
-            { label: 'Verified Partners', value: 50, suffix: '+' },
-            { label: 'Monthly Placements', value: 100, suffix: '' },
-            { label: 'Match Accuracy', value: 90, suffix: '%' },
+            { label: t('hero.stats.activeStudents'), value: 1000, suffix: '+' },
+            { label: t('hero.stats.verifiedPartners'), value: 50, suffix: '+' },
+            { label: t('hero.stats.monthlyPlacements'), value: 100, suffix: '' },
+            { label: t('hero.stats.matchAccuracy'), value: 90, suffix: '%' },
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -138,8 +125,8 @@ export const LandingPage = () => {
       {/* Features Grid */}
       <section className="py-20 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-16 sm:mb-24 space-y-4">
-          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[rgb(var(--text-main))]">Everything you need to <span className="text-[rgb(var(--accent))]">succeed</span></h2>
-          <p className="text-[rgb(var(--text-muted))] text-lg sm:text-xl max-w-2xl mx-auto font-medium">Powering your internship search with tools designed for the modern student.</p>
+          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[rgb(var(--text-main))]">{t('features.title')} <span className="text-[rgb(var(--accent))]">{t('features.titleHighlight')}</span></h2>
+          <p className="text-[rgb(var(--text-muted))] text-lg sm:text-xl max-w-2xl mx-auto font-medium">{t('features.subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
           {features.map((feature, i) => (
@@ -147,6 +134,7 @@ export const LandingPage = () => {
               key={feature.id}
               {...feature}
               index={i}
+              learnMoreLabel={t('features.learnMore')}
               onClick={() => setSelectedFeature(feature)}
             />
           ))}
@@ -165,7 +153,7 @@ export const LandingPage = () => {
             >
               <button
                 onClick={() => setSelectedFeature(null)}
-                aria-label="Close feature details"
+                aria-label={t('featureModal.closeAriaLabel')}
                 className="absolute top-4 right-4 w-10 h-10 rounded-full bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center hover:bg-red-500 hover:text-white transition-all z-10"
               >
                 <X className="w-5 h-5" />
@@ -187,7 +175,7 @@ export const LandingPage = () => {
                 </p>
 
                 <div className="space-y-4 pt-5 border-t border-[rgb(var(--border))]">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[rgb(var(--text-muted))]">Key Advantages</h4>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[rgb(var(--text-muted))]">{t('featureModal.keyAdvantages')}</h4>
                   <div className="grid grid-cols-1 gap-2.5">
                     {selectedFeature.details.map((detail: string, i: number) => (
                       <div key={i} className="flex items-center gap-3">
@@ -206,7 +194,7 @@ export const LandingPage = () => {
                     onClick={() => setSelectedFeature(null)}
                     className="w-full py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 flex items-center justify-center gap-3 text-base transition-all shadow-xl shadow-[rgb(var(--accent))]/20"
                   >
-                    Start your journey <ChevronRight className="w-4 h-4" />
+                    {t('featureModal.startJourney')} <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
@@ -220,9 +208,9 @@ export const LandingPage = () => {
       <section className="py-16 sm:py-20 px-6 max-w-7xl mx-auto">
         <div className="space-y-8 md:space-y-12">
           <div className="text-center space-y-4">
-            <p className="text-2xl font-extrabold uppercase tracking-[0.35em] text-[rgb(var(--accent))]">About ConnekT</p>
-            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-[rgb(var(--text-main))] leading-[1.1] max-w-4xl mx-auto">We help students discover meaningful tech internships while recruiters build stronger campus talent pipelines.</h2>
-            <p className="text-base md:text-lg text-[rgb(var(--text-muted))] max-w-3xl mx-auto leading-relaxed font-light">ConnekT is built for the next generation of innovators. Our mission is to simplify early-career hiring, surface the best-fit opportunities, and create a trusted connection between campus talent and employers.</p>
+            <p className="text-2xl font-extrabold uppercase tracking-[0.35em] text-[rgb(var(--accent))]">{t('about.kicker')}</p>
+            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-[rgb(var(--text-main))] leading-[1.1] max-w-4xl mx-auto">{t('about.heading')}</h2>
+            <p className="text-base md:text-lg text-[rgb(var(--text-muted))] max-w-3xl mx-auto leading-relaxed font-light">{t('about.body')}</p>
           </div>
         </div>
       </section>
@@ -264,11 +252,11 @@ export const LandingPage = () => {
           ></motion.div>
 
           <div className="relative z-10 space-y-8">
-            <h2 className="text-4xl md:text-7xl font-extrabold tracking-tight">Start Your Career <br /> Journey Today.</h2>
-            <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">Don&apos;t miss out on life-changing opportunities. Join thousands of students already building their future.</p>
+            <h2 className="text-4xl md:text-7xl font-extrabold tracking-tight">{t('ctaSection.headingLine1')} <br /> {t('ctaSection.headingLine2')}</h2>
+            <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">{t('ctaSection.body')}</p>
             <div className="flex justify-center pt-4">
               <Link href="/auth?mode=signup" className="px-12 py-6 bg-white text-[rgb(var(--accent))] font-bold rounded-2xl hover:bg-blue-50 transition-all flex items-center gap-3 group shadow-2xl hover:scale-105 active:scale-95 text-lg">
-                Get Started Now <ChevronRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
+                {t('ctaSection.cta')} <ChevronRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
               </Link>
             </div>
           </div>
@@ -283,50 +271,50 @@ export const LandingPage = () => {
               <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[rgb(var(--accent))] to-blue-600 flex items-center justify-center shadow-lg shadow-[rgb(var(--accent))]/30">
                 <Zap className="w-6 h-6 text-white" />
               </div>
-              <span className="font-bold text-xl tracking-tight text-[rgb(var(--text-main))] font-display">ConnekT</span>
+              <span className="font-bold text-xl tracking-tight text-[rgb(var(--text-main))] font-display">{t('footer.brand')}</span>
             </div>
             <p className="text-sm text-[rgb(var(--text-muted))] leading-relaxed font-medium">
-              Bridging the gap between Campus and Career for the next generation of tech leaders through seamless internship experiences and smart matching.
+              {t('footer.tagline')}
             </p>
             <div className="flex items-center gap-4">
-              <SocialLink icon={Twitter} href="#" />
-              <SocialLink icon={Linkedin} href="#" />
-              <SocialLink icon={Github} href="#" />
+              <SocialLink icon={Twitter} href="#" t={t} />
+              <SocialLink icon={Linkedin} href="#" t={t} />
+              <SocialLink icon={Github} href="#" t={t} />
             </div>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-bold text-sm">Navigation</h4>
+            <h4 className="font-bold text-sm">{t('footer.navigationHeading')}</h4>
             <div className="flex flex-col gap-2">
-              <FooterLink href="/auth">Recruiter Portal</FooterLink>
-              <FooterLink href="/auth?mode=signup">Join as Student</FooterLink>
+              <FooterLink href="/auth">{t('footer.recruiterPortal')}</FooterLink>
+              <FooterLink href="/auth?mode=signup">{t('footer.joinAsStudent')}</FooterLink>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-bold text-sm">Resources</h4>
+            <h4 className="font-bold text-sm">{t('footer.resourcesHeading')}</h4>
             <div className="flex flex-col gap-2">
-              <FooterResourceButton onClick={() => setSelectedResource({ id: 'success-stories', title: 'Success Stories', summary: 'Read how students landed their dream roles with ConnekT and how companies found the right talent faster.', details: ['Student-led case studies from top universities.', 'Recruiter success metrics and conversion stories.', 'Internships that turned into full-time offers.'] })}>
-                Success Stories
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'success-stories', title: t('footer.resources.successStories.title'), summary: t('footer.resources.successStories.summary'), details: t.raw('footer.resources.successStories.details') as string[] })}>
+                {t('footer.resources.successStories.title')}
               </FooterResourceButton>
-              <FooterResourceButton onClick={() => setSelectedResource({ id: 'blog', title: 'Blog', summary: 'Insights on career growth, interview prep, and navigating the tech internship landscape.', details: ['Resume tips for campus hires.', 'Interview guides for engineering and product roles.', 'Emerging tech trends students should know.'] })}>
-                Blog
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'blog', title: t('footer.resources.blog.title'), summary: t('footer.resources.blog.summary'), details: t.raw('footer.resources.blog.details') as string[] })}>
+                {t('footer.resources.blog.title')}
               </FooterResourceButton>
-              <FooterResourceButton onClick={() => setSelectedResource({ id: 'partner-with-us', title: 'Partner with Us', summary: 'Grow your internship pipeline with trusted student talent and benefit from a dedicated recruiter dashboard.', details: ['Access verified student talent pools.', 'Custom hiring campaigns for your company.', 'Dedicated onboarding support for recruiters.'] })}>
-                Partner with Us
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'partner-with-us', title: t('footer.resources.partnerWithUs.title'), summary: t('footer.resources.partnerWithUs.summary'), details: t.raw('footer.resources.partnerWithUs.details') as string[] })}>
+                {t('footer.resources.partnerWithUs.title')}
               </FooterResourceButton>
-              <FooterResourceButton onClick={() => setSelectedResource({ id: 'privacy-policy', title: 'Privacy Policy', summary: 'We keep student and recruiter data secure with clear privacy controls and trusted handling practices.', details: ['Transparent data collection and usage.', 'Secure profile and application storage.', 'Respect for user privacy across the platform.'] })}>
-                Privacy Policy
+              <FooterResourceButton onClick={() => setSelectedResource({ id: 'privacy-policy', title: t('footer.resources.privacyPolicy.title'), summary: t('footer.resources.privacyPolicy.summary'), details: t.raw('footer.resources.privacyPolicy.details') as string[] })}>
+                {t('footer.resources.privacyPolicy.title')}
               </FooterResourceButton>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-bold text-sm">Contact Us</h4>
+            <h4 className="font-bold text-sm">{t('footer.contactHeading')}</h4>
             <div className="space-y-3">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-[rgb(var(--accent))] shrink-0 mt-0.5" />
-                <p className="text-sm text-[rgb(var(--text-muted))] font-medium">Bamenda, Cameroon</p>
+                <p className="text-sm text-[rgb(var(--text-muted))] font-medium">{t('footer.location')}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[rgb(var(--accent))] shrink-0" />
@@ -341,11 +329,11 @@ export const LandingPage = () => {
         </div>
 
         <div className="max-w-7xl mx-auto pt-16 mt-16 border-t border-[rgb(var(--border))] flex flex-col sm:flex-row items-center justify-between gap-6 text-[11px] font-medium text-[rgb(var(--text-muted))]">
-          <p>© 2026 ConnekT. All rights reserved.</p>
+          <p>{t('footer.copyright')}</p>
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-[rgb(var(--accent))] transition-colors">Terms</a>
-            <a href="#" className="hover:text-[rgb(var(--accent))] transition-colors">Privacy</a>
-            <a href="#" className="hover:text-[rgb(var(--accent))] transition-colors">Security</a>
+            <a href="#" className="hover:text-[rgb(var(--accent))] transition-colors">{t('footer.terms')}</a>
+            <a href="#" className="hover:text-[rgb(var(--accent))] transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="hover:text-[rgb(var(--accent))] transition-colors">{t('footer.security')}</a>
           </div>
         </div>
       </footer>
@@ -360,11 +348,14 @@ export const LandingPage = () => {
   );
 };
 
-const SocialLink = ({ icon: Icon, href }: any) => (
-  <a href={href} aria-label={`Visit our ${href.includes('twitter') ? 'Twitter' : href.includes('linkedin') ? 'LinkedIn' : href.includes('github') ? 'GitHub' : 'social media'} profile`} className="w-10 h-10 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center text-[rgb(var(--text-muted))] hover:bg-[rgb(var(--accent))] hover:text-white hover:border-transparent transition-all duration-300 shadow-sm">
-    <Icon className="w-5 h-5" />
-  </a>
-);
+const SocialLink = ({ icon: Icon, href, t }: any) => {
+  const networkKey = href.includes('twitter') ? 'twitter' : href.includes('linkedin') ? 'linkedin' : href.includes('github') ? 'github' : 'default';
+  return (
+    <a href={href} aria-label={t('footer.socialAriaLabel', { network: t(`footer.socialNetworks.${networkKey}`) })} className="w-10 h-10 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] flex items-center justify-center text-[rgb(var(--text-muted))] hover:bg-[rgb(var(--accent))] hover:text-white hover:border-transparent transition-all duration-300 shadow-sm">
+      <Icon className="w-5 h-5" />
+    </a>
+  );
+};
 
 const FooterLink = ({ href, children }: any) => (
   <Link href={href} className="text-sm text-[rgb(var(--text-muted))] hover:text-[rgb(var(--accent))] transition-colors w-fit flex items-center gap-2 group">
@@ -380,7 +371,7 @@ const FooterResourceButton = ({ onClick, children }: any) => (
   </button>
 );
 
-const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) => {
+const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick, learnMoreLabel }: any) => {
   const colors: Record<string, string> = {
     blue: "bg-blue-500/10 text-blue-600 border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white",
     purple: "bg-purple-500/10 text-purple-600 border-purple-500/20 group-hover:bg-purple-500 group-hover:text-white",
@@ -408,7 +399,7 @@ const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) =>
 
       <div className="pt-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity translate-y-0 sm:translate-y-2 sm:group-hover:translate-y-0 duration-500">
         <span className="text-[13px] font-bold text-[rgb(var(--accent))] uppercase tracking-widest flex items-center gap-2 underline underline-offset-4 pointer-events-none">
-          Learn more <ChevronRight className="w-4 h-4" />
+          {learnMoreLabel} <ChevronRight className="w-4 h-4" />
         </span>
       </div>
     </motion.div>
@@ -416,6 +407,7 @@ const FeatureCard = ({ icon: Icon, title, desc, color, index, onClick }: any) =>
 };
 
 const ResourceModal = ({ resource, onClose }: any) => {
+  const t = useTranslations('home');
   if (!resource) return null;
 
   return (
@@ -441,7 +433,7 @@ const ResourceModal = ({ resource, onClose }: any) => {
           <p className="text-base text-[rgb(var(--text-muted))] leading-relaxed">{resource.summary}</p>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[rgb(var(--text-main))]">Key Highlights</h3>
+            <h3 className="text-lg font-semibold text-[rgb(var(--text-main))]">{t('resourceModal.keyHighlights')}</h3>
             <ul className="space-y-3">
               {resource.details.map((detail: string, index: number) => (
                 <li key={index} className="flex items-start gap-3">
@@ -454,7 +446,7 @@ const ResourceModal = ({ resource, onClose }: any) => {
 
           <div className="pt-4 border-t border-[rgb(var(--border))] flex justify-between items-center">
             <p className="text-sm text-[rgb(var(--text-muted))] text-center">
-              Interested in learning more? Contact us at{' '}
+              {t('resourceModal.contactPrompt')}{' '}
               <a href="mailto:contact@connekt.io" className="text-[rgb(var(--accent))] hover:underline">
                 contact@connekt.io
               </a>
@@ -465,7 +457,7 @@ const ResourceModal = ({ resource, onClose }: any) => {
                 onClick={onClose}
                 className="px-6 py-2 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all text-sm"
               >
-                Get Started
+                {t('resourceModal.getStarted')}
               </Link>
             )}
           </div>

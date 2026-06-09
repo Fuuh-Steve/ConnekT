@@ -1,0 +1,33 @@
+{
+  "title": "Admin Overview",
+  "subtitle": "Monitor platform activity, manage access levels, and review account growth.",
+  "platformStatus": "Platform Status: Healthy",
+  "errorPrefix": "Unable to load admin metrics.",
+  "errorFallback": "Please check Supabase permissions or network connectivity.",
+  "stats": {
+    "totalUsers": "Total Users",
+    "activeJobs": "Active Jobs",
+    "recruiterAccounts": "Recruiter Accounts",
+    "studentAccounts": "Student Accounts"
+  },
+  "recruiterSignups": {
+    "heading": "Recent Recruiter Signups",
+    "subheading": "Newest company accounts",
+    "liveData": "Live data",
+    "loading": "Loading recruiter data...",
+    "fallbackName": "Recruiter account",
+    "fallbackCompany": "Company not provided",
+    "unknownDate": "Unknown",
+    "empty": "No recruiter activity detected yet."
+  },
+  "jobListings": {
+    "heading": "Latest Job Listings",
+    "subheading": "Most recent roles posted",
+    "loading": "Loading latest roles...",
+    "fallbackTitle": "Untitled role",
+    "fallbackCompany": "Unknown company",
+    "fallbackLocation": "Remote / unspecified",
+    "unknownDate": "Unknown",
+    "empty": "No jobs have been posted yet."
+  }
+}

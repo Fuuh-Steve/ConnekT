@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { LayoutDashboard, Briefcase, User, Zap, ChevronRight, TrendingUp, CheckCircle, Search, Clock, MapPin, Building2, ExternalLink, X, Mail, Loader2 } from 'lucide-react';
 import Image from 'next/image';
@@ -12,6 +13,7 @@ import { CountUp } from '../components/CountUp';
 import { UserProfile, Application, JobListing, StatCardProps } from '../types';
 
 export const StudentDashboard = () => {
+  const t = useTranslations('dashboard.student');
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -98,12 +100,12 @@ export const StudentDashboard = () => {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />
-        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">Loading Dashboard...</p>
+        <p className="text-[rgb(var(--text-muted))] font-bold uppercase tracking-widest text-xs">{t('loading')}</p>
       </div>
     );
   }
 
-  const firstName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Member';
+  const firstName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || t('fallbackName');
 
   // Calculate Profile Strength
   const calculateProfileStrength = () => {
@@ -145,11 +147,11 @@ export const StudentDashboard = () => {
           animate={{ opacity: 1, x: 0 }}
           className="space-y-1"
         >
-          <p className="text-sm font-semibold text-[rgb(var(--accent))]">Overview</p>
+          <p className="text-sm font-semibold text-[rgb(var(--accent))]">{t('overview')}</p>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[rgb(var(--text-main))]">
-            Welcome back, {firstName}
+            {t('welcomeBack', { name: firstName })}
           </h1>
-          <p className="text-sm text-[rgb(var(--text-muted))]">Here&apos;s what&apos;s happening with your applications today.</p>
+          <p className="text-sm text-[rgb(var(--text-muted))]">{t('subtitle')}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -157,60 +159,63 @@ export const StudentDashboard = () => {
         >
           <Link href="/jobs" className="px-6 py-3 bg-[rgb(var(--accent))] text-white font-bold rounded-xl hover:bg-[rgb(var(--accent))]/90 transition-all flex items-center gap-2 shadow-lg shadow-[rgb(var(--accent))]/20">
             <Search className="w-4 h-4" />
-            <span>Explore Jobs</span>
+            <span>{t('exploreJobs')}</span>
           </Link>
         </motion.div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard 
+        <StatCard
           icon={<Briefcase className="w-5 h-5 text-blue-500" />}
-          label="Applications Sent"
+          label={t('stats.applicationsSent.label')}
           value={applications.length}
-          trend={`${applications.length === 0 ? 'Start applying!' : 'Active tracker'}`}
+          trend={applications.length === 0 ? t('stats.applicationsSent.trendStart') : t('stats.applicationsSent.trendActive')}
           trendColor="text-blue-500"
           delay={0.1}
-          tooltip="Total number of roles you've applied for."
+          tooltip={t('stats.applicationsSent.tooltip')}
+          infoLabel={t('stats.info')}
         />
-        <StatCard 
+        <StatCard
           icon={<Zap className="w-5 h-5 text-amber-500" />}
-          label="Interview Rate"
+          label={t('stats.interviewRate.label')}
           value={interviewRate}
           suffix="%"
-          trend={interviewRate > 20 ? "Above average" : "Keep improving"}
+          trend={interviewRate > 20 ? t('stats.interviewRate.trendAbove') : t('stats.interviewRate.trendImprove')}
           trendColor="text-amber-500"
           delay={0.2}
-          tooltip="Percentage of applications moving to interview stages."
+          tooltip={t('stats.interviewRate.tooltip')}
+          infoLabel={t('stats.info')}
         />
-        <StatCard 
+        <StatCard
           icon={<CheckCircle className="w-5 h-5 text-emerald-500" />}
-          label="Profile Strength"
+          label={t('stats.profileStrength.label')}
           value={profileStrength}
           suffix="%"
-          trend={`${profileStrength}% complete`}
+          trend={t('stats.profileStrength.trendComplete', { percent: profileStrength })}
           trendColor="text-emerald-500"
           delay={0.3}
-          tooltip="Based on your profile completeness and verified skills."
+          tooltip={t('stats.profileStrength.tooltip')}
+          infoLabel={t('stats.info')}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-7 gap-10">
         <div className="lg:col-span-4 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-            <h2 className="text-xl font-bold">Recent Applications</h2>
+            <h2 className="text-xl font-bold">{t('recentApplications.heading')}</h2>
             <div className="flex items-center gap-4">
               <div className="relative group">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[rgb(var(--text-muted))] group-focus-within:text-[rgb(var(--accent))] transition-colors" />
-                <input 
-                  type="text" 
-                  placeholder="Search..." 
+                <input
+                  type="text"
+                  placeholder={t('recentApplications.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 pr-4 py-2 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] rounded-xl text-xs focus:outline-none focus:border-[rgb(var(--accent))] w-full sm:w-48 transition-all"
                 />
               </div>
               <Link href="/applications" className="text-sm font-semibold text-[rgb(var(--accent))] hover:underline whitespace-nowrap">
-                View All
+                {t('recentApplications.viewAll')}
               </Link>
             </div>
           </div>
@@ -277,15 +282,15 @@ export const StudentDashboard = () => {
             )) : (
               <div className="text-center py-12 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-dashed border-[rgb(var(--border))]">
                 <Clock className="w-10 h-10 text-[rgb(var(--text-muted))] mx-auto mb-3 opacity-20" />
-                <p className="text-sm font-bold text-[rgb(var(--text-muted))]">No recent applications found.</p>
-                <Link href="/jobs" className="text-xs font-bold text-[rgb(var(--accent))] hover:underline mt-2 inline-block uppercase tracking-widest">Explore Jobs</Link>
+                <p className="text-sm font-bold text-[rgb(var(--text-muted))]">{t('recentApplications.empty')}</p>
+                <Link href="/jobs" className="text-xs font-bold text-[rgb(var(--accent))] hover:underline mt-2 inline-block uppercase tracking-widest">{t('exploreJobs')}</Link>
               </div>
             )}
           </div>
         </div>
 
         <div className="lg:col-span-3 space-y-6">
-          <h2 className="text-xl font-bold">Recommended for You</h2>
+          <h2 className="text-xl font-bold">{t('recommended.heading')}</h2>
 
           <div className="space-y-4">
             {recommendedJobs.length > 0 ? recommendedJobs.map((job, i) => (
@@ -298,7 +303,7 @@ export const StudentDashboard = () => {
                   className="bg-[rgb(var(--bg-side))] p-5 rounded-2xl border border-[rgb(var(--border))] flex flex-col gap-4 hover:border-[rgb(var(--accent))]/30 transition-all group relative"
                 >
                   <div className="absolute top-4 right-4 text-[10px] font-bold text-[rgb(var(--accent))]">
-                    {job.matchScore}% Match
+                    {t('recommended.matchLabel', { score: job.matchScore })}
                   </div>
                   
                   <div className="flex items-center gap-4">
@@ -326,7 +331,7 @@ export const StudentDashboard = () => {
                   </div>
 
                   <div className="w-full py-2.5 bg-[rgb(var(--bg-main))] border border-[rgb(var(--border))] rounded-xl text-xs font-bold hover:bg-[rgb(var(--accent))] hover:text-white hover:border-transparent transition-all shadow-sm text-center">
-                     View Details
+                     {t('recommended.viewDetails')}
                   </div>
                 </motion.div>
               </Link>
@@ -368,9 +373,9 @@ export const StudentDashboard = () => {
                     <p className="font-bold text-[rgb(var(--accent))] tracking-wide uppercase text-[10px] sm:text-xs mt-1">{selectedApp.company}</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setSelectedApp(null)}
-                  aria-label="Close application details"
+                  aria-label={t('applicationModal.closeAriaLabel')}
                   className="p-2 rounded-xl bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text-main))] transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -382,48 +387,48 @@ export const StudentDashboard = () => {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[rgb(var(--text-muted))]">
                       <Clock className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Applied</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('applicationModal.applied')}</span>
                     </div>
                     <p className="text-sm font-bold">{selectedApp.appliedDate}</p>
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[rgb(var(--text-muted))]">
                       <MapPin className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Location</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('applicationModal.location')}</span>
                     </div>
                     <p className="text-sm font-bold truncate">{selectedApp.location}</p>
                   </div>
                   <div className="space-y-1 col-span-2 sm:col-span-1">
                     <div className="flex items-center gap-2 text-[rgb(var(--text-muted))]">
                    <TrendingUp className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Status</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('applicationModal.status')}</span>
                     </div>
                     <p className="text-sm font-bold text-blue-600 dark:text-blue-400">{selectedApp.status}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">Current Stage</h4>
+                  <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('applicationModal.currentStage')}</h4>
                   <div className="p-4 sm:p-5 rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 flex items-start gap-4">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-sm">
                       <CheckCircle className="w-5 h-5 text-blue-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-blue-950 dark:text-blue-100">Reviewing Screening Test</p>
+                      <p className="text-sm font-bold text-blue-950 dark:text-blue-100">{t('applicationModal.reviewingTitle')}</p>
                       <p className="text-[12px] text-blue-700 dark:text-blue-300 mt-1 font-medium leading-relaxed">
-                        The team is currently reviewing your profile and test results.
+                        {t('applicationModal.reviewingDesc')}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">Next Milestone</h4>
+                  <h4 className="font-bold text-[11px] uppercase tracking-widest text-[rgb(var(--text-muted))]">{t('applicationModal.nextMilestone')}</h4>
                   <div className="space-y-3">
                     {[
-                      { step: 'Technical Interview', status: 'pending' },
-                      { step: 'Culture Fit', status: 'locked' },
-                      { step: 'Final Offer', status: 'locked' }
+                      { step: t('applicationModal.steps.technicalInterview'), status: 'pending' },
+                      { step: t('applicationModal.steps.cultureFit'), status: 'locked' },
+                      { step: t('applicationModal.steps.finalOffer'), status: 'locked' }
                     ].map((step, idx) => (
                       <div key={idx} className="flex items-center gap-3 opacity-60">
                         <div className="w-2 h-2 rounded-full bg-[rgb(var(--border))]" />
@@ -439,11 +444,11 @@ export const StudentDashboard = () => {
                     className="flex-1 py-3 sm:py-4 bg-[rgb(var(--accent))] text-white font-bold rounded-xl sm:rounded-2xl shadow-xl shadow-[rgb(var(--accent))]/20 hover:bg-[rgb(var(--accent))]/90 transition-all flex items-center justify-center gap-2"
                   >
                     <CheckCircle className="w-4 h-4" />
-                    <span>Got it</span>
+                    <span>{t('applicationModal.gotIt')}</span>
                   </button>
                   <button className="flex-1 py-3 sm:py-4 bg-[rgb(var(--bg-side))] border border-[rgb(var(--border))] text-[rgb(var(--text-main))] font-bold rounded-xl sm:rounded-2xl hover:bg-[rgb(var(--border))]/30 transition-all flex items-center justify-center gap-2">
                     <Building2 className="w-4 h-4" />
-                    <span>View Company</span>
+                    <span>{t('applicationModal.viewCompany')}</span>
                   </button>
                 </div>
               </div>
@@ -455,7 +460,7 @@ export const StudentDashboard = () => {
   );
 };
 
-const StatCard = ({ icon, label, value, suffix = '', trend, trendColor, delay, tooltip }: StatCardProps) => (
+const StatCard = ({ icon, label, value, suffix = '', trend, trendColor, delay, tooltip, infoLabel }: StatCardProps & { infoLabel: string }) => (
   <motion.div 
     initial={{ opacity: 0, y: 15 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -470,7 +475,7 @@ const StatCard = ({ icon, label, value, suffix = '', trend, trendColor, delay, t
     <div className="flex-1">
       <div className="flex items-center gap-1.5 mb-1">
         <p className="text-[13px] font-bold text-[rgb(var(--text-muted))] uppercase tracking-wider">{label}</p>
-        <span className="text-[10px] text-[rgb(var(--text-muted))] opacity-0 group-hover/card:opacity-100 transition-opacity cursor-help underline decoration-dotted">Info</span>
+        <span className="text-[10px] text-[rgb(var(--text-muted))] opacity-0 group-hover/card:opacity-100 transition-opacity cursor-help underline decoration-dotted">{infoLabel}</span>
       </div>
       <div className="flex items-end gap-2">
         <p className="text-2xl font-bold leading-none">

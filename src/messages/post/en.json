@@ -1,0 +1,47 @@
+{
+  "heading": {
+    "title": "Create Job Posting",
+    "subtitle": "Define the role and start finding the right talent for your team."
+  },
+  "steps": {
+    "jobDetails": "Job Details",
+    "descriptionRequirements": "Job Description & Requirements"
+  },
+  "fields": {
+    "jobTitle": {
+      "label": "Job Title",
+      "placeholder": "e.g. Senior Frontend Developer"
+    },
+    "department": {
+      "label": "Department",
+      "placeholder": "e.g. Engineering"
+    },
+    "location": {
+      "label": "Location",
+      "placeholder": "e.g. Remote / Douala, CM"
+    },
+    "stipend": {
+      "label": "Monthly Stipend (Range)",
+      "placeholder": "e.g. $500 - $1000"
+    },
+    "description": {
+      "placeholder": "Provide a detailed description of the role, responsibilities, and key requirements..."
+    }
+  },
+  "success": {
+    "title": "Posting is Live!",
+    "message": "Your job has been published and is now visible to students.",
+    "manageListings": "Manage Listings"
+  },
+  "buttons": {
+    "back": "Back",
+    "publishJob": "Publish Job",
+    "nextStep": "Next Step"
+  },
+  "fallbacks": {
+    "companyNotProvided": "Company not provided"
+  },
+  "alerts": {
+    "publishFailed": "Failed to post job. Please try again."
+  }
+}
