@@ -22,32 +22,19 @@ export const ApplicationsOversightTable = () => {
       setLoading(true);
       setError(null);
       try {
-        const { data, error: fetchError } = await supabase
-          .from('applications')
-          .select('id, status, created_at, job_id, student_id, jobs(title, company)')
-          .order('created_at', { ascending: false })
-          .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`/api/admin/applications?page=${page}`, {
+          headers: { Authorization: `Bearer ${session?.access_token ?? ''}` },
+        });
 
-        if (fetchError) throw fetchError;
-
-        const rows = (data ?? []) as unknown as AdminApplicationRow[];
-        setHasMore(rows.length > PAGE_SIZE);
-        const pageRows = rows.slice(0, PAGE_SIZE);
-
-        const studentIds = Array.from(new Set(pageRows.map((r) => r.student_id)));
-        if (studentIds.length > 0) {
-          const { data: profilesData } = await supabase
-            .from('profiles')
-            .select('id, full_name')
-            .in('id', studentIds);
-
-          const nameMap = new Map((profilesData ?? []).map((p) => [p.id, p.full_name]));
-          pageRows.forEach((row) => {
-            row.studentName = nameMap.get(row.student_id) ?? null;
-          });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || t('errorFallback'));
         }
 
-        setApplications(pageRows);
+        const body = await res.json();
+        setApplications(body.applications ?? []);
+        setHasMore(Boolean(body.hasMore));
       } catch (err) {
         console.error('Failed to load applications', err);
         setError(err instanceof Error ? err.message : t('errorFallback'));
