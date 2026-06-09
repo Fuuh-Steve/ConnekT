@@ -2,12 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { ShieldCheck, CreditCard, Activity, User, Briefcase } from 'lucide-react';
+import { ShieldCheck, CreditCard, Activity, User, Briefcase, LayoutGrid, Users, Inbox } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 import { CountUp } from '../components/CountUp';
 import { AdminStatProps } from '../types';
 import { supabase } from '../lib/supabase';
+import { UserManagementTable } from '../components/admin/UserManagementTable';
+import { JobModerationTable } from '../components/admin/JobModerationTable';
+import { ApplicationsOversightTable } from '../components/admin/ApplicationsOversightTable';
+
+type AdminTab = 'overview' | 'users' | 'jobs' | 'applications';
 
 type RecruiterProfile = {
   id: string;
@@ -27,6 +32,7 @@ type JobSummary = {
 
 export const AdminDashboard = () => {
   const t = useTranslations('admin');
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalUsers, setTotalUsers] = useState(0);
@@ -122,6 +128,31 @@ export const AdminDashboard = () => {
         </motion.div>
       </div>
 
+      <div className="flex flex-wrap gap-2 border-b border-[rgb(var(--border))] pb-2">
+        {([
+          { id: 'overview', label: t('tabs.overview'), icon: <LayoutGrid className="w-4 h-4" /> },
+          { id: 'users', label: t('tabs.users'), icon: <Users className="w-4 h-4" /> },
+          { id: 'jobs', label: t('tabs.jobs'), icon: <Briefcase className="w-4 h-4" /> },
+          { id: 'applications', label: t('tabs.applications'), icon: <Inbox className="w-4 h-4" /> },
+        ] as { id: AdminTab; label: string; icon: React.ReactNode }[]).map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all',
+              activeTab === tab.id
+                ? 'bg-[rgb(var(--accent))] text-white shadow-sm'
+                : 'text-[rgb(var(--text-muted))] hover:bg-[rgb(var(--bg-side))]'
+            )}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'overview' && (
+        <>
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
@@ -226,6 +257,12 @@ export const AdminDashboard = () => {
           )}
         </section>
       </div>
+        </>
+      )}
+
+      {activeTab === 'users' && <UserManagementTable />}
+      {activeTab === 'jobs' && <JobModerationTable />}
+      {activeTab === 'applications' && <ApplicationsOversightTable />}
     </div>
   );
 };

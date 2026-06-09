@@ -29,5 +29,56 @@
     "fallbackLocation": "Télétravail / non précisé",
     "unknownDate": "Inconnu",
     "empty": "Aucune offre d'emploi n'a encore été publiée."
+  },
+  "tabs": {
+    "overview": "Aperçu",
+    "users": "Utilisateurs",
+    "jobs": "Offres",
+    "applications": "Candidatures"
+  },
+  "users": {
+    "searchPlaceholder": "Rechercher par nom ou email...",
+    "roleFilter": {
+      "all": "Tous les rôles",
+      "student": "Étudiant",
+      "recruiter": "Recruteur",
+      "admin": "Administrateur"
+    },
+    "loading": "Chargement des utilisateurs...",
+    "errorFallback": "Impossible de charger les utilisateurs.",
+    "actionFailed": "L'action a échoué. Veuillez réessayer.",
+    "confirmDelete": "Voulez-vous vraiment supprimer définitivement cet utilisateur ?",
+    "deleteAriaLabel": "Supprimer l'utilisateur",
+    "unnamed": "Utilisateur sans nom",
+    "empty": "Aucun utilisateur trouvé.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {page}"
+  },
+  "jobs": {
+    "loading": "Chargement des offres...",
+    "errorFallback": "Impossible de charger les offres.",
+    "actionFailed": "L'action a échoué. Veuillez réessayer.",
+    "confirmDelete": "Voulez-vous vraiment supprimer définitivement cette offre d'emploi ?",
+    "deleteAriaLabel": "Supprimer l'offre",
+    "fallbackTitle": "Poste sans titre",
+    "fallbackCompany": "Entreprise inconnue",
+    "fallbackLocation": "Télétravail / non précisé",
+    "empty": "Aucune offre trouvée.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {page}"
+  },
+  "applications": {
+    "loading": "Chargement des candidatures...",
+    "errorFallback": "Impossible de charger les candidatures.",
+    "fallbackTitle": "Poste sans titre",
+    "fallbackCompany": "Entreprise inconnue",
+    "fallbackApplicant": "Candidat inconnu",
+    "applicantLabel": "Candidat",
+    "empty": "Aucune candidature trouvée.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {page}"
   }
 }

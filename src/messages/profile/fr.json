@@ -44,6 +44,34 @@
     "empty": "Historique de formation non renseigné.",
     "gpaSuffix": "Moyenne"
   },
+  "recruiter": {
+    "companySnapshot": {
+      "heading": "Aperçu de l'entreprise",
+      "company": "Entreprise",
+      "companyFallback": "Nom de l'entreprise non renseigné",
+      "location": "Localisation",
+      "website": "Site web",
+      "websiteFallback": "Non renseigné"
+    },
+    "hiringStatus": {
+      "heading": "Statut de recrutement",
+      "badge": "Recrute",
+      "loading": "Vérification des postes ouverts...",
+      "openRoles": "{count, plural, =0 {Aucun poste ouvert pour le moment.} one {# poste ouvert publié.} other {# postes ouverts publiés.}}"
+    },
+    "about": {
+      "heading": "À propos de l'entreprise",
+      "subtitle": "Présentation de l'entreprise",
+      "empty": "Ce recruteur n'a pas encore ajouté de description d'entreprise."
+    },
+    "openPositions": {
+      "heading": "Postes ouverts",
+      "subtitle": "Offres d'emploi actives",
+      "loading": "Chargement des postes ouverts...",
+      "empty": "Aucun poste ouvert publié pour le moment.",
+      "locationFallback": "Télétravail / non précisé"
+    }
+  },
   "experienceModal": {
     "closeAriaLabel": "Fermer les détails de l'expérience",
     "roleContext": "Contexte du poste",

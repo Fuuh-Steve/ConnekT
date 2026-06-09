@@ -44,6 +44,34 @@
     "empty": "Education history not provided.",
     "gpaSuffix": "GPA"
   },
+  "recruiter": {
+    "companySnapshot": {
+      "heading": "Company Snapshot",
+      "company": "Company",
+      "companyFallback": "Company name not provided",
+      "location": "Location",
+      "website": "Website",
+      "websiteFallback": "Not provided"
+    },
+    "hiringStatus": {
+      "heading": "Hiring Status",
+      "badge": "Hiring",
+      "loading": "Checking open roles...",
+      "openRoles": "{count, plural, =0 {No open roles right now.} one {# open role posted.} other {# open roles posted.}}"
+    },
+    "about": {
+      "heading": "About the Company",
+      "subtitle": "Company Overview",
+      "empty": "This recruiter hasn't added a company description yet."
+    },
+    "openPositions": {
+      "heading": "Open Positions",
+      "subtitle": "Active Job Listings",
+      "loading": "Loading open positions...",
+      "empty": "No open positions posted yet.",
+      "locationFallback": "Remote / unspecified"
+    }
+  },
   "experienceModal": {
     "closeAriaLabel": "Close experience details",
     "roleContext": "Role Context",

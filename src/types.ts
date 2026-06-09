@@ -128,3 +128,32 @@ export interface ProfileMenuItemProps {
 }
 
 export interface JobCardProps extends JobListing {}
+
+export interface AdminProfileRow {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: UserRole;
+  company_name: string | null;
+  university: string | null;
+  updated_at: string | null;
+}
+
+export interface AdminJobRow {
+  id: string;
+  title: string | null;
+  company: string | null;
+  location: string | null;
+  posted_date: string | null;
+  recruiter_id: string | null;
+}
+
+export interface AdminApplicationRow {
+  id: string;
+  status: ApplicationStatus | string;
+  created_at: string | null;
+  job_id: string;
+  student_id: string;
+  jobs: { title: string | null; company: string | null } | null;
+  studentName?: string | null;
+}

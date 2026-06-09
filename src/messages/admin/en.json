@@ -29,5 +29,56 @@
     "fallbackLocation": "Remote / unspecified",
     "unknownDate": "Unknown",
     "empty": "No jobs have been posted yet."
+  },
+  "tabs": {
+    "overview": "Overview",
+    "users": "Users",
+    "jobs": "Jobs",
+    "applications": "Applications"
+  },
+  "users": {
+    "searchPlaceholder": "Search by name or email...",
+    "roleFilter": {
+      "all": "All roles",
+      "student": "Student",
+      "recruiter": "Recruiter",
+      "admin": "Admin"
+    },
+    "loading": "Loading users...",
+    "errorFallback": "Unable to load users.",
+    "actionFailed": "Action failed. Please try again.",
+    "confirmDelete": "Are you sure you want to permanently delete this user?",
+    "deleteAriaLabel": "Delete user",
+    "unnamed": "Unnamed user",
+    "empty": "No users found.",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page}"
+  },
+  "jobs": {
+    "loading": "Loading jobs...",
+    "errorFallback": "Unable to load jobs.",
+    "actionFailed": "Action failed. Please try again.",
+    "confirmDelete": "Are you sure you want to permanently delete this job listing?",
+    "deleteAriaLabel": "Delete job",
+    "fallbackTitle": "Untitled role",
+    "fallbackCompany": "Unknown company",
+    "fallbackLocation": "Remote / unspecified",
+    "empty": "No jobs found.",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page}"
+  },
+  "applications": {
+    "loading": "Loading applications...",
+    "errorFallback": "Unable to load applications.",
+    "fallbackTitle": "Untitled role",
+    "fallbackCompany": "Unknown company",
+    "fallbackApplicant": "Unknown applicant",
+    "applicantLabel": "Applicant",
+    "empty": "No applications found.",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page}"
   }
 }

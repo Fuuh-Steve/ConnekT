@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink } from 'lucide-react';
+import { User, Mail, Github, Linkedin, Globe, MapPin, Briefcase, GraduationCap, Award, Zap, ChevronRight, Edit3, Download, CheckCircle, Camera, X, Save, Loader2, Plus, XCircle, ExternalLink, Building2, Rocket, Clock } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -26,6 +26,8 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedExperience, setSelectedExperience] = useState<any>(null);
   const [subscription, setSubscription] = useState<'free' | 'pro'>('free');
+  const [recruiterJobs, setRecruiterJobs] = useState<any[]>([]);
+  const [recruiterJobsLoading, setRecruiterJobsLoading] = useState(false);
   
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -74,6 +76,33 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
 
     fetchProfile();
   }, [username, user]);
+
+  useEffect(() => {
+    if (!profile || profile.role !== 'recruiter') {
+      setRecruiterJobs([]);
+      return;
+    }
+
+    const fetchRecruiterJobs = async () => {
+      setRecruiterJobsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('jobs')
+          .select('id, title, location, posted_date')
+          .eq('recruiter_id', profile.id)
+          .order('posted_date', { ascending: false })
+          .limit(5);
+
+        if (!error) setRecruiterJobs(data || []);
+      } catch (err) {
+        console.error('Error fetching recruiter jobs:', err);
+      } finally {
+        setRecruiterJobsLoading(false);
+      }
+    };
+
+    fetchRecruiterJobs();
+  }, [profile]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'cover') => {
     const file = e.target.files?.[0];
@@ -293,6 +322,95 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-12">
+         {profile.role === 'recruiter' ? (
+           <>
+             {/* Left Column: Company Snapshot & Hiring Status */}
+             <div className="space-y-8">
+                <div className="bg-[rgb(var(--bg-main))] p-6 rounded-2xl border border-[rgb(var(--border))] space-y-5 shadow-sm">
+                   <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-[rgb(var(--accent))]" /> {t('recruiter.companySnapshot.heading')}
+                   </h3>
+                   <div className="space-y-4">
+                      <SnapshotRow icon={Building2} label={t('recruiter.companySnapshot.company')} value={profile.company_name || t('recruiter.companySnapshot.companyFallback')} />
+                      <SnapshotRow icon={MapPin} label={t('recruiter.companySnapshot.location')} value={profile.location || t('header.locationFallback')} />
+                      <SnapshotRow icon={Globe} label={t('recruiter.companySnapshot.website')} value={profile.portfolio_url || t('recruiter.companySnapshot.websiteFallback')} />
+                   </div>
+                </div>
+
+                <div className="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-2xl border border-emerald-100 dark:border-emerald-900/20">
+                   <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-3 flex items-center justify-between">
+                     {t('recruiter.hiringStatus.heading')}
+                     <span className="text-[8px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                       <Rocket className="w-2.5 h-2.5" /> {t('recruiter.hiringStatus.badge')}
+                     </span>
+                   </h3>
+                   <p className="text-sm text-emerald-700 dark:text-emerald-300 leading-relaxed font-medium">
+                     {recruiterJobsLoading
+                       ? t('recruiter.hiringStatus.loading')
+                       : t('recruiter.hiringStatus.openRoles', { count: recruiterJobs.length })}
+                   </p>
+                </div>
+             </div>
+
+             {/* Middle Column: About Company & Open Positions */}
+             <div className="lg:col-span-2 space-y-10">
+                <section className="space-y-6">
+                   <div className="space-y-1 border-l-4 border-[rgb(var(--accent))] pl-4">
+                      <h2 className="text-2xl font-bold tracking-tight">{t('recruiter.about.heading')}</h2>
+                      <p className="text-[13px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider">{t('recruiter.about.subtitle')}</p>
+                   </div>
+                   <div className="bg-[rgb(var(--bg-main))] p-6 rounded-2xl border border-[rgb(var(--border))] shadow-sm">
+                      <p className="text-sm text-[rgb(var(--text-main))] leading-relaxed font-medium">
+                        {profile.bio || t('recruiter.about.empty')}
+                      </p>
+                   </div>
+                </section>
+
+                <section className="space-y-6">
+                   <div className="space-y-1 border-l-4 border-slate-300 dark:border-slate-700 pl-4">
+                      <h2 className="text-2xl font-bold tracking-tight">{t('recruiter.openPositions.heading')}</h2>
+                      <p className="text-[13px] text-[rgb(var(--text-muted))] font-bold uppercase tracking-wider">{t('recruiter.openPositions.subtitle')}</p>
+                   </div>
+
+                   <div className="space-y-4">
+                      {recruiterJobsLoading ? (
+                        <p className="text-sm text-[rgb(var(--text-muted))] italic">{t('recruiter.openPositions.loading')}</p>
+                      ) : recruiterJobs.length > 0 ? recruiterJobs.map((job: any) => (
+                        <Link key={job.id} href={`/jobs/${job.id}`} className="block">
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-[rgb(var(--bg-main))] p-6 rounded-2xl border border-[rgb(var(--border))] group hover:border-[rgb(var(--accent))]/30 transition-all shadow-soft flex items-center justify-between gap-4"
+                          >
+                             <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-[rgb(var(--bg-side))] rounded-xl flex items-center justify-center border border-[rgb(var(--border))] group-hover:scale-105 transition-transform">
+                                   <Briefcase className="w-6 h-6 text-[rgb(var(--accent))]" />
+                                </div>
+                                <div>
+                                   <h4 className="font-bold text-lg leading-tight group-hover:text-[rgb(var(--accent))] transition-colors">{job.title}</h4>
+                                   <p className="text-xs font-semibold text-[rgb(var(--text-muted))] mt-1 flex items-center gap-2">
+                                     <MapPin className="w-3 h-3" /> {job.location || t('recruiter.openPositions.locationFallback')}
+                                     {job.posted_date && (
+                                       <span className="flex items-center gap-1">
+                                         <Clock className="w-3 h-3" /> {new Date(job.posted_date).toLocaleDateString()}
+                                       </span>
+                                     )}
+                                   </p>
+                                </div>
+                             </div>
+                             <ChevronRight className="w-5 h-5 text-[rgb(var(--text-muted))] group-hover:text-[rgb(var(--accent))] group-hover:translate-x-0.5 transition-all" />
+                          </motion.div>
+                        </Link>
+                      )) : (
+                        <p className="text-sm text-[rgb(var(--text-muted))] italic">{t('recruiter.openPositions.empty')}</p>
+                      )}
+                   </div>
+                </section>
+             </div>
+           </>
+         ) : (
+           <>
          {/* Left Column: Stats & Skills */}
          <div className="space-y-8">
             <div className="bg-[rgb(var(--bg-main))] p-6 rounded-2xl border border-[rgb(var(--border))] space-y-6 shadow-sm">
@@ -352,7 +470,7 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
 
                <div className="space-y-4">
                   {EDUCATION.length > 0 ? EDUCATION.map((edu: any, i: number) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -382,6 +500,8 @@ export const ProfilePage = ({ lookupBy }: { lookupBy?: string } = {}) => {
                </div>
             </section>
          </div>
+           </>
+         )}
       </div>
       
       {/* Experience Detail Modal */}
@@ -986,6 +1106,18 @@ const SocialLink = ({ icon: Icon, label, url }: any) => (
      </div>
      <span className="text-xs font-bold text-[rgb(var(--text-muted))] group-hover:text-[rgb(var(--text-main))] transition-colors truncate max-w-37.5">{label}</span>
   </a>
+);
+
+const SnapshotRow = ({ icon: Icon, label, value }: any) => (
+  <div className="flex items-start gap-3">
+    <div className="w-8 h-8 rounded-lg bg-[rgb(var(--bg-side))] flex items-center justify-center border border-[rgb(var(--border))] shrink-0 text-[rgb(var(--accent))]">
+      <Icon className="w-4 h-4" />
+    </div>
+    <div className="min-w-0">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-[rgb(var(--text-muted))]">{label}</p>
+      <p className="text-sm font-bold text-[rgb(var(--text-main))] truncate">{value}</p>
+    </div>
+  </div>
 );
 
 const SkillItem = ({ label, progress, delay }: any) => (
