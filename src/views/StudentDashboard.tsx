@@ -303,7 +303,7 @@ export const StudentDashboard = () => {
                   className="bg-[rgb(var(--bg-side))] p-5 rounded-2xl border border-[rgb(var(--border))] flex flex-col gap-4 hover:border-[rgb(var(--accent))]/30 transition-all group relative"
                 >
                   <div className="absolute top-4 right-4 text-[10px] font-bold text-[rgb(var(--accent))]">
-                    {t('recommended.matchLabel', { score: job.matchScore })}
+                    {t('recommended.matchLabel', { score: job.matchScore ?? 0 })}
                   </div>
                   
                   <div className="flex items-center gap-4">
