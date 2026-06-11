@@ -17,7 +17,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const currentTab = pathname?.split('/')[1] || 'dashboard';
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isSplashing, setIsSplashing] = useState(true);
+  // Only show splash once per browser session, not on every page navigation
+  const [isSplashing, setIsSplashing] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !sessionStorage.getItem('connekt-splash-seen');
+  });
   const mainRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
 
@@ -53,7 +57,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     <>
       <AnimatePresence mode="wait">
         {isSplashing && (
-          <SplashLoader onComplete={() => setIsSplashing(false)} />
+          <SplashLoader onComplete={() => {
+            sessionStorage.setItem('connekt-splash-seen', '1');
+            setIsSplashing(false);
+          }} />
         )}
       </AnimatePresence>
       <div className="h-dvh w-full overflow-hidden bg-[rgb(var(--bg-main))] text-[rgb(var(--text-main))] transition-colors duration-300 font-sans selection:bg-[rgb(var(--accent))]/30 selection:text-current flex">

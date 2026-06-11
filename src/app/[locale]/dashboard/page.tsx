@@ -11,8 +11,6 @@ export default function DashboardPage() {
   const { role, loading } = useAuth();
   const router = useRouter();
 
-  console.log('DashboardPage: role =', role, 'loading =', loading);
-
   useEffect(() => {
     if (!loading) {
       if (role === 'guest') {
@@ -23,7 +21,9 @@ export default function DashboardPage() {
     }
   }, [role, loading, router]);
 
-  if (loading) return (
+  // Only show a spinner on the very first load when role is genuinely unknown
+  // If role is already resolved (any non-guest role), render immediately
+  if (loading && role === 'guest') return (
     <div className="min-h-screen flex items-center justify-center bg-[rgb(var(--bg-main))]">
       <div className="w-12 h-12 border-4 border-[rgb(var(--accent))]/20 border-t-[rgb(var(--accent))] rounded-full animate-spin"></div>
     </div>

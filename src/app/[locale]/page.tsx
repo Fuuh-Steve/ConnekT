@@ -17,7 +17,8 @@ export default function Home() {
     }
   }, [role, loading, router]);
 
-  if (loading) {
+  // Only block on true initial load, not on repeat navigations
+  if (loading && role === 'guest') {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center gap-4 bg-[rgb(var(--bg-main))]">
         <Loader2 className="w-10 h-10 text-[rgb(var(--accent))] animate-spin" />

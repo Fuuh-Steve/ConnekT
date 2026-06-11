@@ -15,7 +15,8 @@ export default function AdminPage() {
     }
   }, [role, loading, router]);
 
-  if (loading) {
+  // Only block with a spinner on first load when role is genuinely unknown
+  if (loading && role === 'guest') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[rgb(var(--bg-main))]">
         <div className="w-12 h-12 border-4 border-[rgb(var(--accent))]/20 border-t-[rgb(var(--accent))] rounded-full animate-spin"></div>
