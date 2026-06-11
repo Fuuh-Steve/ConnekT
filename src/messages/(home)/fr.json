@@ -55,8 +55,18 @@
   },
   "about": {
     "kicker": "À propos de ConnekT",
+    "title": "À propos de",
+    "titleHighlight": "nous",
     "heading": "Nous aidons les étudiants à découvrir des stages technologiques enrichissants, tandis que les recruteurs renforcent leurs viviers de talents universitaires.",
-    "body": "ConnekT est conçu pour la prochaine génération d'innovateurs. Notre mission est de simplifier le recrutement en début de carrière, de mettre en avant les meilleures opportunités et de créer un lien de confiance entre les talents universitaires et les employeurs."
+    "body": "ConnekT est conçu pour la prochaine génération d'innovateurs. Notre mission est de simplifier le recrutement en début de carrière, de mettre en avant les meilleures opportunités et de créer un lien de confiance entre les talents universitaires et les employeurs.",
+    "vision": {
+      "title": "Notre vision",
+      "desc": "Bâtir un écosystème fluide où le potentiel académique rencontre les exigences de l'industrie, transformant le Cameroun en un pôle technologique dynamique en offrant à chaque étudiant universitaire des parcours de carrière transparents et à fort impact."
+    },
+    "mission": {
+      "title": "Notre mission",
+      "desc": "Accélérer le début des carrières technologiques au Cameroun en mettant en relation des étudiants développeurs ambitieux avec des entreprises vérifiées, offrant aux candidats un suivi structuré de leurs candidatures et aux recruteurs des viviers de talents universitaires de haute qualité."
+    }
   },
   "ctaSection": {
     "headingLine1": "Commencez votre carrière",

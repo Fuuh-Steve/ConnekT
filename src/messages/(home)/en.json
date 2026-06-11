@@ -55,8 +55,18 @@
   },
   "about": {
     "kicker": "About ConnekT",
+    "title": "About",
+    "titleHighlight": "Us",
     "heading": "We help students discover meaningful tech internships while recruiters build stronger campus talent pipelines.",
-    "body": "ConnekT is built for the next generation of innovators. Our mission is to simplify early-career hiring, surface the best-fit opportunities, and create a trusted connection between campus talent and employers."
+    "body": "ConnekT is built for the next generation of innovators. Our mission is to simplify early-career hiring, surface the best-fit opportunities, and create a trusted connection between campus talent and employers.",
+    "vision": {
+      "title": "Our Vision",
+      "desc": "To build a seamless ecosystem where academic potential meets industry demand, transforming Cameroon into a thriving tech hub by empowering every university student with transparent, high-impact career pathways."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "desc": "To accelerate early-tech careers in Cameroon by matching ambitious student developers with verified companies, providing candidates with structured application tracking and recruiters with high-quality campus pipelines."
+    }
   },
   "ctaSection": {
     "headingLine1": "Start Your Career",

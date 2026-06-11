@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Zap, Briefcase, ShieldCheck, Globe, ChevronRight, Star, Twitter, Linkedin, Github, Mail, MapPin, Phone, X, Check } from 'lucide-react';
+import { Zap, Briefcase, ShieldCheck, Globe, ChevronRight, Star, Twitter, Linkedin, Github, Mail, MapPin, Phone, X, Check, Lightbulb, Target } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { CountUp } from '../components/CountUp';
 
@@ -206,11 +206,68 @@ export const LandingPage = () => {
 
       {/* About Us */}
       <section className="py-16 sm:py-20 px-6 max-w-7xl mx-auto">
-        <div className="space-y-8 md:space-y-12">
+        <div className="space-y-12 md:space-y-16">
           <div className="text-center space-y-4">
-            <p className="text-2xl font-extrabold uppercase tracking-[0.35em] text-[rgb(var(--accent))]">{t('about.kicker')}</p>
-            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-[rgb(var(--text-main))] leading-[1.1] max-w-4xl mx-auto">{t('about.heading')}</h2>
-            <p className="text-base md:text-lg text-[rgb(var(--text-muted))] max-w-3xl mx-auto leading-relaxed font-light">{t('about.body')}</p>
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[rgb(var(--text-main))]">
+              {t('about.title')} <span className="text-[rgb(var(--accent))]">{t('about.titleHighlight')}</span>
+            </h2>
+            <p className="text-[rgb(var(--text-muted))] text-lg sm:text-xl max-w-3xl mx-auto font-medium">
+              {t('about.heading')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-6xl mx-auto">
+            {/* Our Vision Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="p-8 sm:p-10 rounded-[2.5rem] border border-[rgb(var(--border))] space-y-6 hover:shadow-hard transition-all duration-500 bg-[rgb(var(--bg-main))] group relative overflow-hidden shadow-soft text-left"
+            >
+              {/* Vision specific curvy background graphic */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4 group-hover:bg-blue-500/10 transition-colors"></div>
+              
+              {/* Icon Container with rounded-2xl and a blue shadow glow */}
+              <div className="w-14 h-14 sm:w-16 h-16 rounded-[1.25rem] flex items-center justify-center text-white bg-blue-500 shadow-lg shadow-blue-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                <Lightbulb className="w-7 h-7 sm:w-8 h-8" />
+              </div>
+              
+              <div className="space-y-3 relative z-10">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-[rgb(var(--text-main))] tracking-tight">
+                  {t('about.vision.title')}
+                </h3>
+                <p className="text-base sm:text-lg text-[rgb(var(--text-muted))] leading-relaxed font-medium">
+                  {t('about.vision.desc')}
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Our Mission Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="p-8 sm:p-10 rounded-[2.5rem] border border-[rgb(var(--border))] space-y-6 hover:shadow-hard transition-all duration-500 bg-[rgb(var(--bg-main))] group relative overflow-hidden shadow-soft text-left"
+            >
+              {/* Mission specific curvy background graphic */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4 group-hover:bg-purple-500/10 transition-colors"></div>
+              
+              {/* Icon Container with rounded-2xl and a purple shadow glow */}
+              <div className="w-14 h-14 sm:w-16 h-16 rounded-[1.25rem] flex items-center justify-center text-white bg-purple-500 shadow-lg shadow-purple-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                <Target className="w-7 h-7 sm:w-8 h-8" />
+              </div>
+              
+              <div className="space-y-3 relative z-10">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-[rgb(var(--text-main))] tracking-tight">
+                  {t('about.mission.title')}
+                </h3>
+                <p className="text-base sm:text-lg text-[rgb(var(--text-muted))] leading-relaxed font-medium">
+                  {t('about.mission.desc')}
+                </p>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
