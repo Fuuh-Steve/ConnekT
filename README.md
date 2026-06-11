@@ -1,78 +1,117 @@
 # ConnekT
 
-ConnekT is a modern Next.js job marketplace built with Supabase for authentication and data storage. It includes student/applicant workflows, recruiter dashboards, job listings, application management, profile pages, and admin features.
+ConnekT is a modern, high-performance tech internship marketplace specifically designed for university students and recruiters in Cameroon. Built with **Next.js 16 (App Router)**, **React 19**, and **Tailwind CSS 4**, it delivers a seamless connection between academic talent and leading companies, featuring real-time application tracking, automated matching, and robust administration.
 
-## Features
+---
 
-- Responsive job board with job listings and details
-- Applicant dashboard for tracking applications
-- Recruiter dashboard for managing job postings and candidates
-- Profile and settings pages for user account management
-- Supabase-backed authentication and data access
-- Tailwind CSS UI with animated interactions via Framer Motion
+## 🏗️ Folder Structure (App Layout)
 
-## Tech Stack
+The project follows a modular Next.js architecture separating UI routing, business logic views, reusable components, and API controllers.
 
-- Next.js 16
-- React 19
-- Tailwind CSS 4
-- Supabase (`@supabase/supabase-js`)
-- TypeScript
-- Vite-style modern frontend architecture
+```
+connekt/
+├── public/                 # Static assets (images, icons, etc.)
+├── src/
+│   ├── app/                # Next.js App Router (Routing & Route Handlers)
+│   │   ├── [locale]/       # Internationalized page routes (English / French)
+│   │   └── api/            # Serverless API routes (Supabase admin operations)
+│   ├── components/         # Reusable global design system UI components
+│   │   ├── admin/          # Admin-specific helper components
+│   │   ├── dev/            # Developer utility panels
+│   │   ├── Navigation.tsx  # Main navbar and mobile menu drawer
+│   │   └── SplashLoader.tsx# Interactive initial load screen
+│   ├── context/            # React Context Providers (AuthContext, etc.)
+│   ├── i18n/               # i18n configuration for next-intl routing
+│   ├── lib/                # Shared utilities & database clients
+│   │   ├── supabase.ts     # Client-side Supabase setup (Anon key)
+│   │   └── supabase-admin.ts# Server-side admin Supabase setup (Service Role key)
+│   ├── messages/           # Localization translations
+│   │   └── (home)/         # Home & About Us page translations (en.json, fr.json)
+│   ├── views/              # View-level container components (Page bodies)
+│   │   ├── LandingPage.tsx # Hero, features, vision/mission statements, footer
+│   │   ├── ProfilePage.tsx # Candidate/recruiter profile builder and viewer
+│   │   ├── RecruiterDashboard.tsx # Recruiter applicants and job posting panel
+│   │   └── StudentDashboard.tsx   # Student application tracking board
+│   └── index.css           # Global CSS variables, custom themes & Tailwind 4 setup
+├── .env.local              # Local environment credentials (git ignored)
+├── package.json            # Script commands and project dependencies
+├── supabase_schema.sql     # Database tables, policies, and triggers
+└── tsconfig.json           # TypeScript compilation settings
+```
 
-## Getting Started
+---
+
+## 🚦 Application Routes (Page Layout)
+
+The application handles routing using the Next.js `[locale]` structure for automatic translation support:
+
+| Route Path | View Component | Description | Access Level |
+| :--- | :--- | :--- | :--- |
+| `/[locale]` | `LandingPage` | Platform intro, custom Mission/Vision, stats, and footer | Public |
+| `/[locale]/auth` | `AuthPage` | Dual student/recruiter login & signup workflows | Public |
+| `/[locale]/dashboard` | `StudentDashboard` / `RecruiterDashboard` | Specialized dashboard according to the user's role | Auth Required |
+| `/[locale]/jobs` | `JobBoard` | Searchable index of active internship postings | Public |
+| `/[locale]/jobs/[jobId]` | `JobDetails` | Detail specifications and application action | Auth Required |
+| `/[locale]/post` | `RecruiterDashboard` (Post Form) | Dedicated route to publish new internship listings | Recruiter Only |
+| `/[locale]/applicants/[jobId]`| `ApplicantView` | Candidate evaluation and pipeline management | Recruiter Only |
+| `/[locale]/profile` | `ProfilePage` | Interactive user resume builder and editor | Auth Required |
+| `/[locale]/profile/[username]`| `ProfilePage` (Read-only) | Public shareable profile / student resume card | Public |
+| `/[locale]/settings` | `SettingsPage` | Language selection, notifications, and security | Auth Required |
+| `/[locale]/admin` | `AdminDashboard` | User moderation, post approvals, and platform stats | Admin Only |
+
+---
+
+## 🛠️ Tech Stack
+
+* **Core Framework:** Next.js 16.2 (Turbopack) & React 19
+* **Styling & Theme:** Tailwind CSS 4, Custom HSL Color Tokens, Dark/Light Mode
+* **Animations:** Framer Motion (page transitions, micro-animations, modal entries)
+* **Backend & Database:** Supabase (`auth`, `postgresql`, `storage`)
+* **Localization:** `next-intl` (English `en` & French `fr` routing)
+* **Icons:** Lucide React
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
+* Node.js 18 or newer
+* A Supabase project
 
-- Node.js 18+ installed
-- A Supabase project with:
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+### 1. Setup Environment Variables
+Create a `.env.local` file at the root of the project:
 
-### Local Setup
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-private-key
+```
 
-1. Install dependencies:
+### 2. Configure Database Schema
+Apply the SQL script in `supabase_schema.sql` inside your Supabase project's SQL Editor to instantiate the following structure:
+* `profiles` (Stores student/recruiter profile info synced via Auth triggers)
+* `jobs` (Stores internship postings created by recruiters)
+* `applications` (Stores student applications and resume link pointers)
+* Trigger-based triggers to automatically provision profiles upon signup.
 
-   ```bash
-   npm install
-   ```
+### 3. Install & Run Dev Server
+```bash
+# Install dependencies
+npm install
 
-2. Create a `.env.local` file at the project root and add your Supabase keys:
+# Run application in development mode
+npm run dev
+```
 
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   ```
+Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
-3. Start the development server:
+---
 
-   ```bash
-   npm run dev
-   ```
+## 💻 Available Scripts
 
-4. Open your browser:
-
-   ```
-   http://localhost:3000
-   ```
-
-## Database Schema
-
-The Supabase schema is available in `supabase_schema.sql`. Use it to recreate the required tables and relationships for profiles, jobs, applications, and any role-based access controls.
-
-## Scripts
-
-- `npm run dev` - start the app in development mode
-- `npm run build` - build the production application
-- `npm run start` - start the production server
-- `npm run lint` - run ESLint
-- `npm run clean` - remove build output (`.next`, `dist`)
-
-## Notes
-
-- The app currently uses Supabase for backend services and client-side session handling.
-- If you add Gemini or another AI integration later, include any required API keys in `.env.local`.
-
-## License
-
-This repository is currently private. Add your preferred license information here if you publish it.
+* `npm run dev` - Launches dev server with hot-reloading (using Turbopack)
+* `npm run build` - Builds optimized production bundle (TypeScript & Next checking)
+* `npm run start` - Starts production server locally
+* `npm run lint` - Runs code linting check
+* `npm run clean` - Removes Next build outputs and temporary folder caches
