@@ -11,8 +11,33 @@ import { Analytics as VercelAnalytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  ),
   title: "ConnekT",
-  description: "Connecting talented students with top companies",
+  description: "Connecting talented university students with top tech companies in Cameroon.",
+  openGraph: {
+    title: "ConnekT | Bridge Campus to Career in Cameroon",
+    description: "Connecting talented university students with leading tech companies in Cameroon for internship opportunities and smart talent matching.",
+    url: "/",
+    siteName: "ConnekT",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "ConnekT Open Graph Banner",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ConnekT | Bridge Campus to Career in Cameroon",
+    description: "Connecting talented university students with leading tech companies in Cameroon for internship opportunities and smart talent matching.",
+    images: ["/og-image.png"],
+  },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
