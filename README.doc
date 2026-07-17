@@ -1,94 +1,128 @@
-<html>
+﻿<html>
 <head>
   <meta charset="utf-8">
-  <title>Connekt — Detailed Guide</title>
+  <title>Connekt — Detailed User & Technical Guide</title>
   <style>
-    body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; margin: 1in; color: #111111 }
-    h1 { font-size: 18pt; text-align: center; margin-bottom: 12pt }
-    h2 { font-size: 14pt; margin-top: 12pt; margin-bottom: 6pt }
-    h3 { font-size: 12pt; margin-top: 8pt; margin-bottom: 6pt }
-    p { text-align: justify; margin: 0 0 6pt 0 }
-    li { text-align: justify; margin: 4pt 0 }
-    code { font-family: 'Courier New', monospace; }
+    body { font-family: Arial, sans-serif; line-height: 1.4; margin: 1in; color: #111111; }
+    h1 { font-size: 22pt; color: #1f2937; text-align: center; margin-bottom: 16pt; }
+    h2 { font-size: 16pt; color: #1f2937; margin-top: 18pt; margin-bottom: 8pt; }
+    h3 { font-size: 14pt; color: #374151; margin-top: 14pt; margin-bottom: 6pt; }
+    p, li { font-size: 11pt; margin: 0 0 8pt 0; }
+    li { margin-left: 1.2em; }
+    code { font-family: 'Courier New', monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+    pre { background: #111827; color: #f9fafb; padding: 12px; border-radius: 6px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 16pt; }
+    th, td { border: 1px solid #d1d5db; padding: 10px; vertical-align: top; }
+    th { background: #e5e7eb; text-align: left; }
+    a { color: #1d4ed8; text-decoration: none; }
   </style>
 </head>
 <body>
 <h1>Connekt — Detailed User & Technical Guide</h1>
-
-<p>This document explains how to navigate and operate the Connekt application.</p>
+<p>This document explains how to navigate and operate the Connekt application, and describes how the key features work under the hood. It is formatted as HTML so Microsoft Word can open it; use <strong>File → Save As → Word Document (.docx)</strong> to create a native Word file.</p>
 
 <h2>Table of Contents</h2>
 <ol>
   <li>Quick Start</li>
   <li>Top-level Navigation &amp; UI</li>
-  <li>Primary User Flows (Applicants, Recruiters)</li>
+  <li>Primary User Flows</li>
   <li>Admin &amp; Moderation</li>
   <li>Data Model &amp; APIs</li>
   <li>Localization &amp; Theme</li>
   <li>Environment &amp; Deployment</li>
+  <li>System Requirements</li>
+  <li>Software Requirements</li>
+  <li>User Roles &amp; Permissions</li>
+  <li>Login &amp; Logout</li>
+  <li>Dashboards Overview</li>
+  <li>Security Guidelines</li>
   <li>Troubleshooting</li>
+  <li>FAQ</li>
+  <li>Glossary</li>
+  <li>Appendix — File map</li>
 </ol>
 
 <h2>1. Quick Start</h2>
 <ul>
-  <li>Install dependencies: <code>npm install</code></li>
-  <li>Create a <code>.env.local</code> with required Supabase keys and <code>NEXTAUTH_URL</code>.</li>
-  <li>Apply database schema in <code>supabase_schema.sql</code> to your Supabase project.</li>
-  <li>Run locally: <code>npm run dev</code> and open <a href="http://localhost:3000">http://localhost:3000</a>.</li>
+  <li>Install dependencies: <code>npm install</code>.</li>
+  <li>Create a <code>.env.local</code> with Supabase keys and <code>NEXTAUTH_URL</code>.</li>
+  <li>Apply the database schema in <code>supabase_schema.sql</code> to your Supabase project.</li>
+  <li>Start locally: <code>npm run dev</code> and open <a href="http://localhost:3000">http://localhost:3000</a>.</li>
 </ul>
 
 <h2>2. Top-level Navigation &amp; UI</h2>
-<p>The main app navigation is implemented in <code>src/components/Navigation.tsx</code>. Key UI pieces you will use:</p>
+<p>The main app navigation is implemented in <code>src/components/Navigation.tsx</code>. Key UI components include:</p>
 <ul>
-  <li><strong>Header / Navigation:</strong> Links to Home, Jobs, Listings, Post, Dashboard, Profile, and Admin (if authorized). Mobile menu collapses into a drawer.</li>
-  <li><strong>Locale Switcher:</strong> Provided by <code>src/components/LocaleSwitcher.tsx</code>. Switches between English/French and reloads localized routes (URL prefix <code>/en</code> or <code>/fr</code>).</li>
-  <li><strong>Theme Toggle:</strong> <code>src/components/ThemeToggle.tsx</code> toggles dark/light mode; preferences are stored in localStorage.</li>
-  <li><strong>Splash/Loader:</strong> App-level loader in <code>src/components/SplashLoader.tsx</code> handles initial fetches.</li>
+  <li><strong>Header / Navigation:</strong> Primary links to Home, Jobs, Listings, Post, Dashboard, Profile, and Admin (for authorized users).</li>
+  <li><strong>Locale Switcher:</strong> <code>src/components/LocaleSwitcher.tsx</code> toggles English/French and updates localized URLs under <code>/en</code> and <code>/fr</code>.</li>
+  <li><strong>Theme Toggle:</strong> <code>src/components/ThemeToggle.tsx</code> toggles dark/light mode and stores preference in <code>localStorage</code>.</li>
+  <li><strong>Splash/Loader:</strong> <code>src/components/SplashLoader.tsx</code> displays while initial app data loads.</li>
 </ul>
 
 <h3>Navigation behavior</h3>
-<p>Routes are localized under <code>src/app/[locale]</code>. When navigating, the app loads route-specific translation JSON from <code>src/messages</code> and renders server-side where possible using Next.js App Router patterns.</p>
+<p>Routes are localized under <code>src/app/[locale]</code>. The app loads route-specific translation JSON from <code>src/messages</code> and renders server-side where possible using Next.js App Router conventions.</p>
 
 <h2>3. Primary User Flows</h2>
 
 <h3>Applicant (Student)</h3>
 <ol>
-  <li>Sign up / sign in via the Auth page. Auth is handled by Supabase (see <code>src/lib/supabase.ts</code>).</li>
-  <li>Complete your profile at <code>/[locale]/profile</code>. Profile includes headline, skills, experience, education, and a resume link.</li>
-  <li>Browse jobs at <code>/[locale]/jobs</code>. Use filters, search, and sort. Click a job for details (<code>/[locale]/jobs/[jobId]</code>).</li>
-  <li>Click <em>Apply</em> on a job detail to open the application form. Attach a resume (PDF recommended) and submit. Applications are written to the <code>applications</code> table.</li>
-  <li>Track your submissions at <code>/[locale]/applications</code>. Status updates appear here (pending/accepted/rejected).</li>
+  <li>Sign up or sign in on the Auth page. Authentication is handled by Supabase through <code>src/lib/supabase.ts</code>.</li>
+  <li>Complete your profile at <code>/[locale]/profile</code>, including headline, skills, experience, education, and resume link.</li>
+  <li>Browse jobs at <code>/[locale]/jobs</code> and use filters, search, and sort tools.</li>
+  <li>View job details at <code>/[locale]/jobs/[jobId]</code> and click <em>Apply</em> to submit an application.</li>
+  <li>Track submissions at <code>/[locale]/applications</code>, with statuses such as pending, accepted, or rejected.</li>
 </ol>
 
 <h3>Recruiter / Employer</h3>
 <ol>
-  <li>Sign in with recruiter credentials. If not yet a recruiter, request elevated access via your admin panel or create an account provisioned for recruiters.</li>
-  <li>Post a job via <code>/[locale]/post</code>. Provide title, description, location, tags, application deadline, and optional screening questions.</li>
+  <li>Sign in with recruiter credentials. Request elevated access from an admin if needed.</li>
+  <li>Post a job via <code>/[locale]/post</code>. Provide title, description, location, tags, deadline, and optional screening questions.</li>
   <li>Manage postings under <code>/[locale]/listings</code> or <code>/[locale]/jobs</code>. Edit, pause, or remove listings.</li>
-  <li>View applicants for each job at <code>/[locale]/applicants/[jobId]</code>. Filter, add private notes, and change application status.</li>
+  <li>Review applicants at <code>/[locale]/applicants/[jobId]</code>, add private notes, and update application status.</li>
 </ol>
 
 <h2>4. Admin &amp; Moderation</h2>
-<p>Admin pages are inside <code>src/app/[locale]/admin</code>. Typical admin responsibilities include:</p>
+<p>Admin pages are under <code>src/app/[locale]/admin</code>. Admin responsibilities include:</p>
 <ul>
-  <li>Approving / rejecting job postings in <strong>Job Moderation</strong>.</li>
-  <li>Reviewing and bulk-managing applications via <strong>Applications Oversight</strong>.</li>
-  <li>User Management: deactivate/reactivate accounts, change roles, and investigate suspicious activity.</li>
+  <li>Approving or rejecting job postings in Job Moderation.</li>
+  <li>Reviewing and bulk-managing applications in Applications Oversight.</li>
+  <li>Managing user roles, deactivating/reactivating accounts, and investigating suspicious activity.</li>
 </ul>
 
 <h3>How admin auth works</h3>
-<p>Server-side admin checks are implemented in <code>src/lib/adminAuth.ts</code>. API route handlers under <code>src/app/api/admin</code> validate requests with server-side credentials or role flags stored in the database. Never expose <code>SUPABASE_SERVICE_ROLE_KEY</code> to the client.</p>
+<p>Server-side admin checks are implemented in <code>src/lib/adminAuth.ts</code>. API routes in <code>src/app/api/admin</code> validate requests with the Supabase service role key and role flags stored in the database. Never expose <code>SUPABASE_SERVICE_ROLE_KEY</code> to the client.</p>
 
 <h2>5. Data Model &amp; APIs</h2>
-<p>Core tables (see <code>supabase_schema.sql</code>):</p>
-<ul>
-  <li><code>profiles</code> — user profile metadata mapped to auth users.</li>
-  <li><code>jobs</code> — job postings, with fields for title, description, owner, status, tags, location, and deadline.</li>
-  <li><code>applications</code> — submitted applications referencing jobId and profileId, plus status and notes.</li>
-</ul>
+<p>The key domain model is built around users, jobs, and applications. The database schema is defined in <code>supabase_schema.sql</code>.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Table</th>
+      <th>Purpose</th>
+      <th>Key Fields</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>profiles</code></td>
+      <td>User profile metadata mapped to Auth users.</td>
+      <td><code>user_id</code>, <code>name</code>, <code>headline</code>, <code>skills</code>, <code>role</code>, <code>resume_url</code></td>
+    </tr>
+    <tr>
+      <td><code>jobs</code></td>
+      <td>Job postings created by recruiters.</td>
+      <td><code>title</code>, <code>description</code>, <code>owner_id</code>, <code>status</code>, <code>location</code>, <code>tags</code>, <code>deadline</code></td>
+    </tr>
+    <tr>
+      <td><code>applications</code></td>
+      <td>Applications submitted by students for jobs.</td>
+      <td><code>job_id</code>, <code>profile_id</code>, <code>status</code>, <code>resume_url</code>, <code>notes</code>, <code>submitted_at</code></td>
+    </tr>
+  </tbody>
+</table>
 
 <h3>API route patterns</h3>
-<p>Server handlers live under <code>src/app/api</code>. Admin APIs are under <code>src/app/api/admin</code>. Use server-side fetches for admin data to keep the service role key private.</p>
+<p>Server handlers live under <code>src/app/api</code>. Public APIs serve the client, and admin APIs are under <code>src/app/api/admin</code>. Always fetch admin-level data server-side.</p>
 
 <h4>Example: fetching applications server-side</h4>
 <pre><code>import { createAdminClient } from '@/lib/supabase-admin'
@@ -102,194 +136,289 @@ export async function GET(request) {
 </code></pre>
 
 <h2>6. Localization &amp; Theme</h2>
-<p>Localization files are kept in <code>src/messages</code> grouped per route. To add a locale:</p>
+<p>Localization files are stored in <code>src/messages</code> and are grouped by route. To add a new locale:</p>
 <ol>
-  <li>Add the locale folder under <code>src/app</code> (e.g., <code>/es</code>).</li>
-  <li>Add translation JSON files under the appropriate messages folders.</li>
-  <li>Update navigation in <code>src/i18n/navigation.ts</code> if you add new localized pages.</li>
+  <li>Create a new locale folder under <code>src/app</code> (for example, <code>/es</code>).</li>
+  <li>Add translated JSON files under the corresponding folder in <code>src/messages</code>.</li>
+  <li>Update navigation definitions in <code>src/i18n/navigation.ts</code>.</li>
 </ol>
+<p>The theme toggle is implemented in <code>src/components/ThemeToggle.tsx</code>. It stores the selected mode in <code>localStorage</code> so the preference persists across reloads.</p>
 
 <h2>7. Environment &amp; Deployment</h2>
-<p>Required variables (example):</p>
+<p>Required environment variables include:</p>
 <ul>
   <li><code>NEXT_PUBLIC_SUPABASE_URL</code></li>
   <li><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
   <li><code>SUPABASE_SERVICE_ROLE_KEY</code> (server-only)</li>
   <li><code>NEXTAUTH_URL</code></li>
 </ul>
+<p>Deploy on Vercel for automatic Next.js optimizations. Set the environment variables in your Vercel project dashboard and ensure the deployed domain matches <code>NEXTAUTH_URL</code>.</p>
 
-<p>Deploy on Vercel for automatic Next.js optimizations; set the environment variables in your Vercel project settings.</p>
+<h2>8. System Requirements</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Minimum</th>
+      <th>Recommended</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Operating System</td>
+      <td>Windows 10 / macOS 11 / Linux</td>
+      <td>Windows 11 / macOS 13 / Ubuntu 22.04</td>
+    </tr>
+    <tr>
+      <td>Memory</td>
+      <td>8 GB RAM</td>
+      <td>16 GB RAM</td>
+    </tr>
+    <tr>
+      <td>Disk Space</td>
+      <td>2 GB free</td>
+      <td>5 GB free</td>
+    </tr>
+    <tr>
+      <td>Browser</td>
+      <td>Modern Chromium-based or Safari</td>
+      <td>Latest Chrome / Edge / Firefox / Safari</td>
+    </tr>
+  </tbody>
+</table>
 
-<h2>8. Troubleshooting</h2>
+<h2>9. Software Requirements</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>Minimum Version</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Node.js</td>
+      <td>18.x</td>
+      <td>Use the LTS release for stability.</td>
+    </tr>
+    <tr>
+      <td>npm</td>
+      <td>10.x</td>
+      <td>Installed with Node.js.</td>
+    </tr>
+    <tr>
+      <td>Git</td>
+      <td>2.30+</td>
+      <td>For source control and repo setup.</td>
+    </tr>
+    <tr>
+      <td>Supabase</td>
+      <td>Latest hosted project</td>
+      <td>Required for Auth, Database, and Storage.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>10. User Roles &amp; Permissions</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Permissions</th>
+      <th>Access</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Applicant / Student</td>
+      <td>Build profile, apply to jobs, view applications, edit profile.</td>
+      <td>Public / Authenticated</td>
+    </tr>
+    <tr>
+      <td>Recruiter / Employer</td>
+      <td>Create and manage job listings, review applicants, manage listings.</td>
+      <td>Recruiter Only</td>
+    </tr>
+    <tr>
+      <td>Admin</td>
+      <td>Approve/reject jobs, manage users, view metrics, moderate content.</td>
+      <td>Admin Only</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>11. Login &amp; Logout</h2>
+<p>Authentication is handled by Supabase via <code>src/lib/supabase.ts</code>. Users sign in from the Auth page at <code>/[locale]/auth</code>.</p>
+<ul>
+  <li><strong>Login:</strong> Enter credentials or use configured social/login providers. The user receives a valid session token.</li>
+  <li><strong>Logout:</strong> The logout flow clears the session and redirects to the public landing page or login screen.</li>
+  <li><strong>Session handling:</strong> Auth state is maintained in the client and protected routes require a valid session.</li>
+</ul>
+
+<h2>12. Dashboards Overview</h2>
+<p>The application surfaces different dashboard experiences based on user role.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Dashboard</th>
+      <th>Primary View</th>
+      <th>Key Features</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Student Dashboard</td>
+      <td><code>src/views/StudentDashboard.tsx</code></td>
+      <td>Application tracker, saved jobs, profile progress, and recent activity.</td>
+    </tr>
+    <tr>
+      <td>Recruiter Dashboard</td>
+      <td><code>src/views/RecruiterDashboard.tsx</code></td>
+      <td>Post jobs, review applicants, manage listings, and view recruiter stats.</td>
+    </tr>
+    <tr>
+      <td>Admin Dashboard</td>
+      <td><code>src/app/[locale]/admin</code></td>
+      <td>Moderate jobs, manage users, approve posts, and monitor platform health.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>13. Security Guidelines</h2>
+<ul>
+  <li>Do not expose <code>SUPABASE_SERVICE_ROLE_KEY</code> to the client. Keep it in server-only environment variables.</li>
+  <li>Use role-based access checks for admin and recruiter pages.</li>
+  <li>Validate all API requests server-side before modifying database state.</li>
+  <li>Store only necessary user data and avoid saving sensitive information in logs.</li>
+  <li>Rotate Supabase service keys regularly and revoke compromised keys immediately.</li>
+</ul>
+
+<h2>14. Troubleshooting</h2>
 <h3>Common issues</h3>
 <ul>
-  <li><strong>Blank pages / build errors:</strong> Run <code>npm run build</code> locally to surface compile errors.</li>
-  <li><strong>Auth failures:</strong> Confirm Supabase keys and <code>NEXTAUTH_URL</code> match your deployed domain.</li>
-  <li><strong>Missing translations:</strong> Ensure JSON keys exist under <code>src/messages</code> for the current route.</li>
+  <li><strong>Blank pages or build errors:</strong> Run <code>npm run build</code> locally to catch compile-time issues.</li>
+  <li><strong>Auth failures:</strong> Ensure Supabase keys and <code>NEXTAUTH_URL</code> match the app URL exactly.</li>
+  <li><strong>Missing translations:</strong> Confirm the JSON keys exist for the current route and locale in <code>src/messages</code>.</li>
+  <li><strong>Admin panel not visible:</strong> Verify the authenticated user has the correct admin role and refresh after login.</li>
 </ul>
 
-<h3>Logs &amp; diagnostics</h3>
+<h3>Diagnostics &amp; quick checks</h3>
 <ul>
-  <li>Server logs are visible in your terminal when running <code>npm run dev</code> or in Vercel/hosting logs for production.</li>
-  <li>Supabase provides Auth and Database logs via the Supabase dashboard.</li>
+  <li><code>npm run dev</code> — start local development.</li>
+  <li><code>npm run build</code> — validate production build and catch errors.</li>
+  <li><code>npm run lint</code> — identify syntax and style issues when configured.</li>
+  <li>Use browser dev tools to inspect API calls, network failures, and translation loading.</li>
 </ul>
+
+<h2>15. FAQ</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Question</th>
+      <th>Answer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>How do I add a new locale?</td>
+      <td>Create a folder under <code>src/app</code>, add translations under <code>src/messages</code>, and update <code>src/i18n/navigation.ts</code>.</td>
+    </tr>
+    <tr>
+      <td>Why is the admin page not visible?</td>
+      <td>Admin features are shown only to users with the admin role. Check the user's role in the database and refresh after login.</td>
+    </tr>
+    <tr>
+      <td>Where are recruiter job postings stored?</td>
+      <td>Job postings are stored in the <code>jobs</code> table and linked to recruiters by the <code>owner_id</code>.</td>
+    </tr>
+    <tr>
+      <td>Why does Supabase auth redirect incorrectly?</td>
+      <td>Verify <code>NEXTAUTH_URL</code> in <code>.env.local</code> matches your site URL and ensure the redirect URI is allowed in Supabase Auth settings.</td>
+    </tr>
+    <tr>
+      <td>Can I deploy Connekt outside Vercel?</td>
+      <td>Yes. Any Next.js App Router-compatible host works, but keep the service role key secure on the server.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>16. Glossary</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>App Router</td>
+      <td>Next.js routing system for server and client components in <code>src/app</code>.</td>
+    </tr>
+    <tr>
+      <td>Locale</td>
+      <td>Language-specific route prefix, such as <code>/en</code> or <code>/fr</code>.</td>
+    </tr>
+    <tr>
+      <td>Supabase</td>
+      <td>Backend-as-a-service platform used for authentication, database, and storage.</td>
+    </tr>
+    <tr>
+      <td>Service Role Key</td>
+      <td>Privileged Supabase key used only on the server for admin-level operations.</td>
+    </tr>
+    <tr>
+      <td>Recruiter</td>
+      <td>User role that can publish job postings and review applicants.</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2>Appendix — File map with responsibilities</h2>
-<ul>
-  <li><code>src/app/[locale]/auth/page.tsx</code> — Sign-in &amp; sign-up flows</li>
-  <li><code>src/app/[locale]/jobs/page.tsx</code> — Job board listing</li>
-  <li><code>src/app/[locale]/jobs/[jobId]/page.tsx</code> — Job details and apply action</li>
-  <li><code>src/components/Navigation.tsx</code> — Header and primary links</li>
-  <li><code>src/lib/supabase.ts</code> — Client-side Supabase</li>
-  <li><code>src/lib/supabase-admin.ts</code> — Server-side admin Supabase client</li>
-</ul>
+<table>
+  <thead>
+    <tr>
+      <th>File</th>
+      <th>Responsibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>src/app/[locale]/auth/page.tsx</code></td>
+      <td>Sign-in and sign-up flows.</td>
+    </tr>
+    <tr>
+      <td><code>src/app/[locale]/jobs/page.tsx</code></td>
+      <td>Job board listing and filters.</td>
+    </tr>
+    <tr>
+      <td><code>src/app/[locale]/jobs/[jobId]/page.tsx</code></td>
+      <td>Job details and application actions.</td>
+    </tr>
+    <tr>
+      <td><code>src/components/Navigation.tsx</code></td>
+      <td>Header and primary navigation links.</td>
+    </tr>
+    <tr>
+      <td><code>src/components/LocaleSwitcher.tsx</code></td>
+      <td>Locale switching logic.</td>
+    </tr>
+    <tr>
+      <td><code>src/components/ThemeToggle.tsx</code></td>
+      <td>Dark/light theme toggle and persistence.</td>
+    </tr>
+    <tr>
+      <td><code>src/lib/supabase.ts</code></td>
+      <td>Client-side Supabase connection and auth helper functions.</td>
+    </tr>
+    <tr>
+      <td><code>src/lib/supabase-admin.ts</code></td>
+      <td>Server-side Supabase admin client.</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>End of guide.</p>
-
-</body>
-</html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Connekt — Detailed Guide</title>
-  <style>
-    body { font-family: Arial, sans-serif; line-height: 1.4; }
-    h1,h2,h3 { color: #1f2937 }
-    code { background:#f3f4f6; padding:2px 6px; border-radius:4px }
-    pre { background:#111827; color:#f9fafb; padding:10px; border-radius:6px }
-  </style>
-</head>
-<body>
-<h1>Connekt — Detailed User & Technical Guide</h1>
-<p>This document explains how to navigate and operate the Connekt application, and describes how the key features work under the hood. It is formatted as HTML so Microsoft Word can open it; use <em>File → Save As</em> → <strong>Word Document (.docx)</strong> to create a native Word file.</p>
-
-<h2>Table of Contents</h2>
-<ol>
-  <li>Quick Start</li>
-  <li>Top-level Navigation & UI</li>
-  <li>Primary User Flows (Applicants, Recruiters)</li>
-  <li>Admin & Moderation</li>
-  <li>Data Model & APIs</li>
-  <li>Localization & Theme</li>
-  <li>Environment & Deployment</li>
-  <li>Troubleshooting</li>
-</ol>
-
-<h2>1. Quick Start</h2>
-<ul>
-  <li>Install dependencies: <code>npm install</code></li>
-  <li>Create a <code>.env.local</code> with required Supabase keys and <code>NEXTAUTH_URL</code>.</li>
-  <li>Apply database schema in <code>supabase_schema.sql</code> to your Supabase project.</li>
-  <li>Run locally: <code>npm run dev</code> and open <a href="http://localhost:3000">http://localhost:3000</a>.</li>
-</ul>
-
-<h2>2. Top-level Navigation & UI</h2>
-<p>The main app navigation is implemented in <code>src/components/Navigation.tsx</code>. Key UI pieces you will use:</p>
-<ul>
-  <li><strong>Header / Navigation:</strong> Links to Home, Jobs, Listings, Post, Dashboard, Profile, and Admin (if authorized). Mobile menu collapses into a drawer.</li>
-  <li><strong>Locale Switcher:</strong> Provided by <code>src/components/LocaleSwitcher.tsx</code>. Switches between English/French and reloads localized routes (URL prefix <code>/en</code> or <code>/fr</code>).</li>
-  <li><strong>Theme Toggle:</strong> <code>src/components/ThemeToggle.tsx</code> toggles dark/light mode; preferences are stored in localStorage.</li>
-  <li><strong>Splash/Loader:</strong> App-level loader in <code>src/components/SplashLoader.tsx</code> handles initial fetches.</li>
-</ul>
-
-<h3>Navigation behavior</h3>
-<p>Routes are localized under <code>src/app/[locale]</code>. When navigating, the app loads route-specific translation JSON from <code>src/messages</code> and renders server-side where possible using Next.js App Router patterns.</p>
-
-<h2>3. Primary User Flows</h2>
-
-<h3>Applicant (Student)</h3>
-<ol>
-  <li>Sign up / sign in via the Auth page. Auth is handled by Supabase (see <code>src/lib/supabase.ts</code>).</li>
-  <li>Complete your profile at <code>/[locale]/profile</code>. Profile includes headline, skills, experience, education, and a resume link.</li>
-  <li>Browse jobs at <code>/[locale]/jobs</code>. Use filters, search, and sort. Click a job for details (<code>/[locale]/jobs/[jobId]</code>).</li>
-  <li>Click <em>Apply</em> on a job detail to open the application form. Attach a resume (PDF recommended) and submit. Applications are written to the <code>applications</code> table.</li>
-  <li>Track your submissions at <code>/[locale]/applications</code>. Status updates appear here (pending/accepted/rejected).</li>
-</ol>
-
-<h3>Recruiter / Employer</h3>
-<ol>
-  <li>Sign in with recruiter credentials. If not yet a recruiter, request elevated access via your admin panel or create an account provisioned for recruiters.</li>
-  <li>Post a job via <code>/[locale]/post</code>. Provide title, description, location, tags, application deadline, and optional screening questions.</li>
-  <li>Manage postings under <code>/[locale]/listings</code> or <code>/[locale]/jobs</code>. Edit, pause, or remove listings.</li>
-  <li>View applicants for each job at <code>/[locale]/applicants/[jobId]</code>. Filter, add private notes, and change application status.</li>
-</ol>
-
-<h2>4. Admin & Moderation</h2>
-<p>Admin pages are inside <code>src/app/[locale]/admin</code>. Typical admin responsibilities include:</p>
-<ul>
-  <li>Approving / rejecting job postings in <strong>Job Moderation</strong>.</li>
-  <li>Reviewing and bulk-managing applications via <strong>Applications Oversight</strong>.</li>
-  <li>User Management: deactivate/reactivate accounts, change roles, and investigate suspicious activity.</li>
-</ul>
-
-<h3>How admin auth works</h3>
-<p>Server-side admin checks are implemented in <code>src/lib/adminAuth.ts</code>. API route handlers under <code>src/app/api/admin</code> validate requests with server-side credentials or role flags stored in the database. Never expose <code>SUPABASE_SERVICE_ROLE_KEY</code> to the client.</p>
-
-<h2>5. Data Model & APIs</h2>
-<p>Core tables (see <code>supabase_schema.sql</code>):</p>
-<ul>
-  <li><code>profiles</code> — user profile metadata mapped to auth users.</li>
-  <li><code>jobs</code> — job postings, with fields for title, description, owner, status, tags, location, and deadline.</li>
-  <li><code>applications</code> — submitted applications referencing jobId and profileId, plus status and notes.</li>
-</ul>
-
-<h3>API route patterns</h3>
-<p>Server handlers live under <code>src/app/api</code>. Admin APIs are under <code>src/app/api/admin</code>. Use server-side fetches for admin data to keep the service role key private.</p>
-
-<h4>Example: fetching applications server-side</h4>
-<pre><code>import { createAdminClient } from '@/lib/supabase-admin'
-
-export async function GET(request) {
-  const supabase = createAdminClient()
-  const { data, error } = await supabase.from('applications').select('*')
-  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 })
-  return new Response(JSON.stringify(data), { status: 200 })
-}
-</code></pre>
-
-<h2>6. Localization & Theme</h2>
-<p>Localization files are kept in <code>src/messages</code> grouped per route. To add a locale:</p>
-<ol>
-  <li>Add the locale folder under <code>src/app</code> (e.g., <code>/es</code>).</li>
-  <li>Add translation JSON files under the appropriate messages folders.</li>
-  <li>Update navigation in <code>src/i18n/navigation.ts</code> if you add new localized pages.</li>
-</ol>
-
-<h2>7. Environment & Deployment</h2>
-<p>Required variables (example):</p>
-<ul>
-  <li><code>NEXT_PUBLIC_SUPABASE_URL</code></li>
-  <li><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
-  <li><code>SUPABASE_SERVICE_ROLE_KEY</code> (server-only)</li>
-  <li><code>NEXTAUTH_URL</code></li>
-</ul>
-
-<p>Deploy on Vercel for automatic Next.js optimizations; set the environment variables in your Vercel project settings.</p>
-
-<h2>8. Troubleshooting</h2>
-<h3>Common issues</h3>
-<ul>
-  <li><strong>Blank pages / build errors:</strong> Run <code>npm run build</code> locally to surface compile errors.</li>
-  <li><strong>Auth failures:</strong> Confirm Supabase keys and <code>NEXTAUTH_URL</code> match your deployed domain.</li>
-  <li><strong>Missing translations:</strong> Ensure JSON keys exist under <code>src/messages</code> for the current route.</li>
-</ul>
-
-<h3>Logs & diagnostics</h3>
-<ul>
-  <li>Server logs are visible in your terminal when running <code>npm run dev</code> or in Vercel/hosting logs for production.</li>
-  <li>Supabase provides Auth and Database logs via the Supabase dashboard.</li>
-</ul>
-
-<h2>Appendix — File map with responsibilities</h2>
-<ul>
-  <li><code>src/app/[locale]/auth/page.tsx</code> — Sign-in & sign-up flows</li>
-  <li><code>src/app/[locale]/jobs/page.tsx</code> — Job board listing</li>
-  <li><code>src/app/[locale]/jobs/[jobId]/page.tsx</code> — Job details and apply action</li>
-  <li><code>src/components/Navigation.tsx</code> — Header and primary links</li>
-  <li><code>src/lib/supabase.ts</code> — Client-side Supabase
-  <li><code>src/lib/supabase-admin.ts</code> — Server-side admin Supabase client
-</ul>
-
-<p>End of guide. Questions or want a native <code>.docx</code> file created in the repo? I can produce one using Pandoc or by generating the binary here if you prefer.</p>
+<p>End of guide. Use <strong>Save As → Word Document</strong> if you want a native <code>.docx</code> version, or ask for help generating one.</p>
 </body>
 </html>
