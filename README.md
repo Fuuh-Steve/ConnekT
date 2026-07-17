@@ -193,17 +193,6 @@ Refer to the route files for concrete request/response shapes and required heade
 
 You can open the included `README.doc` in Microsoft Word and then `Save As` → `Word Document (.docx)`.
 
-Alternatively, convert Markdown to Word using Pandoc:
-
-```bash
-pandoc README.md -o README.docx
-```
-
-If you prefer an HTML snapshot that Word opens well, use the included `README.doc` (it's HTML formatted).
-
-## ✅ Next Steps
-
-- Review this README and tell me if you want a `README.docx` (binary) generated here — I can create an HTML `.doc` which Word will open, or show commands to convert to `.docx` on your machine.
 
 ---
 
